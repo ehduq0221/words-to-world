@@ -1,80 +1,174 @@
-// 실제 학교 정보와 구분되는 화면 예시용 안내입니다.
-const categories = {
-  study: [
-    { name: '학산도서관', number: '06', type: '학습 시설', description: '학생들의 학습과 자료 탐색을 지원하는 공간입니다.', metric: '학습 만족도', value: '82 / 100', note: '열람 공간과 학습 환경을 살펴보세요.' },
-    { name: '정보기술대학', number: '07', type: '교육 시설', description: '전공 수업과 실습이 이루어지는 공간입니다.', metric: '실습 환경', value: '개선 필요', note: '학생들이 실습 장비 개선을 요청하고 있어요.' },
-    { name: '공과대학', number: '08', type: '교육 시설', description: '공학 분야의 수업과 실험을 위한 공간입니다.', metric: '교육 환경', value: '양호', note: '수업과 실험 환경을 꾸준히 관리해 보세요.' },
-  ],
-  life: [
-    { name: '제1기숙사', number: '18-1', type: '주거 시설', description: '학생들이 캠퍼스에서 생활하는 주거 공간입니다.', metric: '주거 만족도', value: '64 / 100', note: '학생들이 기숙사 자리 부족을 이야기하고 있어요.' },
-    { name: '학생회관', number: '17', type: '학생 생활', description: '학생들의 교내 활동과 생활을 지원하는 공간입니다.', metric: '생활 편의성', value: '78 / 100', note: '학생들의 일상에 필요한 시설을 살펴보세요.' },
-  ],
-  research: [
-    { name: '공동실험실습관', number: '09', type: '연구 시설', description: '실험과 실습을 위한 공간입니다.', metric: '연구 환경', value: '양호', note: '연구실과 실험 장비의 운영 상태를 살펴보세요.' },
-    { name: '제2공동실험실습관', number: '27', type: '연구 시설', description: '교육과 연구 활동을 지원하는 공간입니다.', metric: '연구 역량', value: '72 / 100', note: '학교의 연구 기반을 발전시킬 수 있어요.' },
-  ],
-};
-const list = document.querySelector('#facility-list');
-const detail = document.querySelector('#facility-detail');
-function selectFacility(facility, selectedButton) {
-  detail.closest('.left-panel').classList.add('show-building-info');
-  list.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button === selectedButton)));
-  detail.replaceChildren();
-  const type = document.createElement('span');
-  type.className = 'detail-type';
-  type.textContent = facility.type;
-  const title = document.createElement('h3');
-  title.textContent = facility.name;
-  const description = document.createElement('p');
-  description.textContent = facility.description;
-  detail.append(type, title, description);
-  if (facility.metric) {
-    const metric = document.createElement('div');
-    metric.className = 'detail-metric';
-    const label = document.createElement('span');
-    label.textContent = facility.metric;
-    const value = document.createElement('b');
-    value.textContent = facility.value;
-    metric.append(label, value);
-    detail.append(metric);
-  }
-  const note = document.createElement('small');
-  note.textContent = facility.note;
-  detail.append(note);
+// 건물 안내는 지도 ID, 매장 위치는 operations.json을 기준으로 연결합니다.
+const typeNames = { cafeteria: '식당', cafe: '카페', restaurant: '음식점', store: '편의점·매점' };
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
 }
-function selectCategory(category) {
-  list.replaceChildren();
-  document.querySelectorAll('[data-category]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === category)));
-  for (const facility of categories[category]) {
-    const button = document.createElement('button');
-    const number = document.createElement('span');
-    number.textContent = facility.number;
-    const name = document.createElement('b');
-    name.textContent = facility.name;
-    button.append(number, name);
-    button.addEventListener('click', () => selectFacility(facility, button));
-    list.append(button);
-  }
-  selectFacility(categories[category][0], list.firstElementChild);
+async function readJson(path) {
+  const response = await fetch(new URL(path, import.meta.url));
+  if (!response.ok) throw new Error('시설 안내 자료를 불러올 수 없습니다.');
+  return response.json();
 }
-document.querySelectorAll('[data-category]').forEach(button => button.addEventListener('click', () => selectCategory(button.dataset.category)));
-selectCategory('study');
 
-export function showBuildingInformation(building) {
-  const number = building.name.match(/\((\d+(?:-\d+)?)\)/)?.[1];
-  for (const [category, facilities] of Object.entries(categories)) {
-    const facility = facilities.find(item => item.number === number);
-    if (facility) {
-      selectCategory(category);
-      const button = list.querySelectorAll('button')[facilities.indexOf(facility)];
-      selectFacility(facility, button);
-      return;
-    }
+export async function initFacilityExplorer(buildings, onSelect) {
+  const [guide, operations] = await Promise.all([
+    readJson('../../public/data/facilities.json'),
+    readJson('../../public/data/operations.json'),
+  ]);
+  const records = new Map(buildings.map(building => [building.id, building]));
+  const byId = new Map(buildings.map(building => [building.id, records.get(building.selectionGroupId) || building]));
+  const listedBuildings = buildings.filter(building => !building.selectionGroupId || building.selectionGroupId === building.id);
+  const places = operations.facilities;
+  const ids = new Set();
+  for (const place of places) {
+    if (ids.has(place.id) || !byId.has(place.buildingId)) throw new Error('시설 ID 또는 연결된 지도 건물을 확인해 주세요.');
+    ids.add(place.id);
   }
-  selectFacility({
-    name: building.name,
-    type: number ? number + '호관' : '캠퍼스 시설',
-    description: '인천대학교 송도캠퍼스 지도에 포함된 건물입니다.',
-    note: '상세 시설 안내는 확인 후 보완합니다.',
+  const list = document.querySelector('#facility-list');
+  const detail = document.querySelector('#facility-detail');
+  const search = document.querySelector('#facility-search');
+  const filter = document.querySelector('#food-filter');
+  const count = document.querySelector('#facility-result-count');
+  const categories = guide.categories;
+  const categoryNames = Object.fromEntries(categories.map(item => [item.id, item.name]));
+  let category = 'all';
+  let selectedBuildingId = null;
+  let selectedPlaceId = null;
+  const normalize = value => value.toLocaleLowerCase('ko-KR').replace(/\s/g, '');
+  const titleOf = building => guide.buildings[building.id]?.name || building.name;
+  const foodPlaces = () => places.filter(place => place.type !== 'store');
+
+  function markSelection() {
+    list.querySelectorAll('button').forEach(button => {
+      const selected = button.dataset.placeId
+        ? button.dataset.placeId === selectedPlaceId
+        : button.dataset.buildingId === selectedBuildingId && !selectedPlaceId;
+      button.setAttribute('aria-pressed', String(selected));
+    });
+  }
+
+  function placeCard(place) {
+    const card = element('section', 'place-card');
+    card.dataset.placeId = place.id;
+    card.classList.toggle('is-selected', place.id === selectedPlaceId);
+    card.append(element('span', 'place-type', typeNames[place.type]), element('h4', '', place.name));
+    // 층·호실은 공식 안내에 명시된 문자열 그대로 표시합니다. 실내 좌표를 추정하지 않습니다.
+    card.append(element('p', 'place-location', place.location));
+    const button = element('button', 'locate-place', '지도에서 보기');
+    button.type = 'button';
+    button.setAttribute('aria-label', place.name + ' 지도에서 보기');
+    button.addEventListener('click', () => onSelect(byId.get(place.buildingId), { placeId: place.id, focusMap: true }));
+    card.append(button);
+    return card;
+  }
+
+  function renderList() {
+    const query = normalize(search.value.trim());
+    filter.hidden = category !== 'food';
+    let entries;
+    if (category === 'food') {
+      entries = foodPlaces().filter(place => (!filter.value || place.type === filter.value || (filter.value === 'restaurant' && place.type === 'cafeteria')) &&
+        normalize(place.name + place.location).includes(query)).map(place => ({ building: byId.get(place.buildingId), place }));
+    } else {
+      entries = listedBuildings.filter(building => {
+        const info = guide.buildings[building.id];
+        const matchesCategory = category === 'all' || info?.category === category;
+        const text = [titleOf(building), building.name, info?.number || '', ...(info?.aliases || []), info?.description || ''].join(' ');
+        return matchesCategory && normalize(text).includes(query);
+      }).map(building => ({ building }));
+      if (query && category === 'all') {
+        entries.push(...places.filter(place => normalize(place.name + place.location).includes(query)).map(place => ({ building: byId.get(place.buildingId), place })));
+      }
+      entries.sort((a, b) => (guide.buildings[a.building.id]?.number || '999').localeCompare(guide.buildings[b.building.id]?.number || '999', 'ko', { numeric: true }) || titleOf(a.building).localeCompare(titleOf(b.building), 'ko'));
+    }
+    list.replaceChildren();
+    count.textContent = category === 'food' ? entries.length + '개 매장' : entries.filter(item => !item.place).length + '개 지도 시설' + (entries.some(item => item.place) ? ' · 매장 ' + entries.filter(item => item.place).length + '곳' : '');
+    for (const { building, place } of entries) {
+      const button = element('button', '');
+      button.type = 'button';
+      button.dataset.buildingId = building.id;
+      if (place) button.dataset.placeId = place.id;
+      const info = guide.buildings[building.id];
+      const badge = element('span', '', place ? (place.type === 'cafe' ? '카페' : place.type === 'store' ? '매점' : '식당') : (info?.number || '시설'));
+      const text = element('div', 'facility-item-text');
+      text.append(element('b', '', place ? place.name : titleOf(building)));
+      if (place) text.append(element('small', '', place.location));
+      else text.append(element('small', '', categoryNames[info?.category] + (info?.verification === 'needs-review' ? ' · 정보 확인 중' : '')));
+      button.append(badge, text);
+      button.addEventListener('click', () => onSelect(building, { placeId: place?.id, focusMap: true }));
+      list.append(button);
+    }
+    if (!entries.length) list.append(element('p', 'facility-empty', '검색 결과가 없습니다.'));
+    markSelection();
+  }
+
+  function showBuildingInformation(building, placeId = null) {
+    selectedBuildingId = building.id;
+    selectedPlaceId = placeId;
+    const info = guide.buildings[building.id];
+    detail.closest('.left-panel').classList.add('show-building-info');
+    detail.replaceChildren();
+    detail.append(element('span', 'detail-type', (info?.number ? info.number + '호관 · ' : '') + (categoryNames[info?.category] || categoryNames.other)),
+      element('h3', '', titleOf(building)), element('p', '', info?.description || '상세 시설 안내를 확인 중입니다.'));
+    if (info?.verification === 'needs-review') detail.append(element('p', 'verification-note', '이 시설의 공식 명칭·용도 또는 지도 대응을 확인 중입니다.'));
+    if (info?.note) detail.append(element('p', 'verification-note', info.note));
+    if (info?.rooms?.length) {
+      detail.append(element('h4', 'inside-heading', '주요 시설·용도'));
+      const rooms = element('ul', 'building-rooms');
+      for (const room of info.rooms) {
+        const item = element('li', '');
+        item.append(element('strong', '', room.name), element('span', '', room.location));
+        rooms.append(item);
+      }
+      detail.append(rooms);
+    }
+    const evidence = guide.sources[info?.source];
+    if (evidence) {
+      const source = element('a', 'facility-source', evidence.title);
+      source.href = evidence.url; source.target = '_blank'; source.rel = 'noreferrer';
+      detail.append(source);
+      if (evidence.checkedAt) detail.append(element('small', 'source-date', '자료 확인: ' + evidence.checkedAt));
+    }
+    const inside = places.filter(place => byId.get(place.buildingId)?.id === building.id);
+    if (inside.length) {
+      detail.append(element('h4', 'inside-heading', '이 건물의 식음·편의시설'));
+      const sorted = [...inside].sort((a, b) => Number(b.id === placeId) - Number(a.id === placeId));
+      sorted.forEach(place => detail.append(placeCard(place)));
+      const source = element('a', 'facility-source', '위치 정보: 인천대학교 공식 안내');
+      source.href = operations.sources.find(item => item.item === '편의시설 위치와 운영 주체').url;
+      source.target = '_blank'; source.rel = 'noreferrer';
+      detail.append(source, element('small', 'location-precision', '지도는 소속 건물을 표시합니다. 실내 위치는 층·호실 안내를 확인해 주세요.'));
+    }
+    markSelection();
+  }
+
+  const navigation = document.querySelector('.category-tabs');
+  navigation.replaceChildren();
+  for (const item of categories) {
+    const button = element('button', '', item.name);
+    button.type = 'button'; button.dataset.category = item.id;
+    button.setAttribute('aria-pressed', String(item.id === category));
+    navigation.append(button);
+  }
+  document.querySelectorAll('[data-category]').forEach(button => {
+    button.addEventListener('click', () => {
+      category = button.dataset.category;
+      document.querySelectorAll('[data-category]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+      search.value = '';
+      renderList();
+    });
   });
+  search.addEventListener('input', renderList);
+  filter.addEventListener('change', renderList);
+  renderList();
+  return {
+    showBuildingInformation,
+    getBuildingName: titleOf,
+    getMapLabel(building) {
+      const info = guide.buildings[building.id];
+      return (info?.mapLabel || titleOf(building)) + (info?.number ? ' (' + info.number + ')' : '');
+    },
+  };
 }

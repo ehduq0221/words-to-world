@@ -15,9 +15,10 @@ export function createLabels(container, anchors, onSelect) {
   });
   container.append(layer);
   const projected = new THREE.Vector3();
-  return function update(camera, width, height) {
+  let selectedId = null;
+  function update(camera, width, height) {
     const occupied = [];
-    const sorted = [...entries].sort((a, b) => camera.position.distanceToSquared(a.position) - camera.position.distanceToSquared(b.position));
+    const sorted = [...entries].sort((a, b) => Number(b.building.id === selectedId) - Number(a.building.id === selectedId) || camera.position.distanceToSquared(a.position) - camera.position.distanceToSquared(b.position));
     for (const entry of sorted) {
       projected.copy(entry.position).project(camera);
       const x = (projected.x + 1) * width / 2;
@@ -33,5 +34,10 @@ export function createLabels(container, anchors, onSelect) {
       if (visible) occupied.push(rect);
       entry.element.style.transform = 'translate(' + rect.left + 'px,' + rect.top + 'px)';
     }
+  }
+  update.setSelected = id => {
+    selectedId = id;
+    entries.forEach(entry => entry.element.classList.toggle('is-selected', entry.building.id === id));
   };
+  return update;
 }

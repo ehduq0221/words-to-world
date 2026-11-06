@@ -1,0 +1,1255 @@
+{
+  "version": 2,
+  "checkedAt": "2026-11-06",
+  "sources": {
+    "inu-welfare": {
+      "title": "인천대학교 편의/복지",
+      "url": "https://www.inu.ac.kr/inu/642/subview.do",
+      "updatedAt": "2026-04-03"
+    },
+    "campus-map": {
+      "title": "기존 캠퍼스 지도 데이터 및 보정 기록",
+      "url": "./public/data/SOURCE.md"
+    },
+    "inu-map-9": {
+      "title": "인천대학교 캠퍼스맵 · 대학본부",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/9/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-10": {
+      "title": "인천대학교 캠퍼스맵 · 교수회관",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/10/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-11": {
+      "title": "인천대학교 캠퍼스맵 · INU CUBE",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/11/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-12": {
+      "title": "인천대학교 캠퍼스맵 · 정보전산원(BM컨텐츠관)",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/12/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-13": {
+      "title": "인천대학교 캠퍼스맵 · 자연과학대학, 생명과학기술대학",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/13/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-14": {
+      "title": "인천대학교 캠퍼스맵 · 학산도서관",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/14/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-15": {
+      "title": "인천대학교 캠퍼스맵 · 인공지능대학(정보기술대학)",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/15/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-16": {
+      "title": "인천대학교 캠퍼스맵 · 공과대학, 도시과학대학",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/16/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-17": {
+      "title": "인천대학교 캠퍼스맵 · 공동실험실습관",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/17/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-18": {
+      "title": "인천대학교 캠퍼스맵 · 게스트하우스",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/18/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-19": {
+      "title": "인천대학교 캠퍼스맵 · 복지회관(학생식당)",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/19/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-20": {
+      "title": "인천대학교 캠퍼스맵 · 컨벤션센터",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/20/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-21": {
+      "title": "인천대학교 캠퍼스맵 · 사회과학대학, 법학부, 글로벌정경대학",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/21/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-22": {
+      "title": "인천대학교 캠퍼스맵 · 경영대학, 동북아물류대학원, 동북아국제통상물류학부",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/22/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-23": {
+      "title": "인천대학교 캠퍼스맵 · 인문대학",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/23/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-24": {
+      "title": "인천대학교 캠퍼스맵 · 예술체육대학",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/24/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-25": {
+      "title": "인천대학교 캠퍼스맵 · 학생회관",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/25/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-26": {
+      "title": "인천대학교 캠퍼스맵 · 제1기숙사",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/26/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-27": {
+      "title": "인천대학교 캠퍼스맵 · 제2기숙사",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/27/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-28": {
+      "title": "인천대학교 캠퍼스맵 · 제3기숙사",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/28/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-29": {
+      "title": "인천대학교 캠퍼스맵 · 융합자유전공대학",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/29/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-30": {
+      "title": "인천대학교 캠퍼스맵 · 스포츠센터, 골프연습장",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/30/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-31": {
+      "title": "인천대학교 캠퍼스맵 · 체육관",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/31/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-32": {
+      "title": "인천대학교 캠퍼스맵 · 학군단",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/32/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-33": {
+      "title": "인천대학교 캠퍼스맵 · 강당·공연장",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/33/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-34": {
+      "title": "인천대학교 캠퍼스맵 · 전망타워",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/34/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-35": {
+      "title": "인천대학교 캠퍼스맵 · 해둥실어린이집",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/35/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-36": {
+      "title": "인천대학교 캠퍼스맵 · 온실",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/36/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-37": {
+      "title": "인천대학교 캠퍼스맵 · 제2공동실습관",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/37/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-38": {
+      "title": "인천대학교 캠퍼스맵 · 도시과학대학",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/38/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-39": {
+      "title": "인천대학교 캠퍼스맵 · 생명공학부",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/39/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-map-92": {
+      "title": "인천대학교 캠퍼스맵 · 바이오컴플렉스",
+      "url": "https://www.inu.ac.kr/inu/739/subview.do",
+      "dataUrl": "https://www.inu.ac.kr/campusMap/inu/92/artclDetailView.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-field": {
+      "title": "인천대학교 시설 사용 안내 · 대운동장",
+      "url": "https://www.inu.ac.kr/bbs/inu/243/271192/download.do",
+      "checkedAt": "2026-11-06"
+    },
+    "inu-assets": {
+      "title": "인천대학교 2023 통계연보 · 건물 현황",
+      "url": "https://www.inu.ac.kr/bbs/inu/232/328122/download.do",
+      "checkedAt": "2026-11-06"
+    }
+  },
+  "buildings": {
+    "way/1394978461": {
+      "name": "공중보행로",
+      "number": null,
+      "category": "other",
+      "description": "원본 지도에 공중보행로로 표시된 연결 시설입니다. 연결 건물과 세부 동선은 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "campus-map",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "공중보행로",
+        "way/1394978461"
+      ]
+    },
+    "way/367504004": {
+      "name": "공과대학, 도시과학대학",
+      "number": "08",
+      "category": "education",
+      "description": "공학·도시과학 분야의 강의와 실험·설계를 위한 건물입니다. 로봇제어와 측량·GIS 실습 공간 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-16",
+      "rooms": [
+        {
+          "name": "로봇제어실험실",
+          "location": "1층 110호"
+        },
+        {
+          "name": "측량및GIS실습실",
+          "location": "1층 127호"
+        },
+        {
+          "name": "신소재기초실험실",
+          "location": "2층 201호"
+        }
+      ],
+      "aliases": [
+        "공과대학 (08)"
+      ],
+      "note": "",
+      "mapLabel": "공과·도시과학대학"
+    },
+    "way/367504016": {
+      "name": "학산도서관",
+      "number": "06",
+      "category": "education",
+      "description": "자료 열람과 개인·그룹 학습을 위한 도서관입니다. 열람실·스터디룸·멀티미디어 공간을 안내합니다.",
+      "verification": "official-guide",
+      "source": "inu-map-14",
+      "rooms": [
+        {
+          "name": "자유열람실-1",
+          "location": "지하 1층 B103호"
+        },
+        {
+          "name": "멀티미디어실",
+          "location": "1층 111호"
+        },
+        {
+          "name": "스터디룸- 1",
+          "location": "2층 205호"
+        }
+      ],
+      "aliases": [
+        "학산도서관 (06)"
+      ],
+      "note": ""
+    },
+    "way/367512816": {
+      "name": "강당·공연장",
+      "number": "23",
+      "category": "culture",
+      "description": "공연·연습과 무대 준비를 위한 시설입니다. 리허설·전시 공간, 연습실과 세트제작실이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-33",
+      "rooms": [
+        {
+          "name": "연습실-1",
+          "location": "지하 1층 B121호"
+        },
+        {
+          "name": "세트제작실",
+          "location": "지하 1층 B126호"
+        },
+        {
+          "name": "리허설실(전시공간)",
+          "location": "1층 103호"
+        }
+      ],
+      "aliases": [
+        "강당 및 공연장 (23)"
+      ],
+      "note": ""
+    },
+    "way/367504012": {
+      "name": "자연과학대학, 생명과학기술대학",
+      "number": "05",
+      "category": "education",
+      "description": "자연과학·생명과학 분야의 강의, 기초 실험과 전공 연구를 위한 건물입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-13",
+      "rooms": [
+        {
+          "name": "수학과시청각실",
+          "location": "1층 103호"
+        },
+        {
+          "name": "일반물리실험실",
+          "location": "1층 109호"
+        },
+        {
+          "name": "공통물리실험실-1",
+          "location": "1층 112호"
+        }
+      ],
+      "aliases": [
+        "자연과학/생명과학기술대학 (05)"
+      ],
+      "note": "",
+      "mapLabel": "자연과학·생명과학기술대학"
+    },
+    "way/367512818": {
+      "name": "스포츠센터, 골프연습장",
+      "number": "20",
+      "category": "sports",
+      "description": "수영·헬스·스쿼시·골프 등 체육 활동과 운동 프로그램을 위한 시설입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-30",
+      "rooms": [
+        {
+          "name": "헬스장(GX룸)",
+          "location": "1층 105호"
+        },
+        {
+          "name": "수영장",
+          "location": "1층 110호"
+        },
+        {
+          "name": "스쿼시장1",
+          "location": "2층 201호"
+        }
+      ],
+      "aliases": [
+        "스포츠센터 (20)"
+      ],
+      "note": "",
+      "mapLabel": "스포츠센터"
+    },
+    "way/367504010": {
+      "name": "복지회관(학생식당)",
+      "number": "11",
+      "category": "life",
+      "description": "학생식당과 생활 편의시설, 학생 지원 공간이 모여 있습니다. 장애학생지원센터·우체국 등을 이용할 수 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-19",
+      "rooms": [
+        {
+          "name": "장애학생지원센터",
+          "location": "1층 104호"
+        },
+        {
+          "name": "우체국",
+          "location": "1층 105호"
+        },
+        {
+          "name": "학생식당(516석)",
+          "location": "1층 107호"
+        }
+      ],
+      "aliases": [
+        "복지회관 (11)"
+      ],
+      "note": ""
+    },
+    "way/367504005": {
+      "name": "공동실험실습관",
+      "number": "09",
+      "category": "research",
+      "description": "여러 전공의 공학 실험과 실습을 지원합니다. 풍동·재료·수리 실험 공간 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-17",
+      "rooms": [
+        {
+          "name": "풍동실험실",
+          "location": "1층 109호"
+        },
+        {
+          "name": "재료실험실",
+          "location": "1층 125호"
+        },
+        {
+          "name": "수리실험실습실",
+          "location": "1층 126호"
+        }
+      ],
+      "aliases": [
+        "공동실험실습관 (09)"
+      ],
+      "note": ""
+    },
+    "way/1244533005": {
+      "name": "인공지능대학(정보기술대학)",
+      "number": "07",
+      "category": "education",
+      "description": "인공지능·정보기술 분야의 강의, 컴퓨터·정보통신 실험과 전공 연구 공간입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-15",
+      "rooms": [
+        {
+          "name": "디지털실험실",
+          "location": "1층 101호"
+        },
+        {
+          "name": "컴퓨터실험실-1",
+          "location": "1층 111호"
+        },
+        {
+          "name": "임베디드 인공지능 연구실",
+          "location": "2층 204호"
+        }
+      ],
+      "aliases": [
+        "정보대(07)"
+      ],
+      "note": "",
+      "mapLabel": "인공지능대학"
+    },
+    "way/1394982635": {
+      "name": "바이오컴플렉스",
+      "number": "41",
+      "category": "research",
+      "description": "생명과학·분자의생명 분야의 학과 사무실과 실험·연구 공간이 있습니다. 공동기기실과 오픈랩 등을 안내합니다.",
+      "verification": "official-guide",
+      "source": "inu-map-92",
+      "rooms": [
+        {
+          "name": "분자의생명전공 학과사무실",
+          "location": "2층 202호"
+        },
+        {
+          "name": "생명과학전공 학과사무실",
+          "location": "2층 203호"
+        },
+        {
+          "name": "공동기기실-3",
+          "location": "3층 320호"
+        }
+      ],
+      "aliases": [
+        "바이오컴플렉스 (41)"
+      ],
+      "note": ""
+    },
+    "way/1394978436": {
+      "name": "제1기숙사",
+      "number": "18-1",
+      "category": "life",
+      "description": "학생 생활을 위한 제1기숙사입니다. 식당·세탁실·스터디룸 등 공동생활 시설을 갖추고 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-26",
+      "rooms": [
+        {
+          "name": "식당",
+          "location": "1층 101호"
+        },
+        {
+          "name": "세탁실(남)",
+          "location": "1층 107호"
+        },
+        {
+          "name": "스터디룸",
+          "location": "1층 116호"
+        }
+      ],
+      "aliases": [
+        "제1기숙사 (18-1)"
+      ],
+      "note": ""
+    },
+    "way/367512823": {
+      "name": "체육관",
+      "number": "21",
+      "category": "sports",
+      "description": "체육 실기와 운동 활동을 지원하는 체육관입니다. 실기수업 자료실과 운동 장비 보관 공간이 안내돼 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-31",
+      "rooms": [
+        {
+          "name": "실기수업자료실1",
+          "location": "1층 108호"
+        },
+        {
+          "name": "동아리(운동)장비창고1",
+          "location": "1층 113호"
+        },
+        {
+          "name": "실습실",
+          "location": "2층 207호"
+        }
+      ],
+      "aliases": [
+        "체육관 (21)"
+      ],
+      "note": ""
+    },
+    "way/895812320": {
+      "name": "제2기숙사",
+      "number": "18-2",
+      "category": "life",
+      "description": "학생 생활을 위한 제2기숙사입니다. 식당과 편의점 위치는 학교 편의·복지 안내에서 확인할 수 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-27",
+      "rooms": [],
+      "aliases": [
+        "제2기숙사 (18-2)"
+      ],
+      "note": ""
+    },
+    "way/1394978434": {
+      "name": "제3기숙사",
+      "number": "18-3",
+      "category": "life",
+      "description": "학생 생활을 위한 제3기숙사입니다. 식당·카페·편의점 위치는 학교 편의·복지 안내에서 확인할 수 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-28",
+      "rooms": [],
+      "aliases": [
+        "제3기숙사 (18-3)"
+      ],
+      "note": ""
+    },
+    "way/367504007": {
+      "name": "대학본부",
+      "number": "01",
+      "category": "administration",
+      "description": "입학·학사·교무·재무 등 학교 행정과 국제교류 업무를 담당합니다.",
+      "verification": "official-guide",
+      "source": "inu-map-9",
+      "rooms": [
+        {
+          "name": "입학관리과",
+          "location": "1층 101호"
+        },
+        {
+          "name": "학사과",
+          "location": "1층 104호"
+        },
+        {
+          "name": "재무회계과",
+          "location": "3층 301호"
+        }
+      ],
+      "aliases": [
+        "대학본부 (01)"
+      ],
+      "note": ""
+    },
+    "way/367512821": {
+      "name": "인문대학",
+      "number": "15",
+      "category": "education",
+      "description": "인문 분야 강의와 언어 학습을 위한 건물입니다. 어학원 강의실·회화실·어학전산실습실 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-23",
+      "rooms": [
+        {
+          "name": "어학원강의실-2",
+          "location": "1층 115호"
+        },
+        {
+          "name": "어학전산실습실",
+          "location": "2층 206호"
+        },
+        {
+          "name": "회화실-3",
+          "location": "2층 213호"
+        }
+      ],
+      "aliases": [
+        "인문대학 어학원 (15)"
+      ],
+      "note": ""
+    },
+    "way/367504015": {
+      "name": "컨벤션센터",
+      "number": "12",
+      "category": "education",
+      "description": "교양 수업과 학습 활동에 쓰이는 강의 건물입니다. 기초교육원과 스마트강의실·영어랩실 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-20",
+      "rooms": [
+        {
+          "name": "기초교육원",
+          "location": "2층 208호"
+        },
+        {
+          "name": "스마트강의실1",
+          "location": "3층 302호"
+        },
+        {
+          "name": "영어랩실",
+          "location": "4층 401호"
+        }
+      ],
+      "aliases": [
+        "컨벤션센터 (12)"
+      ],
+      "note": ""
+    },
+    "way/367512820": {
+      "name": "예술체육대학",
+      "number": "16",
+      "category": "education",
+      "description": "미술·디자인·체육 분야의 교육과 실습·연구를 위한 건물입니다. 회화실·디자인실·스포츠 연구 공간이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-24",
+      "rooms": [
+        {
+          "name": "서양화실1",
+          "location": "1층 106호"
+        },
+        {
+          "name": "디자인실1",
+          "location": "1층 109호"
+        },
+        {
+          "name": "스포츠 과학연구소",
+          "location": "4층 401호"
+        }
+      ],
+      "aliases": [
+        "예술체육대학 (16)"
+      ],
+      "note": ""
+    },
+    "way/367504011": {
+      "name": "사회과학대학, 법학부, 글로벌정경대학",
+      "number": "13",
+      "category": "education",
+      "description": "사회과학·법학·글로벌정경 분야의 강의와 연구를 위한 건물입니다. 모의법정과 컴퓨터실 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-21",
+      "rooms": [
+        {
+          "name": "컴퓨터실-1",
+          "location": "1층 114호"
+        },
+        {
+          "name": "컴퓨터실",
+          "location": "2층 209호"
+        },
+        {
+          "name": "모의법정",
+          "location": "2층 218호"
+        }
+      ],
+      "aliases": [
+        "사회과학대학/법과대학 (13)"
+      ],
+      "note": "",
+      "mapLabel": "사회·법학·글로벌정경"
+    },
+    "way/367504006": {
+      "name": "교수회관",
+      "number": "02",
+      "category": "administration",
+      "description": "교수회와 연구지원 부서, 회의 공간 및 교직원식당이 있는 지원 시설입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-10",
+      "rooms": [
+        {
+          "name": "인천대학교 교수회 라운지",
+          "location": "1층 101호"
+        },
+        {
+          "name": "교직원식당",
+          "location": "2층 201호"
+        },
+        {
+          "name": "연구기획관리과",
+          "location": "2층 210호"
+        }
+      ],
+      "aliases": [
+        "교수회관 (02)"
+      ],
+      "note": ""
+    },
+    "way/367512825": {
+      "name": "학생회관",
+      "number": "17",
+      "category": "life",
+      "description": "학생 자치·동아리 활동과 취업·건강 지원을 위한 시설입니다. 총학생회·보건진료소·식음 매장 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-25",
+      "rooms": [
+        {
+          "name": "UNI Job Center",
+          "location": "1층 103호"
+        },
+        {
+          "name": "보건진료소",
+          "location": "1층 104호"
+        },
+        {
+          "name": "총학생회",
+          "location": "2층 206호"
+        }
+      ],
+      "aliases": [
+        "학생회관 (17)"
+      ],
+      "note": ""
+    },
+    "way/1394978460": {
+      "name": "제2공동실습관",
+      "number": "27",
+      "category": "research",
+      "description": "공학·도시과학 분야의 실험과 설계·실습을 지원합니다. PC실습실·도시공학 전산실·공간정보실험실 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-37",
+      "rooms": [
+        {
+          "name": "PC실습실",
+          "location": "1층 105호"
+        },
+        {
+          "name": "도시공학 전산실",
+          "location": "2층 204호"
+        },
+        {
+          "name": "공간정보실험실 1",
+          "location": "2층 207호"
+        }
+      ],
+      "aliases": [
+        "제2공동실험실습관 (27)"
+      ],
+      "note": ""
+    },
+    "way/1394978459": {
+      "name": "도시과학대학",
+      "number": "28",
+      "category": "education",
+      "description": "도시과학 분야의 강의·설계·연구를 위한 건물입니다. 디자인실·컴퓨터실·도시공학 연구 공간 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-38",
+      "rooms": [
+        {
+          "name": "디자인실3",
+          "location": "2층 203호"
+        },
+        {
+          "name": "컴퓨터실E",
+          "location": "2층 206호"
+        },
+        {
+          "name": "도시공학과사무실",
+          "location": "3층 324호"
+        }
+      ],
+      "aliases": [
+        "도시과학대학 (28)"
+      ],
+      "note": ""
+    },
+    "way/1394978457": {
+      "name": "생명공학부",
+      "number": "29",
+      "category": "education",
+      "description": "생명공학 분야의 교육과 연구 공간입니다. 전공 실험실·사무실과 미생물 관련 연구 공간 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-39",
+      "rooms": [
+        {
+          "name": "생명공학전공 실험실",
+          "location": "3층 302호"
+        },
+        {
+          "name": "생명공학전공사무실",
+          "location": "4층 402호"
+        },
+        {
+          "name": "미생물생명공학실험실",
+          "location": "5층 502호"
+        }
+      ],
+      "aliases": [
+        "생명과학대학 (29)"
+      ],
+      "note": ""
+    },
+    "way/367504014": {
+      "name": "정보전산원(BM컨텐츠관)",
+      "number": "04",
+      "category": "administration",
+      "description": "전산실습과 정보시스템 운영을 지원하며 사이버보안랩과 IT 실습 공간이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-12",
+      "rooms": [
+        {
+          "name": "전산실습실-3",
+          "location": "1층 101호"
+        },
+        {
+          "name": "사이버보안랩",
+          "location": "1층 103호"
+        },
+        {
+          "name": "IT이노베이션랩",
+          "location": "1층 107호"
+        }
+      ],
+      "aliases": [
+        "정보전산원 (04)"
+      ],
+      "note": "",
+      "mapLabel": "정보전산원"
+    },
+    "way/367512822": {
+      "name": "융합자유전공대학",
+      "number": "19",
+      "category": "education",
+      "description": "자유전공 교육과 융합 학습을 지원합니다. INU 창의공간과 학부 사무실, 강의·실습 공간이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-29",
+      "rooms": [
+        {
+          "name": "INU 창의공간",
+          "location": "1층 101호"
+        },
+        {
+          "name": "자유전공학부, 국제자유전공학부 사무실",
+          "location": "1층 104호"
+        },
+        {
+          "name": "강의실",
+          "location": "2층 202호"
+        }
+      ],
+      "aliases": [
+        "융합자유전공대학 (19)"
+      ],
+      "note": ""
+    },
+    "way/367504003": {
+      "name": "경영대학, 동북아물류대학원, 동북아국제통상물류학부",
+      "number": "14",
+      "category": "education",
+      "description": "경영·물류·국제통상 분야의 강의·세미나·자료 열람 공간입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-22",
+      "rooms": [
+        {
+          "name": "강의실(물류대학원)",
+          "location": "1층 104호"
+        },
+        {
+          "name": "컴퓨터실-1(컴퓨터실)",
+          "location": "1층 117호"
+        },
+        {
+          "name": "동북아통상자료실",
+          "location": "1층 120호"
+        }
+      ],
+      "aliases": [
+        "글로벌정경대학 (14)"
+      ],
+      "note": "14호관의 세 지도 형상을 하나의 건물로 함께 선택합니다. 주요 시설 안내는 14호관 전체 기준입니다.",
+      "mapLabel": "경영·국제통상·물류"
+    },
+    "way/367504008": {
+      "name": "경영대학, 동북아물류대학원, 동북아국제통상물류학부",
+      "number": "14",
+      "category": "education",
+      "description": "경영·물류·국제통상 분야의 강의·세미나·자료 열람 공간입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-22",
+      "rooms": [
+        {
+          "name": "강의실(물류대학원)",
+          "location": "1층 104호"
+        },
+        {
+          "name": "컴퓨터실-1(컴퓨터실)",
+          "location": "1층 117호"
+        },
+        {
+          "name": "동북아통상자료실",
+          "location": "1층 120호"
+        }
+      ],
+      "aliases": [
+        "동북아경제통상대학 (14)"
+      ],
+      "note": "14호관의 세 지도 형상을 하나의 건물로 함께 선택합니다. 주요 시설 안내는 14호관 전체 기준입니다.",
+      "mapLabel": "경영·국제통상·물류"
+    },
+    "way/1394978443": {
+      "name": "게스트하우스",
+      "number": "10",
+      "category": "life",
+      "description": "숙소와 식당, 세미나실을 갖춘 게스트하우스입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-18",
+      "rooms": [
+        {
+          "name": "세미나실",
+          "location": "1층 107호"
+        },
+        {
+          "name": "숙소(소)1",
+          "location": "1층 108호"
+        },
+        {
+          "name": "숙소(소)1",
+          "location": "2층 201호"
+        }
+      ],
+      "aliases": [
+        "게스트하우스 (10)"
+      ],
+      "note": ""
+    },
+    "way/367512824": {
+      "name": "학군단",
+      "number": "22",
+      "category": "administration",
+      "description": "학군단 행정과 생도 교육·훈육을 지원합니다. 행정실·강의실·체력단련실 등이 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-32",
+      "rooms": [
+        {
+          "name": "행정실",
+          "location": "1층 101호"
+        },
+        {
+          "name": "체력단련실",
+          "location": "1층 107호"
+        },
+        {
+          "name": "4학년강의실/전산실",
+          "location": "2층 206호"
+        }
+      ],
+      "aliases": [
+        "학군단 (22)"
+      ],
+      "note": ""
+    },
+    "way/367504009": {
+      "name": "경영대학, 동북아물류대학원, 동북아국제통상물류학부",
+      "number": "14",
+      "category": "education",
+      "description": "경영·물류·국제통상 분야의 강의·세미나·자료 열람 공간입니다.",
+      "verification": "official-guide",
+      "source": "inu-map-22",
+      "rooms": [
+        {
+          "name": "강의실(물류대학원)",
+          "location": "1층 104호"
+        },
+        {
+          "name": "컴퓨터실-1(컴퓨터실)",
+          "location": "1층 117호"
+        },
+        {
+          "name": "동북아통상자료실",
+          "location": "1층 120호"
+        }
+      ],
+      "aliases": [
+        "물류대학원 (14)"
+      ],
+      "note": "14호관의 세 지도 형상을 하나의 건물로 함께 선택합니다. 주요 시설 안내는 14호관 전체 기준입니다.",
+      "mapLabel": "경영·국제통상·물류"
+    },
+    "way/367504017": {
+      "name": "INU CUBE",
+      "number": "03",
+      "category": "culture",
+      "description": "학교 홍보·전시 공간인 INU CUBE입니다. 공식 안내에는 1·2층 홍보관이 표시돼 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-11",
+      "rooms": [
+        {
+          "name": "홍보관",
+          "location": "1층 101호"
+        },
+        {
+          "name": "홍보관",
+          "location": "2층 201호"
+        }
+      ],
+      "aliases": [
+        "홍보관 (03)"
+      ],
+      "note": ""
+    },
+    "way/1394978444": {
+      "name": "게스트하우스",
+      "number": null,
+      "category": "other",
+      "description": "원본 지도에 등록된 이름입니다. 현재 용도와 공식 건물의 대응 관계를 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "campus-map",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "게스트하우스",
+        "way/1394978444"
+      ]
+    },
+    "way/471463926": {
+      "name": "스넥바",
+      "number": null,
+      "category": "life",
+      "description": "학교 편의·복지 안내에 있는 휴게음식 시설입니다. 14~15호관 사이에 위치합니다.",
+      "verification": "needs-review",
+      "source": "inu-welfare",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "스낵바",
+        "way/471463926"
+      ]
+    },
+    "way/367518075": {
+      "name": "교수회관",
+      "number": null,
+      "category": "other",
+      "description": "원본 지도에 등록된 이름입니다. 현재 용도와 공식 건물의 대응 관계를 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "campus-map",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "교수회관",
+        "way/367518075"
+      ]
+    },
+    "way/1394986583": {
+      "name": "와플",
+      "number": null,
+      "category": "other",
+      "description": "원본 지도에 등록된 이름입니다. 현재 용도와 공식 건물의 대응 관계를 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "campus-map",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "와플",
+        "way/1394986583"
+      ]
+    },
+    "vw/12": {
+      "name": "운동장본부석",
+      "number": null,
+      "category": "sports",
+      "description": "원본 지도에 운동장본부석으로 표시된 부속 시설입니다. 현재 실내 용도와 운영 정보는 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "campus-map",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "운동장본부석",
+        "vw/12"
+      ]
+    },
+    "vw/13": {
+      "name": "온실",
+      "number": "26",
+      "category": "research",
+      "description": "공식 캠퍼스 안내에 등록된 온실입니다. 식물 연구·실습의 구체적인 운영 내용은 별도 확인이 필요합니다.",
+      "verification": "official-guide",
+      "source": "inu-map-36",
+      "rooms": [
+        {
+          "name": "온실",
+          "location": "1층 101호"
+        }
+      ],
+      "aliases": [
+        "온실"
+      ],
+      "note": ""
+    },
+    "vw/14": {
+      "name": "전망타워",
+      "number": "24",
+      "category": "culture",
+      "description": "전망 공간이 있는 캠퍼스 타워입니다. 공식 층별 안내에는 8층 전망대가 표시돼 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-34",
+      "rooms": [
+        {
+          "name": "전망대",
+          "location": "8층"
+        }
+      ],
+      "aliases": [
+        "전망타워"
+      ],
+      "note": ""
+    },
+    "vw/21": {
+      "name": "시민대학",
+      "number": null,
+      "category": "other",
+      "description": "원본 지도에 등록된 이름입니다. 현재 용도와 공식 건물의 대응 관계를 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "inu-assets",
+      "rooms": [],
+      "note": "학교 통계연보의 시민대학 건물명과 대조했습니다. 현재 교육 과정 운영 여부와 공간 용도는 확인 중입니다.",
+      "aliases": [
+        "시민대학",
+        "vw/21"
+      ]
+    },
+    "vw/24": {
+      "name": "학군단",
+      "number": null,
+      "category": "other",
+      "description": "원본 지도에 등록된 이름입니다. 현재 용도와 공식 건물의 대응 관계를 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "campus-map",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "학군단",
+        "vw/24"
+      ]
+    },
+    "vw/25": {
+      "name": "해둥실어린이집",
+      "number": "25",
+      "category": "life",
+      "description": "영유아 보육을 위한 해둥실어린이집입니다. 보육실·음악실·상담실 등으로 구성돼 있습니다.",
+      "verification": "official-guide",
+      "source": "inu-map-35",
+      "rooms": [
+        {
+          "name": "보육실E",
+          "location": "1층 101호"
+        },
+        {
+          "name": "음악실",
+          "location": "1층 113호"
+        },
+        {
+          "name": "원장실 및 상담실",
+          "location": "1층 115호"
+        }
+      ],
+      "aliases": [
+        "어린이집"
+      ],
+      "note": ""
+    },
+    "vw/29": {
+      "name": "정보전산원,정보기술교육원",
+      "number": null,
+      "category": "other",
+      "description": "원본 지도에 등록된 이름입니다. 현재 용도와 공식 건물의 대응 관계를 확인 중입니다.",
+      "verification": "needs-review",
+      "source": "campus-map",
+      "rooms": [],
+      "note": "",
+      "aliases": [
+        "정보전산원,정보기술교육원",
+        "vw/29"
+      ]
+    },
+    "outdoor:main-field": {
+      "name": "대운동장",
+      "number": null,
+      "category": "sports",
+      "description": "야외 운동과 체육 활동을 위한 운동장입니다. 잔디 구장과 트랙을 단순한 형태로 표시합니다.",
+      "verification": "schematic-layout",
+      "source": "inu-field",
+      "rooms": [],
+      "note": "실제 지도에서 운동장본부석 옆의 위치를 참고한 게임용 배치입니다. 형태와 크기는 단순화했습니다."
+    }
+  },
+  "note": "카테고리는 게임의 용도별 탐색 분류입니다. 공식 안내의 건물명·층별 주요 시설을 요약했으며, 미확인 지도 형상은 기타·확인중으로 구분합니다. 매장 상세 위치는 operations.json을 재사용합니다.",
+  "categories": [
+    {
+      "id": "all",
+      "name": "전체"
+    },
+    {
+      "id": "education",
+      "name": "교육·학습"
+    },
+    {
+      "id": "research",
+      "name": "연구·실험"
+    },
+    {
+      "id": "administration",
+      "name": "행정·지원"
+    },
+    {
+      "id": "life",
+      "name": "생활·복지"
+    },
+    {
+      "id": "culture",
+      "name": "문화·행사"
+    },
+    {
+      "id": "sports",
+      "name": "체육·야외"
+    },
+    {
+      "id": "food",
+      "name": "카페·식당"
+    },
+    {
+      "id": "other",
+      "name": "기타"
+    }
+  ],
+  "removedBuildingIds": [
+    "way/1394978440",
+    "way/1394978441",
+    "way/367518086",
+    "way/1394978528",
+    "way/1394978524",
+    "way/1394978523",
+    "way/1394978526",
+    "way/1394978525",
+    "way/1394978527",
+    "way/367518074",
+    "way/367518076",
+    "way/367518077"
+  ]
+}
