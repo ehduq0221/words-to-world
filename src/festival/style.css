@@ -905,13 +905,31 @@
   .f-workspace .f-page-artists .f-artist-info strong { font-size: 11px; }
   .f-workspace .f-page-artists .f-artist-info { padding: 6px; }
 }
-.f-page-fireworks > .f-card { min-height: 100%; }
-.f-page-fireworks .f-fireworks { margin: 16px 0; padding: 20px; }
-.f-page-fireworks .f-firework-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
-.festival-page [data-page=fireworks] { background: #eee5d2; color: #6b512b; }
+/* 폭죽은 현재 라인업과 같은 보조 패널에서 바로 편집합니다. */
+.f-current-plan .f-poster { padding: 14px 16px; min-height: 0; }
+.f-current-plan .f-poster h2 { font-size: 20px; margin: 0 0 8px; }
+.f-current-plan .f-poster > small, .f-current-plan .f-poster > p, .f-current-plan .f-poster-bottom { display: none; }
+.f-current-plan .f-lineup { margin: 0; }
+.f-current-plan .f-lineup li { padding: 7px 0; gap: 5px; }
+.f-current-plan .f-lineup li strong { font-size: 13px; }
+.f-current-plan .f-lineup li small { display: none; }
+.f-current-plan .f-lineup time { font-size: 11px; }
+.festival-page .f-current-plan .f-lineup button { padding: 3px 7px; font-size: 12px; }
+.f-current-plan .f-fireworks { border: 1px solid #d4dfd0; background: #fffdf6; border-radius: 14px; padding: 12px; margin: 10px 0; min-width: 0; }
+.f-current-plan .f-fireworks legend { font-size: 14px; font-weight: 800; padding: 0 6px; }
+.f-current-plan .f-fireworks p { font-size: 10px; margin: 3px 0; }
+.f-current-plan .f-firework-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.f-current-plan .f-fireworks .f-extra { display: flex; gap: 6px; align-items: start; margin: 0; font-size: 11px; }
+.f-current-plan .f-fireworks .f-extra input { margin: 4px 0 0; }
+.f-current-plan .f-fireworks .f-extra small { display: block; font-size: 9px; color: #75846b; }
+.f-current-plan .f-fireworks > label { display: block; font-size: 11px; font-weight: 700; }
+.f-current-plan .f-fireworks select { width: 100%; padding: 6px 8px; border: 1px solid #d3ded4; border-radius: 8px; background: white; margin: 3px 0; font-size: 12px; }
+.festival-page .f-current-plan [data-action=fireworks-preview] { width: 100%; padding: 8px; background: #eee5d2; font-size: 12px; margin-top: 6px; }
 @media(max-width:750px) {
-  .festival-page .f-page-steps { flex-wrap: wrap; }
-  .festival-page .f-page-steps button { flex: 1 1 auto; padding: 7px 5px; font-size: 10px; }
-  .f-page-fireworks .f-fireworks { padding: 10px; }
-  .f-page-fireworks .f-firework-options { grid-template-columns: 1fr; gap: 0; }
+  .f-workspace { grid-template-rows: minmax(0, 1fr) min(38dvh, 300px); }
+  .f-current-plan .f-fireworks { grid-column: 1 / -1; margin: 0; }
+  .f-current-plan .f-poster h2 { font-size: 14px; }
+  .f-current-plan .f-lineup li strong { font-size: 10px; }
+  .f-current-plan .f-lineup li { padding: 4px 0; }
+  .festival-page .f-current-plan .f-lineup button { padding: 1px 5px; font-size: 10px; }
 }

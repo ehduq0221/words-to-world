@@ -1,6 +1,6 @@
 // 가수 선택과 현재 라인업을 함께 보여 주고 보조 화면만 탭으로 전환합니다.
 export function createPlannerPages(root) {
-  const definitions = [['artists', '가수·라인업'], ['settings', '장소·축제 구성'], ['fireworks', '🎆 폭죽 설정'], ['library', '불러오기·저장한 조합']];
+  const definitions = [['artists', '가수·라인업'], ['settings', '장소·축제 구성'], ['library', '불러오기·저장한 조합']];
   const workspace = document.createElement('div'); workspace.className = 'f-workspace';
   const viewport = document.createElement('div'); viewport.className = 'f-page-viewport';
   const track = document.createElement('div'); track.className = 'f-page-track'; viewport.append(track); workspace.append(viewport);
@@ -19,10 +19,13 @@ export function createPlannerPages(root) {
   settings.querySelector('h2').textContent = '장소와 축제 구성';
   settings.querySelector('.f-eyebrow').textContent = 'MAKE IT YOURS';
   sidebar.prepend(settings.querySelector('.f-cost'));
-  const pyro = document.createElement('section'); pyro.className = 'f-card';
-  pyro.innerHTML = '<span class="f-eyebrow">FIREWORKS</span><h2>하늘에 남길 순간</h2><p class="f-muted">언제, 어디에서 터뜨릴지 정하고 바로 미리 보세요.</p>';
-  pyro.append(settings.querySelector('.f-fireworks'));
-  pages[1].append(settings); pages[2].append(pyro); pages[3].append(root.querySelector('.f-library'));
+  const pyro = settings.querySelector('.f-fireworks');
+  pyro.querySelector('legend').textContent = '🎆 폭죽 설정';
+  const notes = pyro.querySelectorAll('p');
+  notes[0].textContent = '여러 시점을 함께 선택할 수 있어요.';
+  notes[1].textContent = '선택한 무대 기준의 하늘 위치입니다.';
+  sidebar.querySelector('.f-poster').after(pyro);
+  pages[1].append(settings); pages[2].append(root.querySelector('.f-library'));
   root.querySelector('.f-layout').remove();
   const nav = document.createElement('nav'); nav.className = 'f-page-nav'; nav.setAttribute('aria-label', '축제 스튜디오 화면');
   nav.innerHTML = `<div class="f-page-steps">${definitions.map(([id, title]) => `<button data-page="${id}" aria-controls="f-page-${id}"><b>${title}</b></button>`).join('')}</div>`;
@@ -30,7 +33,7 @@ export function createPlannerPages(root) {
   let current = 0;
   function goTo(id, focus = false) {
     if (id === 'venue') id = 'settings';
-    if (id === 'effects') id = 'fireworks';
+    if (id === 'effects' || id === 'fireworks') { pyro.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
     if (id === 'lineup' || id === 'welcome') id = 'artists';
     const index = typeof id === 'number' ? id : definitions.findIndex(([key]) => key === id);
     current = Math.max(0, Math.min(pages.length - 1, index));
