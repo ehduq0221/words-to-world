@@ -275,13 +275,14 @@
   "venues": [
     {
       "id": "festival:green-east",
-      "name": "초록 A · 19호관 오른쪽 야외무대",
+      "name": "대운동장 · 야외 축제 무대",
       "baseCost": 4000000,
-      "anchorBuildingId": "way/367512822",
-      "rightOffset": 70,
-      "downOffset": -38,
-      "scale": 0.4,
-      "description": "사용자 지도에서 융합자유전공대학(19) 오른쪽 초록 표시 부근. 이미지 기준 게임용 임시 위치."
+      "anchorBuildingId": "outdoor:main-field",
+      "rightOffset": 0,
+      "downOffset": -65,
+      "scale": 1,
+      "description": "대운동장 안쪽에 무대·관객·부스를 배치합니다. 캠퍼스 데이터의 게임용 운동장 배치를 사용합니다.",
+      "label": "운"
     },
     {
       "id": "festival:green-west",
@@ -291,7 +292,8 @@
       "rightOffset": -72,
       "downOffset": -10,
       "scale": 0.32,
-      "description": "사용자 지도에서 19호관 왼쪽·예술체육대학(16) 위쪽 초록 표시 부근. 이미지 기준 게임용 임시 위치."
+      "description": "사용자 지도에서 19호관 왼쪽·예술체육대학(16) 위쪽 초록 표시 부근. 이미지 기준 게임용 임시 위치.",
+      "label": "B"
     },
     {
       "id": "way/367512816",

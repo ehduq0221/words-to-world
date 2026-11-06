@@ -739,3 +739,20 @@
 @keyframes festival-stick { from { transform: rotate(-25deg); } to { transform: rotate(25deg); } }
 @media(prefers-reduced-motion:reduce) { .fp-my-stick { animation: none; } .fp-beat-track b { transition: none; } }
 .fp-time { display: inline-block; margin: 6px 10px; font-size: 12px; color: #ffebc6; }
+.fp-student { display: flex; align-items: center; gap: 9px; margin: 8px 0; padding: 7px 10px; max-width: min(450px, 72vw); border-radius: 12px; background: #10203bd9; }
+.fp-student-portrait { display: block; width: 29px; height: 40px; flex-shrink: 0; }
+.fp-student-portrait svg { width: 100%; height: 100%; image-rendering: pixelated; }
+.fp-student b { display: block; font-size: 12px; overflow-wrap: anywhere; }
+.fp-student small { display: block; color: #cbd5df; font-size: 10px; }
+.fp-student a { color: #cce4bf; font-size: 10px; white-space: nowrap; margin-left: auto; }
+.fp-extra-tools summary { cursor: pointer; color: #e7e6d6; padding: 6px 0; font-size: 11px; }
+.fp-extra-tools[open] { margin: 8px 0; border-top: 1px solid #ffffff30; }
+.fp-beat-track { width: 190px; height: 22px; }
+.fp-beat-track i { left: 21%; right: 21%; background: #91c78045; }
+.fp-beat-track.on-beat i { background: #baff8890; box-shadow: 0 0 14px #c5ff99; }
+.fp-beat-track b { width: 7px; border-radius: 4px; background: #ffebb3; }
+.fp-my-stick { animation-duration: var(--stick-period, 1.6s); }
+.fp-my-stick.beat-wave { animation: festival-stick-beat 1s ease-in-out 1; }
+@keyframes festival-stick-beat { 0% { transform: rotate(-25deg); } 50% { transform: rotate(28deg); } 100% { transform: rotate(-20deg); } }
+@media(max-width:550px) { .fp-student { max-width: 80vw; padding: 5px; } .fp-student b { font-size: 10px; } .fp-student small { max-width: 175px; } .fp-beat-track { width: 130px; } }
+@media(prefers-reduced-motion:reduce) { .fp-my-stick.beat-wave { animation: none; } }

@@ -34,7 +34,7 @@ test('폭죽은 선택된 공연 구간에만 저장되며 비용을 합산한�
   assert.ok(!validatePlan({ ...p, fireworks: ['opening', 'opening'] }, data));
   const storage = memory(); writePlans([p], data, storage); assert.deepEqual(readPlans(data, storage)[0].fireworks, p.fireworks);
 });
-test('제공 차트 기반 예시와 초록 위치 데이터가 유효하다', () => {
+test('제공 차트 기반 예시와 축제 위치 데이터가 유효하다', () => {
   for (const preset of data.presets) assert.ok(validatePlan({ ...createPlan(data), ...preset, extras: ['booths', 'lights', 'confetti'] }, data));
   const campus = JSON.parse(readFileSync(new URL('../../public/data/campus.json', import.meta.url)));
   for (const venue of data.venues.filter(v => !v.archived)) assert.ok(campus.buildings.some(b => b.id === venue.anchorBuildingId));
@@ -80,4 +80,25 @@ test('17·19·21시 공연의 배경을 시간대별로 구분한다', async () 
   assert.equal(getPerformanceEnvironment('19:00').phase, 'twilight');
   assert.equal(getPerformanceEnvironment('21:00').phase, 'night');
   assert.throws(() => getPerformanceEnvironment('invalid'));
+});
+
+test('선택 학생의 이름·학과·외형을 읽고 원본 프로필을 수정하지 않는다', async () => {
+  const { getSelectedStudent } = await import('./student.js');
+  const storage = memory(); const profile = { name: '김인천', department: '컴퓨터공학부', gender: '여성', avatar: 11 };
+  storage.setItem('words-to-world-character', JSON.stringify(profile));
+  const student = getSelectedStudent(storage);
+  assert.equal(student.selected, true); assert.equal(student.name, profile.name); assert.equal(student.department, profile.department);
+  assert.equal(student.avatar, 11); assert.equal(student.jacket, '#8b617b'); assert.equal(student.hairstyle, 'bob');
+  assert.deepEqual(JSON.parse(storage.getItem('words-to-world-character')), profile);
+  assert.equal(getSelectedStudent(memory()).selected, false);
+});
+test('응원봉 박자는 느리게 움직이고 넓은 성공 구간을 제공한다', async () => {
+  const { judgeLightstick } = await import('./participation.js');
+  for (const tempo of [85, 118, 136]) {
+    const first = judgeLightstick(0, tempo);
+    assert.ok(first.duration >= 1300 && first.duration <= 2200);
+    assert.equal(judgeLightstick(first.duration * .5, tempo).rating, 'PERFECT');
+    assert.equal(judgeLightstick(first.duration * .25, tempo).rating, 'GOOD');
+    assert.equal(first.rating, 'MISS');
+  }
 });

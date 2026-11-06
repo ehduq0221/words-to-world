@@ -49,7 +49,7 @@ export async function createFestivalScene(container, location) {
   const originalMaterials = new Map(campus.meshes.map(mesh => [mesh, mesh.material]));
   const nearby = campus.meshes.filter(mesh => {
     const c = new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3());
-    return Math.hypot(c.x - origin.x, c.z - origin.z) < 170;
+    return mesh.userData.building.kind !== 'sports-field' && Math.hypot(c.x - origin.x, c.z - origin.z) < 170;
   }).map(mesh => ({ mesh, original: mesh.material }));
 
   function material(color, emissive = false) {
@@ -65,6 +65,31 @@ export async function createFestivalScene(container, location) {
   box(0, 19, -9, 42, 23, 2, glow);
   [-27, 27].forEach(x => { box(x, 18, 0, 2, 36, 2, dark); box(x, 8, 0, 7, 14, 7, dark); });
   box(0, 36, 0, 56, 2, 3, dark);
+  // 사진 참고: 대운동장의 트러스 타워·학교 이름·세로 LED 배너.
+  const inuViolet = material(0x914fe8, true);
+  const trussMetal = material(0xb1bacb), inuBlue = material(0x17284a), tentGold = material(0xe4c16a);
+  function strut(a, b, radius = .22) {
+    const start = new THREE.Vector3(...a), end = new THREE.Vector3(...b), direction = end.clone().sub(start);
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, direction.length(), 5), trussMetal);
+    mesh.position.copy(start).add(end).multiplyScalar(.5); mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize()); group.add(mesh);
+  }
+  for (const x of [-34, 34]) {
+    for (const side of [-1, 1]) strut([x + side * 2, 0, -4], [x + side * 2, 52, -4]);
+    for (let y = 0; y < 48; y += 8) { strut([x - 2, y, -4], [x + 2, y + 8, -4]); strut([x + 2, y, -4], [x - 2, y + 8, -4]); }
+  }
+  strut([-36, 52, -4], [36, 52, -4], .35); strut([-36, 55, -4], [36, 55, -4], .35);
+  for (let x = -36; x < 36; x += 8) strut([x, 52, -4], [x + 8, 55, -4]);
+  const brandCanvas = document.createElement('canvas'); brandCanvas.width = 1024; brandCanvas.height = 128;
+  const brandContext = brandCanvas.getContext('2d'); brandContext.fillStyle = '#152340'; brandContext.fillRect(0, 0, 1024, 128);
+  brandContext.fillStyle = '#f3e9c7'; brandContext.font = 'bold 49px sans-serif'; brandContext.textAlign = 'center'; brandContext.fillText('인천대학교 · CAMPUS FESTIVAL', 512, 78);
+  const brandTexture = new THREE.CanvasTexture(brandCanvas); brandTexture.colorSpace = THREE.SRGBColorSpace;
+  const brandMaterial = new THREE.MeshBasicMaterial({ map: brandTexture });
+  const brandSign = new THREE.Mesh(new THREE.PlaneGeometry(72, 9), brandMaterial); brandSign.position.set(0, 59, -3); group.add(brandSign);
+  [-42, 42].forEach(x => {
+    box(x, 23, -3, 7, 46, 3, inuBlue);
+    const strip = box(x, 24, -1.3, 4, 41, .4, inuViolet); strip.userData.inuBanner = true;
+    const sign = new THREE.Mesh(new THREE.PlaneGeometry(23, 3.2), brandMaterial); sign.rotation.z = Math.PI / 2; sign.position.set(x, 25, -.9); group.add(sign);
+  });
   // 실제 외모·안무를 모사하지 않는 게임용 무대 캐릭터입니다.
   const performers = [];
   const wardrobe = [0xeee1ff, 0x9ddfce, 0xffb6d2, 0xb0cafa, 0xffdba0, 0xdfb7f4];
@@ -101,6 +126,20 @@ export async function createFestivalScene(container, location) {
     box(0, 5.1, -.15, 1.7, .7, 1.5, hairMat, person);
     crowd.push(person); group.add(person);
   }
+  const visitor = new THREE.Group(); visitor.name = 'selected-festival-student'; group.add(visitor);
+  const visitorJacket = material(0x283d58), visitorSkin = material(0xf0d0ae), visitorHair = material(0x352c29), visitorGlow = material(0xc6ff70, true);
+  box(0, 2.7, 0, 1.9, 2.3, 1.1, visitorJacket, visitor);
+  box(-.45, .9, 0, .65, 1.8, .75, dark, visitor); box(.45, .9, 0, .65, 1.8, .75, dark, visitor);
+  box(0, 4.7, 0, 1.6, 1.6, 1.3, visitorSkin, visitor); box(0, 5.5, -.1, 1.8, .7, 1.5, visitorHair, visitor);
+  const visitorLongHair = box(0, 4.1, .65, 1.8, 2.7, .55, visitorHair, visitor);
+  const visitorArm = new THREE.Group(); visitorArm.position.set(-1.2, 3.3, 0); visitor.add(visitorArm);
+  box(0, -.6, 0, .6, 1.7, .7, visitorJacket, visitorArm); box(0, 1.1, 0, .35, 2.7, .35, visitorGlow, visitorArm);
+  box(1.2, 2.6, 0, .6, 1.7, .7, visitorJacket, visitor);
+  const visitorHalo = new THREE.Mesh(new THREE.RingGeometry(1.8, 2.1, 32), new THREE.MeshBasicMaterial({ color: 0xf3f4a7, side: THREE.DoubleSide })); visitorHalo.rotation.x = -Math.PI / 2; visitorHalo.position.y = .4; visitor.add(visitorHalo);
+  const visitorTagCanvas = document.createElement('canvas'); visitorTagCanvas.width = 256; visitorTagCanvas.height = 64;
+  const visitorTagTexture = new THREE.CanvasTexture(visitorTagCanvas);
+  const visitorTag = new THREE.Sprite(new THREE.SpriteMaterial({ map: visitorTagTexture, transparent: true, depthTest: false })); visitorTag.position.y = 7.3; visitorTag.scale.set(4.5, 1.2, 1); visitor.add(visitorTag);
+  let visitorWaveUntil = 0, visitorName = '체험용 학생';
   // 무대(앞끝 z=11)와 첫 관객 열(z=23) 사이의 펜스·안내 통로.
   const fence = new THREE.Group(); fence.name = 'festival-barrier'; group.add(fence);
   const steel = material(0xb8c6cb), safetyLime = material(0xd5ff36), uniform = material(0x25344a), reflective = material(0xf5ffe0, true);
@@ -126,9 +165,14 @@ export async function createFestivalScene(container, location) {
     [-1, 1].forEach(side => { const arm = new THREE.Group(); arm.position.set(side * 1.2, 3.6, 0); box(0, -.8, 0, .5, 1.7, .6, uniform, arm); steward.add(arm); staffArms.push(arm); });
     const badge = new THREE.Mesh(new THREE.PlaneGeometry(1.2, .45), badgeMaterial); badge.position.set(0, 3.1, .7); steward.add(badge);
   });
+  const backCount = 396;
+  const backBodies = new THREE.InstancedMesh(bodyGeo, white, backCount), backHeads = new THREE.InstancedMesh(headGeo, white, backCount), backSticks = new THREE.InstancedMesh(stickGeo, glow, backCount);
+  group.add(backBodies, backHeads, backSticks);
+  const backDummy = new THREE.Object3D();
+  for (let i = 0; i < backCount; i++) { backBodies.setColorAt(i, crowdClothes[i % crowdClothes.length].color); backHeads.setColorAt(i, skinTones[i % 3].color); }
   const booths = new THREE.Group(); group.add(booths);
   [-48, 48].forEach(x => {
-    [30, 50, 70].forEach(z => { box(x, 4, z, 12, 8, 10, white, booths); box(x, 9, z, 14, 2, 12, glow, booths); });
+    [30, 50, 70].forEach(z => { box(x, 4, z, 12, 8, 10, white, booths); const roof = new THREE.Mesh(new THREE.ConeGeometry(10, 7, 4), tentGold); roof.rotation.y = Math.PI / 4; roof.position.set(x, 11, z); booths.add(roof); });
   });
   const beams = [];
   for (let i = 0; i < 6; i++) {
@@ -175,6 +219,19 @@ export async function createFestivalScene(container, location) {
   scene.add(skyEffects);
   const fireworks = createFireworks(skyEffects, reducedMotion);
   let fireworkPosition = 'stage-back';
+  // 사진의 송도 야경에서 영감을 받은 가상 실루엣입니다. 실제 건물 좌표가 아닙니다.
+  const city = new THREE.Group(); city.position.copy(origin); city.rotation.y = group.rotation.y; scene.add(city);
+  const cityMaterial = material(0x172137), windowMaterial = new THREE.MeshBasicMaterial({ color: 0xffde97 });
+  const cityLights = new THREE.InstancedMesh(new THREE.PlaneGeometry(2, 3), windowMaterial, 22 * 40);
+  const cityDummy = new THREE.Object3D(); let windowIndex = 0;
+  for (let i = 0; i < 22; i++) {
+    const x = (i - 10.5) * 53, height = 80 + i % 5 * 21, z = -800 - i % 3 * 35;
+    box(x, height / 2, z, 32, height, 27, cityMaterial, city);
+    for (let row = 0; row < 8; row++) for (let col = 0; col < 5; col++) {
+      cityDummy.position.set(x - 12 + col * 6, 8 + row * (height - 15) / 8, z + 13.6); cityDummy.updateMatrix(); cityLights.setMatrixAt(windowIndex++, cityDummy.matrix);
+    }
+  }
+  city.add(cityLights);
   function theme(value) {
     genre = value;
     const t = themes[genre];
@@ -182,6 +239,7 @@ export async function createFestivalScene(container, location) {
     if (!scene.background) scene.background = targetSky.clone();
     scene.fog = overview ? null : new THREE.Fog(environment.sky, 600, 2200);
     ambient.intensity = environment.ambient; ambient.color.set(environment.phase === 'sunset' ? 0xffdfc4 : 0xc8d8ff);
+    cityLights.visible = environment.phase !== 'sunset';
     sun.visible = environment.phase === 'sunset'; moon.visible = environment.phase === 'night'; stars.visible = environment.phase === 'night';
     groundMaterial.color.setHex(environment.ground);
     glow.color.set(profile.colors[0]); glow.emissive.set(profile.colors[0]);
@@ -205,7 +263,7 @@ export async function createFestivalScene(container, location) {
     ctx.fillStyle = '#172039'; ctx.textAlign = 'center';
     ctx.font = 'bold 25px sans-serif'; ctx.fillText(profile.title, 512, 115);
     let fontSize = 78; do { ctx.font = `bold ${fontSize}px sans-serif`; fontSize -= 2; } while (ctx.measureText(artist.name).width > 925 && fontSize > 22);
-    ctx.fillText(artist.name, 512, 265); ctx.font = '24px sans-serif'; ctx.fillText('FANTASY LIVE · SONGDO CAMPUS', 512, 380);
+    ctx.fillText(artist.name, 512, 265); ctx.font = '24px sans-serif'; ctx.fillText('INCHEON NATIONAL UNIVERSITY · LIVE', 512, 380);
     screenTexture.needsUpdate = true;
     decor.children.slice().forEach(child => { child.geometry?.dispose(); decor.remove(child); });
     if (profile.design === 'crown' || profile.design === 'prism') {
@@ -229,12 +287,14 @@ export async function createFestivalScene(container, location) {
   }
   function applyView(mode) {
     view = mode; overview = mode === 'map'; marker.visible = overview;
+    controls.maxPolarAngle = mode === 'inside' ? Math.PI * .6 : Math.PI / 2 - .06;
+    camera.fov = mode === 'inside' ? 55 : 40; camera.updateProjectionMatrix();
     campus.meshes.forEach(mesh => { mesh.material = originalMaterials.get(mesh); });
     if (outlineMaterial) outlineMaterial.opacity = mode === 'inside' ? .15 : .7;
     scene.fog = overview ? null : new THREE.Fog(environment.sky, 600, 2200);
     if (mode === 'inside') {
       nearby.forEach(({ mesh }) => { mesh.material = ghost; });
-      camera.position.copy(localPoint(visitorX, 9, visitorZ)); controls.target.copy(localPoint(visitorX * .15, 19, -5));
+      camera.position.copy(localPoint(visitorX + 5, 12, visitorZ + 22)); controls.target.copy(localPoint(visitorX * .15, 7, visitorZ - 42));
     } else if (mode === 'fireworks') {
       const factor = 1 / Math.min(container.clientWidth / container.clientHeight, 1);
       camera.position.copy(skyEffects.position).addScaledVector(right, 170 * factor).addScaledVector(down, 380 * factor); camera.position.y = 145 * factor;
@@ -274,9 +334,22 @@ export async function createFestivalScene(container, location) {
       person.rotation.z = Math.sin(beat * (profile.dance === 'wave' ? .35 : .7) + i * .4) * .08;
       arms.forEach((arm, side) => { arm.rotation.z = Math.sin(beat * .5 + i + side) * (profile.dance === 'sharp' ? 1.4 : .8); });
     });
+    visitor.position.set(visitorX, .3, visitorZ);
+    visitorArm.rotation.z = elapsed < visitorWaveUntil ? -1 + Math.sin(t * 5) * .7 : -.2;
+    for (let i = 0; i < backCount; i++) {
+      const x = (i % 22 - 10.5) * 4, z = 79 + Math.floor(i / 22) * 3;
+      const jump = genre === 'indie' ? 0 : Math.max(0, Math.sin(t * 4 + i)) * (elapsed < cheerUntil ? 3 : 1.3);
+      const hidden = Math.hypot(x - visitorX, z - visitorZ) < 4 || (view === 'inside' && z > visitorZ && Math.abs(x - visitorX) < 12);
+      backDummy.scale.setScalar(hidden ? 0 : 1); backDummy.rotation.set(0, 0, Math.sin(t + i) * .04);
+      backDummy.position.set(x, 2 + jump, z); backDummy.updateMatrix(); backBodies.setMatrixAt(i, backDummy.matrix);
+      backDummy.position.y = 4.5 + jump; backDummy.updateMatrix(); backHeads.setMatrixAt(i, backDummy.matrix);
+      backDummy.position.set(x + 1.2, 5 + jump, z); backDummy.updateMatrix(); backSticks.setMatrixAt(i, backDummy.matrix);
+    }
+    backBodies.instanceMatrix.needsUpdate = true; backHeads.instanceMatrix.needsUpdate = true; backSticks.instanceMatrix.needsUpdate = true;
     staffArms.forEach((arm, i) => { arm.rotation.z = Math.sin(t * .6 + i) * .09; });
     decor.rotation.z = profile.design === 'bloom' ? Math.sin(t * .4) * .02 : 0;
     crowd.forEach((person, i) => {
+      person.visible = Math.hypot(person.position.x - visitorX, person.position.z - visitorZ) > 2.5;
       const phase = t * (genre === 'indie' ? 1.4 : genre === 'idol' ? 5 : 7) + i * .7;
       person.rotation.z = Math.sin(phase) * (genre === 'indie' ? .07 : .14);
       person.position.y = genre === 'indie' ? 0 : Math.max(0, Math.sin(phase)) * (elapsed < cheerUntil ? 5 : genre === 'hiphop' ? 2.8 : 1.5);
@@ -290,7 +363,8 @@ export async function createFestivalScene(container, location) {
       particles.attributes.position.needsUpdate = true;
     }
     fireworks.update(playing ? dt : 0);
-    controls.update(); renderer.render(scene, camera); frame = requestAnimationFrame(animate);
+    controls.update(); renderer.render(scene, camera);
+    frame = requestAnimationFrame(animate);
   }
   resize(container.clientWidth, container.clientHeight); frame = requestAnimationFrame(animate);
   return {
@@ -300,25 +374,28 @@ export async function createFestivalScene(container, location) {
     setFireworkPosition(id) { positionFireworks(id); if (view === 'fireworks') applyView('fireworks'); },
     moveVisitor(dx, dz) { visitorX = THREE.MathUtils.clamp(visitorX + dx, -25, 25); visitorZ = THREE.MathUtils.clamp(visitorZ + dz, 26, 145); restoreView = null; applyView('inside'); },
     cheer() { cheerUntil = elapsed + 2; },
-    waveLightstick() { cheerUntil = elapsed + 1.5; },
+    waveLightstick(color) { cheerUntil = elapsed + 1.5; visitorWaveUntil = elapsed + 1.5; if (color) { visitorGlow.color.set(color); visitorGlow.emissive.set(color); } },
+    setVisitor(student) { visitorName = student.name;
+      const ctx = visitorTagCanvas.getContext('2d'); ctx.clearRect(0, 0, 256, 64); ctx.fillStyle = '#18342ded'; ctx.fillRect(0, 0, 256, 64); ctx.fillStyle = '#e9ffd5'; ctx.font = 'bold 27px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(`${student.selected ? '나' : '체험'} · ${student.name}`, 128, 43, 242); visitorTagTexture.needsUpdate = true;
+      visitorJacket.color.set(student.jacket); visitorSkin.color.set(student.skin); visitorHair.color.set(student.hair); visitorLongHair.visible = student.hairstyle !== 'short'; visitorLongHair.scale.y = student.hairstyle === 'bob' ? .55 : 1; },
     capturePhoto() {
       renderer.render(scene, camera);
       const photo = document.createElement('canvas'); photo.width = renderer.domElement.width; photo.height = renderer.domElement.height;
       const ctx = photo.getContext('2d'); ctx.drawImage(renderer.domElement, 0, 0);
       ctx.fillStyle = '#10172bcc'; ctx.fillRect(0, photo.height - 58, photo.width, 58); ctx.fillStyle = 'white';
       ctx.font = `${Math.min(18, Math.max(10, photo.width / 45))}px sans-serif`;
-      ctx.fillText(`${profile.artistName} · WORDS TO WORLD · FANTASY LIVE`, 18, photo.height - 34, photo.width - 36);
+      ctx.fillText(`${visitorName}의 축제 · ${profile.artistName} · INCHEON NATIONAL UNIVERSITY`, 18, photo.height - 34, photo.width - 36);
       ctx.fillText('© OpenStreetMap contributors · ODbL', 18, photo.height - 13, photo.width - 36);
       return photo.toDataURL('image/png');
     },
     burstFireworks() { fireworks.burst(); if (!restoreView) restoreView = view; skyUntil = elapsed + 7.2; applyView('fireworks'); },
     resetFireworks() { fireworks.reset(); },
-    configure(extras) { booths.visible = extras.includes('booths'); crowd.forEach(p => { p.children[2].visible = extras.includes('lights') || genre === 'indie'; }); },
+    configure(extras) { backSticks.visible = extras.includes('lights'); booths.visible = extras.includes('booths'); crowd.forEach(p => { p.children[2].visible = extras.includes('lights') || genre === 'indie'; }); },
     setFinale(value) { finale = value; },
     setPreparation(progress) { group.scale.setScalar(baseScale * (reducedMotion ? 1 : Math.max(.01, Math.min(1, progress)))); },
     setPlaying(value) { playing = value; },
     dispose() {
-      disposed = true; badgeTexture.dispose(); screenTexture.dispose(); fireworks.dispose(); cancelAnimationFrame(frame); observer.disconnect(); controls.dispose();
+      disposed = true; visitorTagTexture.dispose(); brandTexture.dispose(); badgeTexture.dispose(); screenTexture.dispose(); fireworks.dispose(); cancelAnimationFrame(frame); observer.disconnect(); controls.dispose();
       const geometries = new Set(), materials = new Set();
       scene.traverse(object => { if (object.geometry) geometries.add(object.geometry); if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach(m => materials.add(m)); });
       geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); ghost.dispose(); renderer.dispose(); renderer.domElement.remove();

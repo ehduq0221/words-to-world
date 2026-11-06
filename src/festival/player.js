@@ -1,5 +1,6 @@
 import { getPerformanceEnvironment } from './environment.js';
-import { judgeBeat } from './participation.js';
+import { getSelectedStudent, studentPortrait } from './student.js';
+import { judgeLightstick } from './participation.js';
 import { createFestivalScene } from './scene.js';
 import { createFestivalAudio } from './audio.js';
 import { buildTimeline } from './timeline.js';
@@ -8,28 +9,43 @@ import { FIREWORK_SITES, getArtistProfile } from './profiles.js';
 export async function openFestivalPreview(plan, data, opener, options = {}) {
   const artists = plan.artistIds.map(id => data.artists.find(a => a.id === id)).filter(Boolean);
   if (!artists.length) throw new Error('미리 볼 가수를 먼저 선택해 주세요.');
+  let student = getSelectedStudent();
   const venue = data.venues.find(v => v.id === plan.venueId);
   if (!venue) throw new Error('축제 장소를 다시 선택해 주세요.');
   const fireworksOnly = options.mode === 'fireworks', quick = options.mode === 'quick';
   const dialog = document.createElement('dialog'); dialog.className = 'festival-player';
   dialog.setAttribute('aria-label', fireworksOnly ? '폭죽 미리보기' : '하루 축제 체험');
   dialog.innerHTML = `<div class="fp-scene"></div>
-    <header class="fp-top"><div><small>ONE DAY, OUR CAMPUS</small><h2></h2><p></p><span class="fp-profile"></span><time class="fp-time"></time></div><button data-action="close" aria-label="미리보기 종료">닫기 ×</button></header>
+    <header class="fp-top"><div><small>ONE DAY, OUR CAMPUS</small><h2></h2><p></p><div class="fp-student"><span class="fp-student-portrait"></span><span><b></b><small></small></span><a href="../../character-create.html" target="_blank" rel="noopener">학생 선택</a></div><span class="fp-profile"></span><time class="fp-time"></time></div><button data-action="close" aria-label="미리보기 종료">닫기 ×</button></header>
     <div class="fp-loading" role="status">캠퍼스에 무대를 설치하고 있어요…</div>
     <div class="fp-my-stick" aria-hidden="true"><span></span></div><div class="fp-caption" aria-live="polite"></div><div class="fp-cheer" aria-live="polite"></div>
     <footer class="fp-controls"><div class="fp-tracks"></div><div class="fp-progress"><span></span></div>
       <nav class="fp-view-modes" aria-label="축제 체험 시점"><button data-view="outside">밖에서 보기</button><button data-view="inside">관객 속으로 입장</button><button data-view="map">캠퍼스 전체</button></nav>
       <div class="fp-participate"><span>직접 즐기기</span><button data-action="cheer">🙌 환호하기 · Space</button><button data-action="lightstick" aria-pressed="false">✦ 응원봉 흔들기 · L</button><button data-action="photo">📷 공연 사진 저장 · P</button><button data-move="-5,0" aria-label="관객석 왼쪽 이동">←</button><button data-move="0,-5" aria-label="무대 쪽으로 이동">앞으로</button><button data-move="0,5" aria-label="무대에서 뒤로 이동">뒤로</button><button data-move="5,0" aria-label="관객석 오른쪽 이동">→</button></div>
-      <div class="fp-rhythm"><button data-action="rhythm">♪ 비트 맞추기 · F</button><div class="fp-beat-track" aria-hidden="true"><i></i><b></b></div><span class="fp-beat-result" aria-live="polite">중앙에 올 때 탭!</span><div class="fp-stick-colors" aria-label="응원봉 색상"></div></div><div class="fp-pyro-controls"><label>폭죽 위치 <select aria-label="미리보기 폭죽 위치"></select></label><button data-action="fireworks">🎆 지금 폭죽 미리보기</button><small>폭죽이 터질 때 하늘이 잘 보이는 시점으로 잠시 이동해요.</small></div>
+      <div class="fp-rhythm"><button data-action="rhythm">✦ 박자에 맞춰 응원봉 흔들기 · F</button><div class="fp-beat-track" aria-hidden="true"><i></i><b></b></div><span class="fp-beat-result" aria-live="polite">반짝이는 구간에서 천천히 흔들어요</span><div class="fp-stick-colors" aria-label="응원봉 색상"></div></div><div class="fp-pyro-controls"><label>폭죽 위치 <select aria-label="미리보기 폭죽 위치"></select></label><button data-action="fireworks">🎆 지금 폭죽 미리보기</button><small>폭죽이 터질 때 하늘이 잘 보이는 시점으로 잠시 이동해요.</small></div>
       <div class="fp-buttons"><button data-action="pause">일시정지</button><button data-action="restart">다시 보기</button><button data-action="sound" aria-pressed="false">소리 켜기</button><span>${fireworksOnly ? '폭죽 전용 · 종료할 때까지 체험 가능' : quick ? '빠른 보기 · 2배속' : '미리보기 · 게임 지표 변경 없음'}</span></div>
     </footer>`;
+  const tools = document.createElement('details'); tools.className = 'fp-extra-tools';
+  const summary = document.createElement('summary'); summary.textContent = '이동 · 사진 · 폭죽 도구'; tools.append(summary);
+  tools.append(dialog.querySelector('.fp-participate'), dialog.querySelector('.fp-pyro-controls'));
+  dialog.querySelector('.fp-buttons').before(tools);
   document.body.append(dialog); dialog.showModal();
+  function updateStudent() {
+    student = getSelectedStudent();
+    dialog.querySelector('.fp-student-portrait').innerHTML = studentPortrait(student);
+    dialog.querySelector('.fp-student b').textContent = student.selected ? `${student.name} 학생으로 체험 중` : '선택된 학생 없음 · 체험용 학생';
+    dialog.querySelector('.fp-student small').textContent = student.department;
+    dialog.querySelector('[data-view="inside"]').textContent = student.selected ? '내 학생으로 입장' : '관객 체험 · 학생 미선택';
+    if (scene) scene.setVisitor(student);
+  }
+  function studentChanged(event) { if (event.key === 'words-to-world-character') updateStudent(); }
   const host = dialog.querySelector('.fp-scene'), caption = dialog.querySelector('.fp-caption'), loading = dialog.querySelector('.fp-loading');
   const siteSelect = dialog.querySelector('select');
   FIREWORK_SITES.forEach(site => { const option = document.createElement('option'); option.value = site.id; option.textContent = site.name; siteSelect.append(option); });
   siteSelect.value = plan.fireworkPosition || 'stage-back';
   let burstUntil = 0, rhythmMs = 0, lastTick = performance.now(), lastTap = -1000, combo = 0, currentArtist = artists[0], waving = false;
   let scene, timer, cheerTimer, disposed = false, paused = false, seconds = quick || fireworksOnly ? 4 : 0, sound = false, stage = '', currentView = options.startView || 'outside';
+  updateStudent(); window.addEventListener('storage', studentChanged);
   let finish;
   const completion = new Promise(resolve => { finish = resolve; });
   const audio = createFestivalAudio(), timeline = buildTimeline(artists.length), fired = new Set();
@@ -40,11 +56,12 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
   });
   function close() {
     if (disposed) return;
-    disposed = true; clearInterval(timer); clearTimeout(cheerTimer); scene?.dispose(); audio.dispose(); dialog.close(); dialog.remove(); opener?.focus(); finish();
+    disposed = true; window.removeEventListener('storage', studentChanged); clearInterval(timer); clearTimeout(cheerTimer); scene?.dispose(); audio.dispose(); dialog.close(); dialog.remove(); opener?.focus(); finish();
   }
   dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
   dialog.querySelector('[data-action="close"]').onclick = close;
   function setView(mode) {
+    if (mode === 'inside' && seconds < 4) { seconds = 4; scene?.setPreparation(1); }
     currentView = mode; scene?.setView(mode);
     dialog.querySelectorAll('[data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === mode)));
     dialog.querySelector('.fp-participate').classList.toggle('is-inside', mode === 'inside');
@@ -76,14 +93,19 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
     waving = !waving;
     const button = dialog.querySelector('[data-action="lightstick"]'); button.setAttribute('aria-pressed', String(waving));
     button.textContent = waving ? '✦ 응원봉 내리기 · L' : '✦ 응원봉 흔들기 · L';
-    setView('inside'); if (waving) scene?.waveLightstick();
+    setView('inside'); if (waving) scene?.waveLightstick(dialog.style.getPropertyValue('--stick-color') || '#c6ff70');
   }
   function tapBeat() {
-    if (!scene || paused || rhythmMs - lastTap < 150) return;
+    if (!scene) return;
+    if (paused) { dialog.querySelector('.fp-beat-result').textContent = '재생한 뒤 천천히 흔들어 보세요'; return; }
+    if (rhythmMs - lastTap < 650) return;
     lastTap = rhythmMs;
-    const result = judgeBeat(rhythmMs + Math.max(0, performance.now() - lastTick), getArtistProfile(currentArtist).tempo);
+    if (!waving) wave();
+    const stick = dialog.querySelector('.fp-my-stick'); stick.classList.remove('beat-wave'); void stick.offsetWidth; stick.classList.add('beat-wave');
+    scene.waveLightstick(dialog.style.getPropertyValue('--stick-color') || '#c6ff70');
+    const result = judgeLightstick(rhythmMs + Math.max(0, performance.now() - lastTick), getArtistProfile(currentArtist).tempo);
     combo = result.rating === 'MISS' ? 0 : combo + 1;
-    dialog.querySelector('.fp-beat-result').textContent = result.rating === 'MISS' ? '다음 박자에 다시! · 0 COMBO' : `${result.rating}! · ${combo} COMBO`;
+    dialog.querySelector('.fp-beat-result').textContent = result.rating === 'MISS' ? '조금 기다렸다가 다시 흔들어요' : `${result.rating === 'PERFECT' ? '딱 맞았어요!' : '함께 흔들었어요!'} · 연속 ${combo}번`;
     if (result.rating !== 'MISS') { scene.cheer(); audio.cheer(); }
   }
   function takePhoto() {
@@ -121,7 +143,7 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
     const segment = timeline.segments.find(s => seconds >= s.start && seconds < s.end) || timeline.segments.at(-1), index = segment.index;
     const key = `${segment.kind}:${index}`;
     if (key !== stage) {
-      stage = key; currentArtist = artists[index]; rhythmMs = 0; lastTap = -1000; combo = 0;
+      stage = key; currentArtist = artists[index]; dialog.style.setProperty('--stick-period', `${judgeLightstick(0, getArtistProfile(currentArtist).tempo).duration / 1000}s`); rhythmMs = 0; lastTap = -1000; combo = 0;
       const artist = artists[index], profile = getArtistProfile(artist);
       scene.setArtist(artist); scene.configure(plan.extras); audio.setArtist(artist);
       const showTime = fireworksOnly ? '21:00' : data.slots[index];
@@ -140,7 +162,8 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
       const at = timeline.fireworkTimes[moment];
       if (!paused && at !== undefined && seconds >= at && !fired.has(moment)) { fired.add(moment); burst(); }
     }
-    dialog.querySelector('.fp-beat-track b').style.left = `${judgeBeat(rhythmMs, getArtistProfile(currentArtist).tempo).phase * 100}%`;
+    dialog.querySelector('.fp-beat-track b').style.left = `${judgeLightstick(rhythmMs, getArtistProfile(currentArtist).tempo).phase * 100}%`;
+    dialog.querySelector('.fp-beat-track').classList.toggle('on-beat', Math.abs(judgeLightstick(rhythmMs, getArtistProfile(currentArtist).tempo).phase - .5) <= .29);
     scene.setFinale(segment.kind === 'finale' && plan.extras.includes('confetti'));
     scene.setPreparation(quick || fireworksOnly ? 1 : seconds / 4);
     dialog.querySelector('.fp-progress span').style.width = `${Math.min(100, seconds / timeline.length * 100)}%`;
@@ -151,7 +174,7 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
     scene = await createFestivalScene(host, venue);
     if (disposed) { scene.dispose(); return; }
     loading.remove(); controls.forEach(el => { el.disabled = false; });
-    scene.setFireworkPosition(siteSelect.value); scene.setPlaying(!paused); setView(currentView); render();
+    scene.setVisitor(student); scene.setFireworkPosition(siteSelect.value); scene.setPlaying(!paused); setView(currentView); render();
     dialog.focus();
     if (fireworksOnly) burst();
     let previous = performance.now(); lastTick = previous;

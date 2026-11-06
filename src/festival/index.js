@@ -14,7 +14,7 @@ export async function initFestival() {
   let plan = createPlan(data), saved = [], filter = 'all', dirty = false, savingBlocked = false, previewing = false;
   const comparison = new Set();
   try { saved = readPlans(data); } catch (error) { savingBlocked = true; setTimeout(() => message(`저장한 기획안을 읽지 못했습니다. ${error.message}`), 0); }
-  root.innerHTML = `<div class="festival-heading"><div><span class="f-eyebrow">WORDS TO WORLD / CAMPUS FESTIVAL</span><h1>우리의 캠퍼스,<br>오늘은 페스티벌.</h1><p>좋아하는 목소리, 함께할 친구들.<br>당신이 꿈꾸던 하루를 이곳에서 먼저 만나 보세요.</p></div><div class="f-stamp">ONE DAY<br><b>OUR<br>YOUTH</b><span>송도캠퍼스</span></div></div>
+  root.innerHTML = `<div class="festival-heading"><div><span class="f-eyebrow">WORDS TO WORLD / CAMPUS FESTIVAL</span><h1>송도캠퍼스,<br>오늘은 대동제.</h1><p>좋아하는 목소리, 함께할 친구들.<br>인천대학교에서 꿈꾸던 하루를 먼저 만나 보세요.</p></div><div class="f-stamp">ONE DAY<br><b>OUR<br>YOUTH</b><span>송도캠퍼스</span></div></div>
     <nav class="f-toolbar"><button data-action="new">＋ 새 기획안</button><button data-action="save" class="primary">기획안 저장</button><button data-action="quick-preview">⚡ 빠르게 보기</button><button data-action="preview" class="preview-button">▷ 축제 체험하기</button></nav>
     <p id="f-message" role="status" aria-live="polite"></p>
     <section class="f-presets" aria-label="예시 라인업"><span class="f-eyebrow">차트에서 골라 본 우리의 하루</span><div class="f-preset-list"></div><p class="f-chart-source"></p></section>
@@ -22,7 +22,7 @@ export async function initFestival() {
       <p class="f-muted">실제 가수 후보 · 최대 3팀 · 섭외비와 공연 연출은 게임용 설정</p><nav class="f-filters" aria-label="가수 장르"><button data-filter="all">전체</button><button data-filter="indie">노을·밴드 연출</button><button data-filter="idol">아이돌</button><button data-filter="hiphop">힙합·그루브 연출</button></nav><div class="f-candidates"></div></section>
     <aside class="f-planning"><section class="f-card"><span class="f-eyebrow">02 / MAKE IT YOURS</span><h2>나만의 하루 만들기</h2>
       <label>기획안 이름<input id="f-name" maxlength="60"></label>
-      <label>우리의 무대<select id="f-venue"></select></label><p class="f-venue-note"></p><div class="f-location-map" aria-label="초록 표시 기준 축제 위치 안내"></div>
+      <label>우리의 무대<select id="f-venue"></select></label><p class="f-venue-note"></p><div class="f-location-map" aria-label="축제 장소 위치 안내"></div>
       <label>총예산 (원)<input id="f-budget" type="number" min="0" max="1000000000000" step="1" required></label>
       <div class="f-extras"></div><fieldset class="f-fireworks"><legend>하늘에 남길 순간 · 폭죽 설정</legend><p class="f-muted">원하는 시점을 여러 개 선택하세요. 가수가 부족한 구간은 선택할 수 없어요.</p><div class="f-firework-options"></div><label>폭죽을 터뜨릴 위치<select id="f-firework-position"></select></label><p class="f-muted">선택한 야외무대를 기준으로 하늘 위치를 정합니다. 캠퍼스 중앙은 전체 지도 중앙입니다.</p><button data-action="fireworks-preview">🎆 폭죽만 미리보기</button></fieldset><div class="f-cost" aria-live="polite"></div></section>
       <section class="f-poster" aria-label="선택한 공연 라인업 포스터"><small>INCHEON NATIONAL UNIVERSITY</small><h2 class="f-poster-name"></h2><p>ONE DAY · SONGDO CAMPUS</p><ol class="f-lineup"></ol><div class="f-poster-bottom">함께라서 더 빛나는 우리의 밤 ✦</div></section>
@@ -152,7 +152,7 @@ export async function initFestival() {
   }
   function render() {
     root.querySelectorAll('.f-fireworks input').forEach(input => { input.checked = (plan.fireworks || []).includes(input.value); input.disabled = !availableFireworks(plan).some(m => m.id === input.value); });
-    root.querySelector('.f-venue-note').textContent = data.venues.find(v => v.id === plan.venueId).description || '이전 버전에서 저장한 예시 장소입니다. 초록 A·B 위치로 변경할 수 있습니다.';
+    root.querySelector('.f-venue-note').textContent = data.venues.find(v => v.id === plan.venueId).description || '이전 버전에서 저장한 예시 장소입니다. 대운동장 또는 초록 B 위치로 변경할 수 있습니다.';
     root.querySelectorAll('.f-location-map [data-venue]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.venue === plan.venueId)));
     root.querySelector('.f-selected-count').textContent = `${plan.artistIds.length} / 3 TEAMS`;
     root.querySelectorAll('[data-filter]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
