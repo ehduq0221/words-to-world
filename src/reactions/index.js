@@ -5,7 +5,7 @@
 //   3단계가 합쳐지면 src/game/index.js의 두 export가 이 파일을 가리키도록 바꿉니다.
 
 import { registerArea, getState, updateArea, onTimeAdvance, subscribe } from './gameApi.js';
-import { createInitialArea, addToArea, updateIssues, getPath } from './engine.js';
+import { createInitialArea, addToArea, updateIssues, getPath, calendarEvents } from './engine.js';
 import { renderReactionPanel } from './panel.js';
 
 const AREA = 'reactions';
@@ -75,9 +75,15 @@ function changed(values) {
 // src/main.js에서 startGame() 전에 호출합니다.
 export function initReactions() {
   registerArea(AREA, createInitialArea);
-  onTimeAdvance(() => {
+  onTimeAdvance(({ date }) => {
     if (!config || !getState()?.[AREA]) return;
-    updateArea(AREA, area => ({ ...area, dayCount: area.dayCount + 1 }));
+    updateArea(AREA, area => {
+      let next = { ...area, dayCount: area.dayCount + 1 };
+      for (const event of calendarEvents(config, date)) {
+        next = addToArea(next, config, lines, { type: event.type, kind: 'event', buildingId: event.buildingId ?? null, cause: event.cause, priority: event.label ?? '', values: event.values ?? {}, persona: event.persona ?? null, date }).area;
+      }
+      return next;
+    });
     if (getState()[AREA].dayCount % config.checkEveryDays === 0) checkIssues();
   });
   subscribe(state => {

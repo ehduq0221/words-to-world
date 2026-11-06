@@ -22,7 +22,12 @@ function compare(actual, { op, value }) {
   }
 }
 
-// 지금 상태에서 성립하는 민원 목록. 해당 기능이 아직 없으면(값이 undefined) 민원도 없습니다.
+// 단계(level): rule.levels의 조건 중 몇 개가 맞는지. 높을수록 심각합니다(예: 대기 300명 이상).
+function levelOf(rule, read) {
+  return (rule.levels ?? []).filter(condition => compare(read(condition.field), condition)).length;
+}
+
+// 지금 상태에서 성립하는 민원·칭찬 목록. 해당 기능이 아직 없으면(값이 undefined) 생기지 않습니다.
 export function findIssues(state, rules) {
   const issues = new Map();
   for (const rule of rules) {
@@ -30,18 +35,27 @@ export function findIssues(state, rules) {
       const items = getPath(state, rule.each);
       if (!items || typeof items !== 'object') continue;
       for (const [key, item] of Object.entries(items)) {
-        if (!rule.when.every(condition => compare(item?.[condition.field], condition))) continue;
+        const read = field => item?.[field];
+        // valueField가 있으면 고정값 대신 같은 항목의 다른 값과 비교합니다. 예: openBeds < capacity
+        const check = condition => compare(read(condition.field), condition.valueField ? { ...condition, value: read(condition.valueField) } : condition);
+        if (!rule.when.every(check)) continue;
         const values = Object.fromEntries(Object.entries(rule.values ?? {}).map(([name, field]) => [name, item[field]]));
-        issues.set(`${rule.id}:${key}`, { rule, buildingId: item.buildingId ?? null, values });
+        issues.set(`${rule.id}:${key}`, { rule, buildingId: item.buildingId ?? null, values, level: levelOf(rule, read) });
       }
     } else {
       const value = getPath(state, rule.path);
+      const read = () => value;
       if (rule.when.every(condition => compare(value, condition))) {
-        issues.set(rule.id, { rule, buildingId: rule.buildingId ?? null, values: { value } });
+        issues.set(rule.id, { rule, buildingId: rule.buildingId ?? null, values: { value, ...(rule.fixedValues ?? {}) }, level: levelOf(rule, read) });
       }
     }
   }
   return issues;
+}
+
+// 학사 일정 같은 날짜 반응. 해당 날짜가 되면 한 번 나옵니다.
+export function calendarEvents(config, date) {
+  return (config.calendar ?? []).filter(event => event.month === date.month && event.day === date.day);
 }
 
 function matches(when, values) {
@@ -68,7 +82,8 @@ export function fill(text, values) {
 export function pickLine(lines, type, values, recent, seq) {
   let candidates = lines.filter(line => line.type === type && matches(line.when, values));
   if (!candidates.length) {
-    const fallback = type.endsWith('.resolved') ? 'default.resolved' : 'default';
+    const suffix = ['resolved', 'eased', 'praise'].find(name => type.endsWith(`.${name}`));
+    const fallback = suffix ? `default.${suffix}` : 'default';
     candidates = lines.filter(line => line.type === fallback);
   }
   if (!candidates.length) return null;
@@ -117,7 +132,11 @@ export function addToArea(area, config, lines, { type, kind = 'event', issueId =
   };
 }
 
-// 민원 상태를 갱신합니다. 새로 생긴 민원과 오래 지속된 민원은 반응을 남기고, 사라진 민원은 해결 반응을 남깁니다.
+// 민원·칭찬 상태를 갱신하고, 바뀐 만큼 학생 반응을 남깁니다.
+// - 새 민원: 「개선 요청」, 새 칭찬: 「칭찬」
+// - 단계가 오르면 「악화」, 내려가면 「완화」(유형.eased 대사)
+// - 같은 민원이 remindEveryDays 넘게 이어지면 「계속 요청」
+// - 민원이 사라지면 「해결」(유형.resolved 대사), 칭찬이 사라지면 조용히 뺍니다.
 export function updateIssues(area, config, lines, state, date) {
   const found = findIssues(state, config.rules);
   let next = { ...area, issues: { ...area.issues } };
@@ -127,15 +146,33 @@ export function updateIssues(area, config, lines, state, date) {
     next = result.area;
     added.push(result.reaction);
   };
-  for (const [issueId, { rule, buildingId, values }] of found) {
+  for (const [issueId, { rule, buildingId, values, level }] of found) {
     const existing = next.issues[issueId];
-    if (existing && next.dayCount - existing.lastAt < config.remindEveryDays) continue;
-    push({ type: rule.type, kind: 'complaint', issueId, buildingId, cause: rule.cause, priority: '개선 요청', values, persona: rule.persona });
-    next.issues[issueId] = { ruleId: rule.id, type: rule.type, cause: rule.cause, buildingId, values, persona: rule.persona ?? null, since: existing?.since ?? date, lastAt: next.dayCount };
+    const kind = rule.kind ?? 'complaint';
+    const base = { issueId, buildingId, cause: rule.cause, values, persona: rule.persona };
+    let spoke = true;
+    if (!existing) {
+      push(kind === 'praise'
+        ? { ...base, type: `${rule.type}`, kind: 'praise', priority: '칭찬' }
+        : { ...base, type: rule.type, kind: 'complaint', priority: level > 0 ? '긴급' : '개선 요청' });
+    } else if (level > existing.level) {
+      push({ ...base, type: rule.type, kind: 'complaint', priority: '악화' });
+    } else if (level < existing.level) {
+      push({ ...base, type: `${rule.type}.eased`, kind: 'eased', priority: '완화' });
+    } else if (kind === 'complaint' && next.dayCount - existing.lastAt >= config.remindEveryDays) {
+      push({ ...base, type: rule.type, kind: 'complaint', priority: '계속 요청' });
+    } else {
+      spoke = false;
+    }
+    next.issues[issueId] = {
+      ruleId: rule.id, kind, type: rule.type, cause: rule.cause, buildingId, values, level,
+      persona: rule.persona ?? null, since: existing?.since ?? date, lastAt: spoke ? next.dayCount : existing.lastAt,
+    };
   }
   for (const [issueId, issue] of Object.entries(area.issues)) {
     if (found.has(issueId)) continue;
     delete next.issues[issueId];
+    if (issue.kind === 'praise') continue;
     push({ type: `${issue.type}.resolved`, kind: 'resolved', issueId, buildingId: issue.buildingId, cause: issue.cause, priority: '해결', values: issue.values, persona: issue.persona });
   }
   return { area: next, added };
