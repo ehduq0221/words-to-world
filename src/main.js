@@ -8,9 +8,11 @@ import { initFacilityExplorer } from './interaction/gamePreview.js';
 import { publishBuildingSelection } from './interaction/buildingSelection.js';
 import { createSelectionHighlight } from './interaction/selectionHighlight.js';
 import { initDecisions } from './decisions/index.js';
+import { initCalendar } from './game/index.js';
 
 async function start() {
   if (!await initCharacterMap()) return;
+  initCalendar().catch(error => console.error(error));
   const container = document.querySelector('#map');
   const status = document.querySelector('#status');
   try {

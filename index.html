@@ -8,14 +8,16 @@
   <link rel="stylesheet" href="./src/character/card.css">
   <link rel="stylesheet" href="./src/interaction/facilityExplorer.css">
   <link rel="stylesheet" href="./src/decisions/decisions.css">
+  <link rel="stylesheet" href="./src/game/calendar.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
   <header class="topbar">
     <div class="brand"><span class="brand-mark">W</span><div><span class="eyebrow">WORDS TO WORLD</span><h1>인천대학교 <span>송도캠퍼스</span></h1></div></div>
     <div class="metrics" aria-label="학교 운영 지표"><div><span>운영 예산</span><strong id="hud-budget">₩ 12.8억</strong><small id="hud-budget-note">선택 반영 0</small></div><div><span>학생 만족도</span><strong><span id="hud-satisfaction">76</span><em>/ 100</em></strong><small id="hud-satisfaction-note">선택 누적 0</small></div><div><span>학교 평판</span><strong><span id="hud-reputation">68</span><em>/ 100</em></strong><small id="hud-reputation-note">선택 누적 0</small></div></div>
-    <div class="date"><b>2026년 3월</b><span>1학기 · 화면 예시</span></div>
+    <button type="button" class="date" id="game-date" aria-haspopup="dialog" aria-expanded="false" aria-controls="game-calendar"><b id="game-date-label">2026년 3월</b><span id="game-date-sub">1학기 · 학사 일정 보기</span></button>
   </header>
+  <section class="game-calendar" id="game-calendar" role="dialog" aria-labelledby="game-calendar-title" hidden></section>
   <main id="map" aria-label="인천대학교 송도캠퍼스 3D 지도"></main>
   <section class="campus-caption"><span class="live-dot"></span> 송도캠퍼스 <span>기본 캠퍼스</span></section>
   <aside class="left-panel panel">
