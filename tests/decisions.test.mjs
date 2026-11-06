@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as model from '../src/decisions/model.js';
+import { createGameStore } from '../src/game/store.js';
+const config=JSON.parse(fs.readFileSync(new URL('../public/data/game.json',import.meta.url)));
 const data = JSON.parse(fs.readFileSync(new URL('../public/data/decisions.json', import.meta.url)));
 const campus = JSON.parse(fs.readFileSync(new URL('../public/data/campus.json', import.meta.url)));
 
@@ -19,7 +21,7 @@ test('모든 이벤트는 존재하는 대표 건물과 세 가지 대응에 연
 test('결과는 한 번만 반영되며 복원 후 다른 선택으로 중복 보상할 수 없다', async () => {
   let saved = null;
   globalThis.localStorage = { getItem: () => saved, setItem: (_, value) => { saved = value; } };
-  const api = await import('../src/decisions/stubGame.js?test=primary');
+  const api = createGameStore({config,storage:localStorage});
   api.registerArea('decisions', () => ({ opened: [] }));
   api.startGame();
   const computer = data.events.find(event => event.id === 'slow-computers');
@@ -28,14 +30,14 @@ test('결과는 한 번만 반영되며 복원 후 다른 선택으로 중복 �
   assert.equal(model.decide(computer, 'repair', api), false);
   assert.equal(api.getState().ledger.length, 1);
   assert(!model.activeEvents(data.events, api.getState(), 5).includes(computer));
-  const restored = await import('../src/decisions/stubGame.js?test=restored');
+  const restored = createGameStore({config,storage:localStorage});
   restored.registerArea('decisions', () => ({ opened: [] }));
   restored.startGame();
   assert.equal(model.decide(computer, 'defer', restored), false);
   assert.equal(restored.getState().metrics.budget, 1200000000);
   assert.equal(model.effectText(restored.getState().ledger[0]), '예산 −8,000만 · 만족도 +6');
   const before = restored.getState();
-  assert.throws(() => restored.applyEffect({ id: 'expensive', budget: -2000000000 }), /예산/);
+  assert.throws(() => model.decide({...computer,id:'expensive',choices:[{id:'replace',effect:{budget:-2000000000}}]}, 'replace', restored), /예산/);
   assert.equal(restored.getState(), before);
   globalThis.localStorage.setItem = () => { throw new Error('quota'); };
   assert.throws(() => restored.applyEffect({ id: 'storage-failure', budget: -1 }), /quota/);

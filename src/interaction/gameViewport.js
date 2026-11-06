@@ -8,7 +8,7 @@ document.body.append(screen);
 function resizeScreen() {
   const width = Math.max(1280, window.innerWidth);
   const scale = window.innerWidth / width;
-  const height = Math.max(1120, window.innerHeight / scale);
+  const height = Math.max(820, window.innerHeight / scale);
   screen.style.width = width + 'px';
   screen.style.height = height + 'px';
   screen.style.transform = 'scale(' + scale + ')';

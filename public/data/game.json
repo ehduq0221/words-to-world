@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "initialDate": {"year":2026,"month":3,"day":3},
+  "initialMetrics": {"budget":1280000000,"satisfaction":76,"reputation":68},
+  "semesterBaseCost": 25000000000,
+  "dayDurationMs": 2500,
+  "note": "예산·평가·목표 보상은 게임용 설정입니다. 학기 기본 지출 250억은 인건비·교육·시설 관리비를 단순화한 설정이며 실제 학교 결산이 아닙니다. 운영 수입은 operations.json에서 별도로 정산합니다.",
+  "calendarSource": "https://inu.ac.kr/bbs/safety/358/380929/download.do",
+  "calendar": [
+    {"start":"03-03","end":"03-03","label":"1학기 개강","kind":"term"},
+    {"start":"03-12","end":"03-12","label":"개교기념일","kind":"holiday"},
+    {"start":"06-09","end":"06-15","label":"1학기 기말시험","kind":"exam"},
+    {"start":"06-16","end":"06-22","label":"1학기 보강주간","kind":"term"},
+    {"start":"09-01","end":"09-01","label":"2학기 개강","kind":"term"},
+    {"start":"12-08","end":"12-14","label":"2학기 기말시험","kind":"exam"}
+  ]
+}

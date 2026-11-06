@@ -53,7 +53,8 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
       const entry = state.ledger.find(item => item.id === effectId(event, selected));
       const result = element('div', 'decision-result');
       result.setAttribute('role', 'status');
-      result.append(element('strong', '', selected.label), element('p', 'decision-effects', effectText(entry)), element('p', '', '“' + selected.response + '”'));
+      const nextDay = JSON.stringify(state.time.date) !== JSON.stringify(entry.date);
+      result.append(element('strong', '', selected.label), element('p', 'decision-effects', effectText(entry)), element('p', '', nextDay ? '“' + selected.response + '”' : '결정을 반영했습니다. 학생의 후속 이야기는 내일부터 들려와요.'));
       card.append(result);
     } else {
       const choices = element('div', 'decision-choices');
@@ -77,6 +78,7 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
   }
 
   function openEvent(event) {
+    window.dispatchEvent(new CustomEvent("campus:event-open", { detail: { title: event.title } }));
     const anchor = byBuilding.get(event.buildingId);
     onSelect(anchor.building, { focusMap: true });
     if (!api.getState().decisions.opened.includes(event.id)) {
@@ -113,23 +115,7 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     }
   }
 
-  function showMetrics(state) {
-    const { budget, satisfaction, reputation } = state.metrics;
-    document.querySelector('#hud-budget').textContent = '₩ ' + formatWon(budget);
-    document.querySelector('#hud-satisfaction').textContent = satisfaction;
-    document.querySelector('#hud-reputation').textContent = reputation;
-    const spent = state.ledger.reduce((sum, entry) => sum + Math.max(0, -entry.budget), 0);
-    const earned = state.ledger.reduce((sum, entry) => sum + Math.max(0, entry.budget), 0);
-    document.querySelector('#hud-budget-note').textContent = '선택 반영 ' + formatWon(earned - spent, true);
-    document.querySelector('#hud-satisfaction-note').textContent = '선택 누적 ' + (satisfaction - 76 > 0 ? '+' : '') + (satisfaction - 76);
-    document.querySelector('#hud-reputation-note').textContent = '선택 누적 ' + (reputation - 68 > 0 ? '+' : '') + (reputation - 68);
-    document.querySelector('#finance-income').textContent = formatWon(86000000 + earned, true);
-    document.querySelector('#finance-expense').textContent = formatWon(-62000000 - spent);
-    document.querySelector('#finance-balance').textContent = formatWon(24000000 + earned - spent, true) + ' 원';
-  }
-
   function render(state) {
-    showMetrics(state);
     const opened = [...state.decisions.opened].reverse().map(id => data.events.find(event => event.id === id)).filter(Boolean);
     const scroll = feed.scrollTop;
     feed.replaceChildren(...opened.map(event => eventCard(event, state)));
@@ -154,6 +140,5 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
   }
   api.registerArea('decisions', () => ({ opened: [] }));
   api.subscribe(render);
-  api.startGame();
   return { update: projectMarkers };
 }

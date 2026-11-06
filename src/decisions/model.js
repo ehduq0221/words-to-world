@@ -11,6 +11,8 @@ export function decide(event, choiceId, api) {
   if (resolvedChoice(event, api.getState())) return false;
   const choice = event.choices.find(item => item.id === choiceId);
   if (!choice) throw new Error('선택지를 확인해 주세요.');
+  if (choice.effect.budget > 0) throw new Error('학생 요청 보상은 만족도와 평판만 변경할 수 있습니다.');
+  if (api.getState().metrics.budget + choice.effect.budget < 0) throw new Error('예산이 부족해 실행할 수 없습니다. 다른 선택지를 골라 주세요.');
   return api.applyEffect({ id: effectId(event, choice), ...choice.effect, reason: `${event.title} · ${choice.label}`, source: 'decisions' });
 }
 export function formatWon(value, signed = false) {
