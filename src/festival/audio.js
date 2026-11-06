@@ -32,8 +32,10 @@ export function createFestivalAudio() {
       const buffer = context.createBuffer(1, context.sampleRate * .6, context.sampleRate);
       const samples = buffer.getChannelData(0);
       for (let i = 0; i < samples.length; i++) samples[i] = (Math.random() * 2 - 1) * Math.exp(-i / (samples.length * .12));
-      const source = context.createBufferSource(), gain = context.createGain();
-      source.buffer = buffer; gain.gain.value = .1; source.connect(gain).connect(context.destination); source.start();
+      for (let shot = 0; shot < 5; shot++) {
+        const source = context.createBufferSource(), gain = context.createGain();
+        source.buffer = buffer; gain.gain.value = .1; source.connect(gain).connect(context.destination); source.start(context.currentTime + shot * .48);
+      }
     },
     setGenre(value) { genre = value; step = 0; },
     pause() { if (context) context.suspend(); },

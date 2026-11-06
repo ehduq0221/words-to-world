@@ -11,7 +11,7 @@ export async function openFestivalPreview(plan, data, opener) {
     <header class="fp-top"><div><small>ONE DAY, OUR CAMPUS</small><h2></h2><p></p></div><button data-action="close" aria-label="미리보기 종료">닫기 ×</button></header>
     <div class="fp-caption" aria-live="polite"></div>
     <footer class="fp-controls"><div class="fp-tracks"></div><div class="fp-progress"><span></span></div>
-      <div class="fp-buttons"><button data-action="pause">일시정지</button><button data-action="restart">다시 보기</button><button data-action="overview" aria-pressed="false">지도에서 위치 보기</button><button data-action="sound" aria-pressed="false">소리 켜기</button><span>미리보기 · 게임 지표 변경 없음</span></div>
+      <div class="fp-buttons"><button data-action="pause">일시정지</button><button data-action="restart">다시 보기</button><button data-action="closeup" aria-pressed="false">무대 가까이 보기</button><button data-action="overview" aria-pressed="false">지도에서 위치 보기</button><button data-action="sound" aria-pressed="false">소리 켜기</button><span>미리보기 · 게임 지표 변경 없음</span></div>
     </footer>`;
   document.body.append(dialog); dialog.showModal();
   const canvasHost = dialog.querySelector('.fp-scene');
@@ -37,9 +37,16 @@ export async function openFestivalPreview(plan, data, opener) {
     paused = !paused; scene?.setPlaying(!paused); paused ? audio.pause() : audio.resume();
     event.target.textContent = paused ? '재생' : '일시정지';
   };
+  dialog.querySelector('[data-action="closeup"]').onclick = event => {
+    const enabled = event.target.getAttribute('aria-pressed') !== 'true';
+    event.target.setAttribute('aria-pressed', String(enabled)); event.target.textContent = enabled ? '주변 함께 보기' : '무대 가까이 보기';
+    const other = dialog.querySelector('[data-action="overview"]'); other.setAttribute('aria-pressed', 'false'); other.textContent = '지도에서 위치 보기';
+    scene?.setCloseup(enabled);
+  };
   dialog.querySelector('[data-action="overview"]').onclick = event => {
     const enabled = event.target.getAttribute('aria-pressed') !== 'true';
     event.target.setAttribute('aria-pressed', String(enabled)); event.target.textContent = enabled ? '무대로 돌아가기' : '지도에서 위치 보기'; scene?.setOverview(enabled);
+    const other = dialog.querySelector('[data-action="closeup"]'); other.setAttribute('aria-pressed', 'false'); other.textContent = '무대 가까이 보기';
   };
   dialog.querySelector('[data-action="restart"]').onclick = () => {
     seconds = 0; paused = false; stage = -1; fired.clear(); scene?.resetFireworks(); scene?.setPlaying(true); audio.resume();
