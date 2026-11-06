@@ -1,0 +1,13 @@
+/* 총장 결정 확인 창 (src/ui/confirm.js) */
+.ui-confirm { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: #1d2e2680; }
+.ui-confirm-box { width: min(420px, 100%); max-height: calc(100dvh - 32px); overflow: auto; background: #fff; border-radius: 14px; padding: 20px 20px 16px; box-shadow: 0 20px 50px #13241c40; }
+.ui-confirm-box h3 { margin: 0 0 14px; font-size: 16px; letter-spacing: -.04em; line-height: 1.4; color: #243d37; }
+.ui-confirm-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
+.ui-confirm-table th, .ui-confirm-table td { padding: 6px 4px; border-bottom: 1px solid #edf1eb; text-align: right; font-weight: 500; }
+.ui-confirm-table th:first-child { text-align: left; color: #6f8277; font-weight: 500; }
+.ui-confirm-table tr:first-child th { font-size: 10px; color: #98a397; }
+.ui-confirm-table tr.changed td:last-child { color: #2f654d; font-weight: 700; }
+.ui-confirm-note { margin: 6px 0 0; font-size: 11px; line-height: 1.6; color: #6c7d72; }
+.ui-confirm-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.ui-confirm-buttons button { border-radius: 8px; padding: 8px 14px; font-size: 12px; border: 1px solid #d4e0d6; background: #fff; color: #3c5946; }
+.ui-confirm-buttons .ui-confirm-ok { background: #2f654d; border-color: #2f654d; color: #fff; font-weight: 650; }

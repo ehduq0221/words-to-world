@@ -1,6 +1,6 @@
 // dev.html 전용. 3단계가 합쳐지면 stubGame.js와 함께 삭제합니다.
 import { startGame, getState, subscribe, devAdvanceDays } from './stubGame.js';
-import { initOperations } from './index.js';
+import { initOperations, planning } from './index.js';
 import { formatWon } from './menu.js';
 
 const data = await (async () => {
@@ -29,6 +29,10 @@ for (const [buildingId, name] of buildings) {
 document.querySelector('.dev-time').addEventListener('click', event => {
   const days = event.target.closest('[data-days]')?.dataset.days;
   if (!days) return;
+  if (days === 'window') {
+    for (let i = 0; i < 400 && !planning()?.open; i++) devAdvanceDays(1);
+    return;
+  }
   if (days !== 'semester') return devAdvanceDays(Number(days));
   const { semester } = getState().time;
   while (getState().time.semester === semester) devAdvanceDays(1);

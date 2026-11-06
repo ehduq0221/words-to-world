@@ -6,6 +6,7 @@
   <title>운영 기능 확인 · Words to World</title>
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="./operations.css">
+  <link rel="stylesheet" href="../ui/confirm.css">
   <style>
     body { overflow: auto; padding: 24px; }
     .dev { display: grid; grid-template-columns: 260px 1fr; gap: 20px; max-width: 980px; margin: 0 auto; }
@@ -23,7 +24,7 @@
   <main class="dev">
     <aside class="panel">
       <h1>운영 기능 확인</h1>
-      <p>3단계 게임 상태가 합쳐지기 전, 임시 구현으로 4단계를 확인하는 개발용 화면입니다. 건물을 고르면 지도에서 건물을 선택했을 때와 같은 이벤트를 보냅니다. 운영을 바꾸면 확인 창이 뜨고, 같은 결정은 다음 날(+1일)부터 다시 바꿀 수 있습니다.</p>
+      <p>3단계 게임 상태가 합쳐지기 전, 임시 구현으로 4단계를 확인하는 개발용 화면입니다. 건물을 고르면 지도에서 건물을 선택했을 때와 같은 이벤트를 보냅니다. 운영 방식은 학기 운영 결정이라 학기 중에는 바꿀 수 없고, 다음 학기 시작 30일 전부터 「다음 학기 계획」을 정할 수 있습니다. 계획은 확인 창을 거치고, 같은 항목은 하루에 한 번만 고칠 수 있으며, 학기 첫날 적용됩니다.</p>
       <div class="dev-buildings" id="dev-buildings"></div>
       <div id="facility-actions"></div>
     </aside>
@@ -31,6 +32,7 @@
       <div class="dev-time">
         <button data-days="1">+1일</button>
         <button data-days="30">+30일</button>
+        <button data-days="window">다음 결정 기간까지</button>
         <button data-days="semester">학기 정산까지</button>
       </div>
       <div class="dev-status" id="dev-status"></div>
