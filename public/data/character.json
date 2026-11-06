@@ -1,0 +1,344 @@
+{
+  "checkedAt": "2026-11-06",
+  "sources": [
+    "https://www.inu.ac.kr/inu/602/subview",
+    "https://www.inu.ac.kr/clis/12634/subview.do"
+  ],
+  "note": "공식 대학 안내의 학과·학부·전공 목록. 개편 명칭은 안내 페이지 기준이며 입학 전형별 모집단위와 다를 수 있습니다. 전자공학부 명칭은 2024 통계연보와 학과 선택 안내의 전자공학전공·반도체융합전공을 대조했습니다.",
+  "groups": [
+    {
+      "college": "인문대학",
+      "departments": [
+        {
+          "name": "국어국문학과",
+          "alias": ""
+        },
+        {
+          "name": "영어영문학과",
+          "alias": ""
+        },
+        {
+          "name": "독어독문학과",
+          "alias": ""
+        },
+        {
+          "name": "불어불문학과",
+          "alias": ""
+        },
+        {
+          "name": "일본지역문화학과",
+          "alias": ""
+        },
+        {
+          "name": "중어중국학과",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "자연과학대학",
+      "departments": [
+        {
+          "name": "수학과",
+          "alias": ""
+        },
+        {
+          "name": "물리학과",
+          "alias": ""
+        },
+        {
+          "name": "화학과",
+          "alias": ""
+        },
+        {
+          "name": "패션산업학과",
+          "alias": ""
+        },
+        {
+          "name": "해양학과",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "사회과학대학",
+      "departments": [
+        {
+          "name": "사회복지학과",
+          "alias": ""
+        },
+        {
+          "name": "미디어커뮤니케이션학과",
+          "alias": ""
+        },
+        {
+          "name": "문헌정보학과",
+          "alias": ""
+        },
+        {
+          "name": "창의인재개발학과",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "글로벌정경대학",
+      "departments": [
+        {
+          "name": "행정학과",
+          "alias": ""
+        },
+        {
+          "name": "정치외교학과",
+          "alias": ""
+        },
+        {
+          "name": "경제학과",
+          "alias": ""
+        },
+        {
+          "name": "Global Trade & Service학부",
+          "alias": "구 무역학부 · 2026학년도 신입생 명칭"
+        },
+        {
+          "name": "소비자학과",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "공과대학",
+      "departments": [
+        {
+          "name": "기계공학과",
+          "alias": ""
+        },
+        {
+          "name": "전기공학과",
+          "alias": ""
+        },
+        {
+          "name": "전자공학부",
+          "alias": ""
+        },
+        {
+          "name": "산업경영공학과",
+          "alias": ""
+        },
+        {
+          "name": "신소재공학과",
+          "alias": ""
+        },
+        {
+          "name": "안전공학과",
+          "alias": ""
+        },
+        {
+          "name": "에너지화학공학과",
+          "alias": ""
+        },
+        {
+          "name": "바이오-로봇시스템공학과",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "인공지능대학(정보기술대학)",
+      "departments": [
+        {
+          "name": "컴퓨터공학부",
+          "alias": ""
+        },
+        {
+          "name": "인공지능정보통신공학부",
+          "alias": "정보통신공학과"
+        },
+        {
+          "name": "인공지능시스템공학과",
+          "alias": "임베디드시스템공학과"
+        }
+      ]
+    },
+    {
+      "college": "경영대학",
+      "departments": [
+        {
+          "name": "경영학부",
+          "alias": ""
+        },
+        {
+          "name": "데이터과학과",
+          "alias": ""
+        },
+        {
+          "name": "세무회계학과",
+          "alias": ""
+        },
+        {
+          "name": "테크노경영학과",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "예술체육대학",
+      "departments": [
+        {
+          "name": "조형예술학부 한국화전공",
+          "alias": ""
+        },
+        {
+          "name": "조형예술학부 서양화전공",
+          "alias": ""
+        },
+        {
+          "name": "디자인학부",
+          "alias": ""
+        },
+        {
+          "name": "공연예술학과",
+          "alias": ""
+        },
+        {
+          "name": "스포츠과학부",
+          "alias": ""
+        },
+        {
+          "name": "운동건강학부",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "사범대학",
+      "departments": [
+        {
+          "name": "국어교육과",
+          "alias": ""
+        },
+        {
+          "name": "영어교육과",
+          "alias": ""
+        },
+        {
+          "name": "일어교육과",
+          "alias": ""
+        },
+        {
+          "name": "수학교육과",
+          "alias": ""
+        },
+        {
+          "name": "체육교육과",
+          "alias": ""
+        },
+        {
+          "name": "유아교육과",
+          "alias": ""
+        },
+        {
+          "name": "역사교육과",
+          "alias": ""
+        },
+        {
+          "name": "윤리교육과",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "도시과학대학",
+      "departments": [
+        {
+          "name": "도시행정학과",
+          "alias": ""
+        },
+        {
+          "name": "도시공학과",
+          "alias": ""
+        },
+        {
+          "name": "도시환경공학부 건설환경공학전공",
+          "alias": ""
+        },
+        {
+          "name": "도시환경공학부 환경공학전공",
+          "alias": ""
+        },
+        {
+          "name": "도시건축학부 건축공학전공",
+          "alias": ""
+        },
+        {
+          "name": "도시건축학부 도시건축학전공",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "생명과학기술대학",
+      "departments": [
+        {
+          "name": "생명과학부 생명과학전공",
+          "alias": ""
+        },
+        {
+          "name": "생명과학부 분자의생명전공",
+          "alias": ""
+        },
+        {
+          "name": "생명공학부 생명공학전공",
+          "alias": ""
+        },
+        {
+          "name": "생명공학부 나노바이오공학전공",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "융합자유전공대학",
+      "departments": [
+        {
+          "name": "자유전공학부",
+          "alias": ""
+        },
+        {
+          "name": "국제자유전공학부",
+          "alias": ""
+        },
+        {
+          "name": "융합학부",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "동북아국제통상물류학부",
+      "departments": [
+        {
+          "name": "동북아국제통상전공",
+          "alias": ""
+        },
+        {
+          "name": "스마트물류공학전공",
+          "alias": ""
+        },
+        {
+          "name": "IBE전공",
+          "alias": ""
+        }
+      ]
+    },
+    {
+      "college": "법학부",
+      "departments": [
+        {
+          "name": "법학부",
+          "alias": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+html[data-character-pending] body { visibility: hidden; }
+.character-card { padding: 17px; flex-shrink: 0; }
+.character-profile { display: flex; gap: 13px; align-items: center; margin-top: 15px; }
+.character-portrait { width: 64px; height: 82px; border-radius: 10px; background: #edf3e7; display: grid; place-items: center; flex: none; }
+.character-portrait svg { width: 49px; height: 70px; image-rendering: pixelated; }
+.character-identity { min-width: 0; overflow-wrap: anywhere; }
+.character-identity strong { display: block; font-size: 18px; letter-spacing: -.05em; }
+.character-identity span { display: block; font-size: 11px; color: #708270; margin-top: 6px; }
+.character-identity small { display: block; font-size: 10px; color: #9aa391; margin-top: 6px; }
+.character-card dl { margin: 16px 0 0; padding-top: 13px; border-top: 1px solid #e8ede5; display: grid; grid-template-columns: auto 1fr; gap: 9px; font-size: 10px; }
+.character-card dt { color: #879580; }
+.character-card dd { margin: 0; text-align: right; color: #5d735f; overflow-wrap: anywhere; }
+.character-edit { display: block; margin-top: 15px; padding: 8px 10px; background: #edf4e8; color: #527455; border: 1px solid #dce8d4; border-radius: 6px; font-size: 10px; text-align: center; text-decoration: none; }

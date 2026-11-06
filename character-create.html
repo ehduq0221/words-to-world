@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>나의 캐릭터 만들기 · Words to World</title>
+<link rel="stylesheet" href="./src/character/character.css">
+</head>
+<body>
+<main class="shell">
+ <div class="top"><button class="back" id="back" aria-label="뒤로">←</button><div class="steps" aria-label="캐릭터 생성 단계"><span class="active"></span><span></span><span></span></div><span class="brand">WORDS TO WORLD</span></div>
+ <div class="intro"><p id="subtitle">나의 캠퍼스 생활을 시작해요</p><h1 id="title">내 캐릭터의 모습을<br>골라 주세요</h1></div>
+ <section id="appearance" class="card">
+  <div class="selected-preview"><div class="large-portrait" id="selected-avatar"></div><div><strong>내 캐릭터의 모습</strong><p>마음에 드는 외형을 골라 주세요.</p></div></div>
+  <div class="avatars" id="avatars" role="group" aria-label="캐릭터 외형 선택"></div>
+ </section>
+ <form id="information" class="card form" hidden>
+  <label class="field"><span>이름</span><input id="name" name="name" maxlength="20" placeholder="이름을 입력해 주세요" autocomplete="off" required></label>
+  <section class="major-section" aria-label="주전공 선택">
+   <h2>주전공</h2>
+   <div data-major="main"></div>
+  </section>
+
+  <label class="field"><span>국적</span><input id="nationality" name="nationality" value="대한민국" maxlength="40" required></label>
+  <label class="field"><span>사는 도시</span><input id="city" name="city" value="서울시" maxlength="40" required></label>
+  <div><span class="field-label">성별</span><div class="gender"><label><input type="radio" name="gender" value="남성" checked><span>남성</span></label><label><input type="radio" name="gender" value="여성"><span>여성</span></label><label><input type="radio" name="gender" value="선택 안 함"><span>선택 안 함</span></label></div></div>
+  <details class="additional-majors">
+   <summary>복수전공 · 부전공 추가 <span aria-hidden="true">⌄</span></summary>
+   <section class="additional-major" aria-label="복수전공 선택">
+    <label class="additional-toggle"><input type="checkbox" name="hasDouble" value="yes"><span>복수전공 선택</span></label>
+    <div data-major="double" hidden></div>
+   </section>
+   <section class="additional-major" aria-label="부전공 선택">
+    <label class="additional-toggle"><input type="checkbox" name="hasMinor" value="yes"><span>부전공 선택</span></label>
+    <div data-major="minor" hidden></div>
+   </section>
+  </details>
+  <p class="department-source">학과·학부·전공은 <a href="https://www.inu.ac.kr/inu/602/subview" target="_blank" rel="noreferrer">인천대학교 공식 대학 안내</a>와 <a href="https://www.inu.ac.kr/clis/12634/subview.do" target="_blank" rel="noreferrer">2026학년도 명칭 안내</a>를 참고했습니다.</p>
+ </form>
+ <section id="confirmation" class="card confirm-profile" hidden></section>
+ <p class="error" id="error" role="alert" hidden></p>
+</main>
+<div class="bottom"><button class="primary" id="next">이 캐릭터로 할게요</button></div>
+<script type="module">
+import {initCharacter} from './src/character/index.js';
+initCharacter().catch(() => {
+ const error = document.querySelector('#error');
+ error.textContent = '캐릭터 자료를 불러올 수 없습니다. 새로고침해 주세요.';
+ error.hidden = false;
+});
+</script>
+</body>
+</html>

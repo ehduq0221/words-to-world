@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { initCharacterMap } from './character/card.js';
 import { loadCampus } from './data/loadCampus.js';
 import { createCampus } from './scene/createCampus.js?v=building-selection-2';
 import { createCamera } from './interaction/createCamera.js';
@@ -6,6 +7,7 @@ import { createLabels } from './interaction/createLabels.js?v=building-selection
 import { showBuildingInformation } from './interaction/gamePreview.js?v=building-selection-2';
 
 async function start() {
+  if (!await initCharacterMap()) return;
   const container = document.querySelector('#map');
   const status = document.querySelector('#status');
   try {

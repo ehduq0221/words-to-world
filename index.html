@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-character-pending>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Words to World · 인천대학교</title>
   <link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="./src/character/card.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
@@ -28,10 +29,12 @@
       <article><div class="student"><span class="avatar sage">이</span><div><b>기숙사 거주 학생</b><small>1학년 · 주거 환경</small></div></div><p>“학교에 공부할 곳은 많은데 기숙사 자리가 너무 부족해요.”</p><span class="tag">기숙사 수용 인원</span></article>
     </section>
     <section class="panel finance"><div class="section-heading"><h2>이번 달 예산</h2><span>예시</span></div><div class="finance-row"><span>예상 수입</span><b>+8,600만</b></div><div class="finance-row"><span>예상 지출</span><b>−6,200만</b></div><div class="balance"><span>예상 운영 잔액</span><strong>+2,400만 원</strong></div></section>
+    <section class="panel character-card" id="character-card" aria-label="내 캐릭터" hidden></section>
   </aside>
   <div class="map-controls">왼쪽 드래그 · 회전 <span>오른쪽 드래그 · 이동</span> 휠 · 확대·축소</div>
   <footer><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors · ODbL</a> · <a href="./public/data/SOURCE.md">지도 출처</a></span><span>운영 수치와 학생 반응은 화면 예시입니다.</span></footer>
   <p id="status" role="status">캠퍼스를 불러오고 있습니다.</p>
+  <script type="module" src="./src/interaction/gameViewport.js"></script>
   <script type="module" src="./src/main.js?v=building-selection-2"></script>
 </body>
 </html>
