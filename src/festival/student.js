@@ -18,13 +18,21 @@ export function getSelectedStudent(storage = localStorage) {
     hairstyle: female ? index % 2 ? 'bob' : 'long' : 'short' };
 }
 export function studentPortrait(student) {
-  // 같은 선택의 헤어·피부·재킷 색을 사용하는 축제용 픽셀 초상화.
-  return `<svg viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" shape-rendering="crispEdges">
-    <path fill="${student.hair}" d="M7 4h18v${student.hairstyle === 'long' ? 22 : student.hairstyle === 'bob' ? 17 : 10}H7z"/>
-    <path fill="${student.skin}" d="M9 9h14v12H9zM5 26h4v8H5zm18 0h4v8h-4z"/>
-    <path fill="${student.hair}" d="M7 5h18v5h-4v-2h-6v3H9v3H7z"/>
-    <path fill="#26333c" d="M12 13h2v2h-2zm7 0h2v2h-2zM10 34h5v8h-5zm8 0h5v8h-5z"/>
-    <path fill="${student.jacket}" d="M8 23h16v13H8zM6 24h3v6H6zm17 0h3v6h-3z"/>
-    <path fill="#f4f2e3" d="M14 23h5v11h-5z"/><path fill="#8ba88c" d="M16 25h2v7h-2z"/>
+  // 선택 팔레트를 유지하는 축제용 초상. 3D 모델과 재킷·머리·피부색을 공유합니다.
+  const long = student.hairstyle !== 'short';
+  return `<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect width="64" height="76" rx="16" fill="#dce9df"/>
+    <path fill="${student.hair}" d="M13 29C11 2 53 0 52 30L${long ? '55 54H9' : '50 36H14'}Z"/>
+    <path fill="${student.jacket}" d="M6 76V61Q7 48 24 48h16q17 0 18 13v15Z"/>
+    <path fill="#f4f2e3" d="m25 50 7 7 7-7-2 26H27Z"/>
+    <path fill="${student.skin}" d="M26 41h12v12q-6 9-12 0Z"/>
+    <ellipse cx="32" cy="29" rx="17" ry="20" fill="${student.skin}"/>
+    <path fill="${student.hair}" d="M15 29Q8 5 31 7q24-3 20 22-7-2-11-13-6 12-23 9Z"/>
+    <g fill="#26333c"><ellipse cx="25" cy="30" rx="2" ry="2.6"/><ellipse cx="39" cy="30" rx="2" ry="2.6"/></g>
+    <g fill="#fff"><circle cx="25.5" cy="29.2" r=".8"/><circle cx="39.5" cy="29.2" r=".8"/></g>
+    <g fill="#d89485" opacity=".6"><ellipse cx="22" cy="36" rx="3.3" ry="1.6"/><ellipse cx="42" cy="36" rx="3.3" ry="1.6"/></g>
+    <path d="M28 39q4 4 8 0" fill="none" stroke="#965c57" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="m23 51-5 7 9 5m14-12 5 7-9 5" fill="none" stroke="#fff" opacity=".5"/>
+    <circle cx="18" cy="65" r="3" fill="#e7eddb"/>
   </svg>`;
 }

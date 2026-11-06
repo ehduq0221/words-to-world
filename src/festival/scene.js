@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { createFestivalAvatar } from './avatar.js';
 import { getPerformanceEnvironment } from './environment.js';
 import { createFireworks } from './fireworks.js';
 import { getArtistProfile, FIREWORK_SITES } from './profiles.js';
@@ -94,18 +95,9 @@ export async function createFestivalScene(container, location) {
   const performers = [];
   const wardrobe = [0xeee1ff, 0x9ddfce, 0xffb6d2, 0xb0cafa, 0xffdba0, 0xdfb7f4];
   for (let i = 0; i < 6; i++) {
-    const person = new THREE.Group(); group.add(person);
-    const outfit = material(wardrobe[i]), skin = material(0xe9bea0), hair = material(i % 2 ? 0x543b35 : 0x252332);
-    box(0, 9, 0, 2.4, 4, 1.6, outfit, person);
-    box(-.7, 5.8, 0, .8, 3, .9, dark, person); box(.7, 5.8, 0, .8, 3, .9, dark, person);
-    box(0, 12.2, 0, 2, 2, 1.8, skin, person); box(0, 13.2, -.2, 2.2, 1, 1.9, hair, person);
-    const longHair = new THREE.Group(); person.add(longHair);
-    box(-1.05, 11.5, -.3, .65, 3.3, 1.7, hair, longHair); box(1.05, 11.5, -.3, .65, 3.3, 1.7, hair, longHair); box(0, 11.2, -.95, 2.1, 4, .55, hair, longHair);
-    const ponytail = box(0, 12, -1.5, 1.1, 3.5, 1, hair, person);
-    const skirt = box(0, 7, 0, 2.8, 1.6, 2, outfit, person);
-    box(-.4, 12.3, .95, .2, .25, .12, dark, person); box(.4, 12.3, .95, .2, .25, .12, dark, person);
-    const arms = [-1, 1].map(side => { const pivot = new THREE.Group(); pivot.position.set(side * 1.5, 10, 0); person.add(pivot); box(0, -1.3, 0, .7, 3, .8, outfit, pivot); return pivot; });
-    performers.push({ person, arms, outfit, longHair, ponytail, skirt });
+    const actor = createFestivalAvatar({ jacket: wardrobe[i], hair: i % 2 ? '#543b35' : '#252332', stage: true });
+    actor.person.scale.setScalar(1.55); actor.person.position.y = 6; group.add(actor.person);
+    performers.push(actor);
   }
   const decor = new THREE.Group(); group.add(decor);
   const screenCanvas = document.createElement('canvas'); screenCanvas.width = 1024; screenCanvas.height = 512;
@@ -113,28 +105,29 @@ export async function createFestivalScene(container, location) {
   const screenMaterial = new THREE.MeshBasicMaterial({ map: screenTexture });
   const screen = new THREE.Mesh(new THREE.PlaneGeometry(41, 22), screenMaterial); screen.position.set(0, 19, -7.9); group.add(screen);
   const crowd = [];
-  const bodyGeo = new THREE.BoxGeometry(1.5, 3, 1.5), headGeo = new THREE.SphereGeometry(.95, 6, 5), stickGeo = new THREE.BoxGeometry(.35, 3, .35);
+  const bodyGeo = new THREE.CapsuleGeometry(.7, 1.6, 3, 8), headGeo = new THREE.SphereGeometry(.95, 12, 8), stickGeo = new THREE.BoxGeometry(.35, 3, .35);
   const crowdClothes = [0x7a9bc1, 0xb9789c, 0x698d70, 0xc9a16c, 0x8b7cbb, 0xb1c4c1].map(c => material(c));
   const skinTones = [0xf0c5a3, 0xd5a17d, 0xb67d58].map(c => material(c));
   const hairMat = material(0x2d2832);
+  const crowdHairGeo = new THREE.SphereGeometry(.99, 10, 6, 0, Math.PI * 2, 0, Math.PI * .55);
   for (let i = 0; i < 168; i++) {
     const person = new THREE.Group();
     person.position.set((i % 14 - 6.5) * 4.7, 0, 23 + Math.floor(i / 14) * 4.4);
     const body = new THREE.Mesh(bodyGeo, crowdClothes[i % crowdClothes.length]); body.position.y = 2; person.add(body);
     const head = new THREE.Mesh(headGeo, skinTones[i % 3]); head.position.y = 4.5; person.add(head);
     const stick = new THREE.Mesh(stickGeo, i % 2 ? glow : accent); stick.position.set(1.2, 5, 0); person.add(stick);
-    box(0, 5.1, -.15, 1.7, .7, 1.5, hairMat, person);
+    const cap = new THREE.Mesh(crowdHairGeo, hairMat); cap.position.set(0, 4.6, 0); person.add(cap);
     crowd.push(person); group.add(person);
   }
-  const visitor = new THREE.Group(); visitor.name = 'selected-festival-student'; group.add(visitor);
-  const visitorJacket = material(0x283d58), visitorSkin = material(0xf0d0ae), visitorHair = material(0x352c29), visitorGlow = material(0xc6ff70, true);
-  box(0, 2.7, 0, 1.9, 2.3, 1.1, visitorJacket, visitor);
-  box(-.45, .9, 0, .65, 1.8, .75, dark, visitor); box(.45, .9, 0, .65, 1.8, .75, dark, visitor);
-  box(0, 4.7, 0, 1.6, 1.6, 1.3, visitorSkin, visitor); box(0, 5.5, -.1, 1.8, .7, 1.5, visitorHair, visitor);
-  const visitorLongHair = box(0, 4.1, .65, 1.8, 2.7, .55, visitorHair, visitor);
-  const visitorArm = new THREE.Group(); visitorArm.position.set(-1.2, 3.3, 0); visitor.add(visitorArm);
-  box(0, -.6, 0, .6, 1.7, .7, visitorJacket, visitorArm); box(0, 1.1, 0, .35, 2.7, .35, visitorGlow, visitorArm);
-  box(1.2, 2.6, 0, .6, 1.7, .7, visitorJacket, visitor);
+  const visitorRig = createFestivalAvatar();
+  const visitor = visitorRig.person; visitor.name = 'selected-festival-student'; visitor.rotation.y = Math.PI; group.add(visitor);
+  const visitorJacket = visitorRig.outfit, visitorSkin = visitorRig.skin, visitorHair = visitorRig.hair;
+  const visitorLongHair = visitorRig.longHair, visitorArm = visitorRig.arms[0];
+  const visitorGlow = material(0xc6ff70, true);
+  const myStick = new THREE.Group(); myStick.position.set(0, -1.6, .1); visitorArm.add(myStick);
+  box(0, -.1, 0, .18, .6, .18, white, myStick);
+  const stickBulb = new THREE.Mesh(new THREE.SphereGeometry(.3, 10, 8), visitorGlow); stickBulb.position.y = -.6; myStick.add(stickBulb);
+  let jumpStarted = -100;
   const visitorHalo = new THREE.Mesh(new THREE.RingGeometry(1.8, 2.1, 32), new THREE.MeshBasicMaterial({ color: 0xf3f4a7, side: THREE.DoubleSide })); visitorHalo.rotation.x = -Math.PI / 2; visitorHalo.position.y = .4; visitor.add(visitorHalo);
   const visitorTagCanvas = document.createElement('canvas'); visitorTagCanvas.width = 256; visitorTagCanvas.height = 64;
   const visitorTagTexture = new THREE.CanvasTexture(visitorTagCanvas);
@@ -167,7 +160,8 @@ export async function createFestivalScene(container, location) {
   });
   const backCount = 396;
   const backBodies = new THREE.InstancedMesh(bodyGeo, white, backCount), backHeads = new THREE.InstancedMesh(headGeo, white, backCount), backSticks = new THREE.InstancedMesh(stickGeo, glow, backCount);
-  group.add(backBodies, backHeads, backSticks);
+  const backHair = new THREE.InstancedMesh(crowdHairGeo, hairMat, backCount);
+  group.add(backBodies, backHeads, backSticks, backHair);
   const backDummy = new THREE.Object3D();
   for (let i = 0; i < backCount; i++) { backBodies.setColorAt(i, crowdClothes[i % crowdClothes.length].color); backHeads.setColorAt(i, skinTones[i % 3].color); }
   const booths = new THREE.Group(); group.add(booths);
@@ -330,22 +324,25 @@ export async function createFestivalScene(container, location) {
       person.position.z = profile.formation === 'arc' ? Math.abs(i - 2.5) * 1.4 : profile.formation === 'zigzag' ? (i % 2) * 4 : 0;
       person.visible = i < count;
       const beat = t * profile.tempo / 60 * Math.PI;
-      person.position.y = profile.dance === 'bounce' ? Math.max(0, Math.sin(beat + i)) * 1.1 : 0;
+      person.position.y = 6 + (profile.dance === 'bounce' ? Math.max(0, Math.sin(beat + i)) * 1.1 : 0);
       person.rotation.z = Math.sin(beat * (profile.dance === 'wave' ? .35 : .7) + i * .4) * .08;
       arms.forEach((arm, side) => { arm.rotation.z = Math.sin(beat * .5 + i + side) * (profile.dance === 'sharp' ? 1.4 : .8); });
     });
-    visitor.position.set(visitorX, .3, visitorZ);
-    visitorArm.rotation.z = elapsed < visitorWaveUntil ? -1 + Math.sin(t * 5) * .7 : -.2;
+    const jumpPhase = Math.min(1, (elapsed - jumpStarted) / .85);
+    visitor.position.set(visitorX, .3 + (reducedMotion ? 0 : Math.sin(jumpPhase * Math.PI) * 3.5), visitorZ);
+    visitorRig.arms[1].rotation.z = elapsed - jumpStarted < .85 ? -2.6 : .12;
+    visitorArm.rotation.z = elapsed < visitorWaveUntil ? 2.5 + Math.sin(t * 3) * .45 : .2;
     for (let i = 0; i < backCount; i++) {
       const x = (i % 22 - 10.5) * 4, z = 79 + Math.floor(i / 22) * 3;
       const jump = genre === 'indie' ? 0 : Math.max(0, Math.sin(t * 4 + i)) * (elapsed < cheerUntil ? 3 : 1.3);
-      const hidden = Math.hypot(x - visitorX, z - visitorZ) < 4 || (view === 'inside' && z > visitorZ && Math.abs(x - visitorX) < 12);
+      const hidden = Math.hypot(x - visitorX, z - visitorZ) < 4 || (view === 'inside' && z > visitorZ && Math.abs(x - visitorX) < 12) || (view === 'inside' && z > visitorZ - 8 && Math.abs(x - visitorX) < 5);
       backDummy.scale.setScalar(hidden ? 0 : 1); backDummy.rotation.set(0, 0, Math.sin(t + i) * .04);
       backDummy.position.set(x, 2 + jump, z); backDummy.updateMatrix(); backBodies.setMatrixAt(i, backDummy.matrix);
       backDummy.position.y = 4.5 + jump; backDummy.updateMatrix(); backHeads.setMatrixAt(i, backDummy.matrix);
+      backDummy.position.y = 4.6 + jump; backDummy.updateMatrix(); backHair.setMatrixAt(i, backDummy.matrix);
       backDummy.position.set(x + 1.2, 5 + jump, z); backDummy.updateMatrix(); backSticks.setMatrixAt(i, backDummy.matrix);
     }
-    backBodies.instanceMatrix.needsUpdate = true; backHeads.instanceMatrix.needsUpdate = true; backSticks.instanceMatrix.needsUpdate = true;
+    backBodies.instanceMatrix.needsUpdate = true; backHeads.instanceMatrix.needsUpdate = true; backHair.instanceMatrix.needsUpdate = true; backSticks.instanceMatrix.needsUpdate = true;
     staffArms.forEach((arm, i) => { arm.rotation.z = Math.sin(t * .6 + i) * .09; });
     decor.rotation.z = profile.design === 'bloom' ? Math.sin(t * .4) * .02 : 0;
     crowd.forEach((person, i) => {
@@ -373,7 +370,7 @@ export async function createFestivalScene(container, location) {
     setView(mode) { restoreView = null; applyView(mode); },
     setFireworkPosition(id) { positionFireworks(id); if (view === 'fireworks') applyView('fireworks'); },
     moveVisitor(dx, dz) { visitorX = THREE.MathUtils.clamp(visitorX + dx, -25, 25); visitorZ = THREE.MathUtils.clamp(visitorZ + dz, 26, 145); restoreView = null; applyView('inside'); },
-    cheer() { cheerUntil = elapsed + 2; },
+    cheer() { cheerUntil = elapsed + 2; if (elapsed - jumpStarted >= .85) jumpStarted = elapsed; visitorWaveUntil = elapsed + 1.5; },
     waveLightstick(color) { cheerUntil = elapsed + 1.5; visitorWaveUntil = elapsed + 1.5; if (color) { visitorGlow.color.set(color); visitorGlow.emissive.set(color); } },
     setVisitor(student) { visitorName = student.name;
       const ctx = visitorTagCanvas.getContext('2d'); ctx.clearRect(0, 0, 256, 64); ctx.fillStyle = '#18342ded'; ctx.fillRect(0, 0, 256, 64); ctx.fillStyle = '#e9ffd5'; ctx.font = 'bold 27px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(`${student.selected ? '나' : '체험'} · ${student.name}`, 128, 43, 242); visitorTagTexture.needsUpdate = true;

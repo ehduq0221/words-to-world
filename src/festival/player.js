@@ -21,12 +21,13 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
     <div class="fp-my-stick" aria-hidden="true"><span></span></div><div class="fp-caption" aria-live="polite"></div><div class="fp-cheer" aria-live="polite"></div>
     <footer class="fp-controls"><div class="fp-tracks"></div><div class="fp-progress"><span></span></div>
       <nav class="fp-view-modes" aria-label="축제 체험 시점"><button data-view="outside">밖에서 보기</button><button data-view="inside">관객 속으로 입장</button><button data-view="map">캠퍼스 전체</button></nav>
-      <div class="fp-participate"><span>직접 즐기기</span><button data-action="cheer">🙌 환호하기 · Space</button><button data-action="lightstick" aria-pressed="false">✦ 응원봉 흔들기 · L</button><button data-action="photo">📷 공연 사진 저장 · P</button><button data-move="-5,0" aria-label="관객석 왼쪽 이동">←</button><button data-move="0,-5" aria-label="무대 쪽으로 이동">앞으로</button><button data-move="0,5" aria-label="무대에서 뒤로 이동">뒤로</button><button data-move="5,0" aria-label="관객석 오른쪽 이동">→</button></div>
+      <div class="fp-participate"><span>직접 즐기기</span><button data-action="cheer">🙌 점프하며 환호 · Space</button><button data-action="lightstick" aria-pressed="false">✦ 응원봉 흔들기 · L</button><button data-action="photo">📷 공연 사진 저장 · P</button><button data-move="-5,0" aria-label="관객석 왼쪽 이동">←</button><button data-move="0,-5" aria-label="무대 쪽으로 이동">앞으로</button><button data-move="0,5" aria-label="무대에서 뒤로 이동">뒤로</button><button data-move="5,0" aria-label="관객석 오른쪽 이동">→</button></div>
       <div class="fp-rhythm"><button data-action="rhythm">✦ 박자에 맞춰 응원봉 흔들기 · F</button><div class="fp-beat-track" aria-hidden="true"><i></i><b></b></div><span class="fp-beat-result" aria-live="polite">반짝이는 구간에서 천천히 흔들어요</span><div class="fp-stick-colors" aria-label="응원봉 색상"></div></div><div class="fp-pyro-controls"><label>폭죽 위치 <select aria-label="미리보기 폭죽 위치"></select></label><button data-action="fireworks">🎆 지금 폭죽 미리보기</button><small>폭죽이 터질 때 하늘이 잘 보이는 시점으로 잠시 이동해요.</small></div>
       <div class="fp-buttons"><button data-action="pause">일시정지</button><button data-action="restart">다시 보기</button><button data-action="sound" aria-pressed="false">소리 켜기</button><span>${fireworksOnly ? '폭죽 전용 · 종료할 때까지 체험 가능' : quick ? '빠른 보기 · 2배속' : '미리보기 · 게임 지표 변경 없음'}</span></div>
     </footer>`;
   const tools = document.createElement('details'); tools.className = 'fp-extra-tools';
   const summary = document.createElement('summary'); summary.textContent = '이동 · 사진 · 폭죽 도구'; tools.append(summary);
+  dialog.querySelector('.fp-rhythm').prepend(dialog.querySelector('[data-action="cheer"]'));
   tools.append(dialog.querySelector('.fp-participate'), dialog.querySelector('.fp-pyro-controls'));
   dialog.querySelector('.fp-buttons').before(tools);
   document.body.append(dialog); dialog.showModal();
@@ -68,7 +69,10 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
     dialog.querySelector('.fp-my-stick').classList.toggle('visible', mode === 'inside' && waving);
   }
   function cheer() {
-    scene?.cheer(); audio.cheer(); const text = dialog.querySelector('.fp-cheer');
+    if (!scene) return;
+    setView('inside');
+    if (paused) { paused = false; scene.setPlaying(true); audio.resume(); dialog.querySelector('[data-action="pause"]').textContent = '일시정지'; }
+    scene.cheer(); audio.cheer(); const text = dialog.querySelector('.fp-cheer');
     text.textContent = '와아아! 오늘 이 무대, 우리 함께!'; text.classList.remove('active'); void text.offsetWidth; text.classList.add('active');
     clearTimeout(cheerTimer); cheerTimer = setTimeout(() => { text.textContent = ''; }, 1700);
   }
@@ -84,10 +88,10 @@ export async function openFestivalPreview(plan, data, opener, options = {}) {
     if (event.code === 'KeyL' && scene) { event.preventDefault(); wave(); return; }
     if (event.code === 'KeyF' && scene) { event.preventDefault(); tapBeat(); return; }
     if (event.code === 'KeyP' && scene) { event.preventDefault(); takePhoto(); return; }
+    if (event.code === 'Space' && scene) { event.preventDefault(); if (!event.repeat) cheer(); return; }
     if (event.target.matches('button')) return;
     const moves = { ArrowLeft: [-5, 0], ArrowRight: [5, 0], ArrowUp: [0, -5], ArrowDown: [0, 5] };
     if (moves[event.key] && scene) { event.preventDefault(); setView('inside'); scene.moveVisitor(...moves[event.key]); }
-    if (event.code === 'Space' && scene) { event.preventDefault(); cheer(); }
   });
   function wave() {
     waving = !waving;
