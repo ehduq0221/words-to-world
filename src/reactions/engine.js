@@ -2,7 +2,7 @@
 // area는 게임 상태의 reactions 영역, config는 public/data/reactions.json입니다.
 
 export function createInitialArea() {
-  return { seq: 0, dayCount: 0, issues: {}, snapshots: {}, feed: [], recent: [] };
+  return { seq: 0, dayCount: 0, pendingSince: null, issues: {}, snapshots: {}, feed: [], recent: [] };
 }
 
 export function getPath(source, path) {
@@ -198,5 +198,6 @@ export function updateIssues(area, config, lines, state, date) {
     push({ type: `${issue.type}.resolved`, kind: 'resolved', issueId, buildingId: issue.buildingId, cause: issue.cause, priority: '해결', values: withChanges(current, previous[issueId] ?? issue.values), persona: issue.persona });
   }
   next.snapshots = Object.fromEntries(snapshots);
+  next.pendingSince = null;
   return { area: next, added };
 }

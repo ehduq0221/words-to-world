@@ -59,10 +59,11 @@ const advanceUntilEvent = () => {
 };
 
 // [그룹 이름, [[버튼 이름, 동작, 현재 선택 여부]]]
+// [그룹 이름, 버튼 목록, 결정 키]. 결정 키가 있는 그룹은 플레이어 결정이라 확인 창과 하루 한 번 규칙을 따릅니다.
 const groups = [
-  ['기숙사비 (모든 기숙사)', [['인하', 'low'], ['현재 요금', 'normal'], ['인상', 'high']].map(([label, key]) => [label, () => { sim.feeLevel = key; applySim(); }, () => sim.feeLevel === key])],
-  ...['dorm-1', 'dorm-2'].map(id => [`${DORMS[id].name} 운영하는 방`, [0.5, 0.75, 1].map(rate => [`${rate * 100}%`, () => { sim.open[id] = rate; applySim(); }, () => sim.open[id] === rate])]),
-  ...Object.entries(CAFETERIAS).map(([id, item]) => [`${item.name} 운영`, [['직접 운영', 'direct'], ['임대', 'lease']].map(([label, mode]) => [label, () => { sim.cafeterias[id] = mode; applySim(); }, () => sim.cafeterias[id] === mode])]),
+  ['기숙사비 (모든 기숙사)', [['인하', 'low'], ['현재 요금', 'normal'], ['인상', 'high']].map(([label, key]) => [label, () => { sim.feeLevel = key; applySim(); }, () => sim.feeLevel === key]), 'feeLevel'],
+  ...['dorm-1', 'dorm-2'].map(id => [`${DORMS[id].name} 운영하는 방`, [0.5, 0.75, 1].map(rate => [`${rate * 100}%`, () => { sim.open[id] = rate; applySim(); }, () => sim.open[id] === rate]), `openRate:${id}`]),
+  ...Object.entries(CAFETERIAS).map(([id, item]) => [`${item.name} 운영`, [['직접 운영', 'direct'], ['임대', 'lease']].map(([label, mode]) => [label, () => { sim.cafeterias[id] = mode; applySim(); }, () => sim.cafeterias[id] === mode]), `mode:${id}`]),
   ['학생 편의성', [58, 66, 72, 82].map(value => [String(value), () => { sim.convenience = value; applySim(); }, () => sim.convenience === value])],
   ['학생 만족도', [30, 40, 60, 80].map(value => [String(value), () => setMetric('satisfaction', value), () => getState().metrics.satisfaction === value])],
   ['학교 평판', [35, 60, 80].map(value => [String(value), () => setMetric('reputation', value), () => getState().metrics.reputation === value])],
@@ -82,6 +83,8 @@ function explain(label, before, changedValues) {
   }
   if (!changedValues) {
     result.textContent = `「${label}」 → 이미 선택된 상태라 바뀐 것이 없어요.`;
+  } else if (after.pendingSince !== null && after.pendingSince !== undefined) {
+    result.textContent = `「${label}」 → 바뀐 내용을 기록했어요. 학생들의 반응은 내일부터 들려와요. 「+1일」을 눌러 보세요.`;
   } else if (label.startsWith('+') || label.includes('학기') || label.includes('일정')) {
     result.textContent = `「${label}」 → 이 기간에는 학사 일정 반응이나, 28일 넘게 이어진 민원이 없어 새 반응이 없어요.`;
   } else {
@@ -89,9 +92,16 @@ function explain(label, before, changedValues) {
   }
 }
 
+// 4단계 운영 메뉴의 결정 규칙을 흉내 냅니다: 확인 창 한 번, 같은 결정은 하루 한 번.
+// 실제 확인 창(지금/결정 후 비교 표)은 4단계 운영 메뉴에 있습니다.
+const decidedOn = {};
+const today = () => { const { year, month, day } = getState().time.date; return `${year}-${month}-${day}`; };
+const isDecisionLocked = key => decidedOn[key] === today();
+
 const controls = document.querySelector('#dev-controls');
 const pressedChecks = [];
-for (const [title, buttons] of groups) {
+const lockedGroups = [];
+for (const [title, buttons, decisionKey] of groups) {
   const group = document.createElement('div');
   group.className = 'dev-group';
   const heading = document.createElement('h3');
@@ -104,11 +114,24 @@ for (const [title, buttons] of groups) {
     button.addEventListener('click', () => {
       const before = getState().reactions;
       const snapshot = JSON.stringify([getState().operations.summary, getState().metrics, getState().time]);
+      if (decisionKey) {
+        if (isPressed()) return explain(`${title} ${label}`, before, false);
+        if (isDecisionLocked(decisionKey)) {
+          result.textContent = `「${title} ${label}」 → 오늘 이미 결정했어요. 내일부터 다시 바꿀 수 있어요.`;
+          return;
+        }
+        if (!window.confirm(`「${title}」을(를) 「${label}」(으)로 결정할까요?\n확인하면 오늘은 다시 바꿀 수 없고, 학생 반응은 내일부터 들려와요.`)) {
+          result.textContent = `「${title} ${label}」 → 취소했어요. 바뀐 것이 없어요.`;
+          return;
+        }
+        decidedOn[decisionKey] = today();
+      }
       action();
       explain(`${title} ${label}`.replace(/^시간 /, ''), before, snapshot !== JSON.stringify([getState().operations.summary, getState().metrics, getState().time]));
     });
     row.append(button);
   }
+  if (decisionKey) lockedGroups.push([decisionKey, heading, row, title]);
   group.append(heading, row);
   controls.append(group);
 }
@@ -116,6 +139,11 @@ for (const [title, buttons] of groups) {
 const won = value => `${Math.round(value / 1e8).toLocaleString('ko-KR')}억`;
 function show(state) {
   for (const [button, isPressed] of pressedChecks) button.setAttribute('aria-pressed', String(isPressed()));
+  for (const [key, heading, row, title] of lockedGroups) {
+    const locked = isDecisionLocked(key);
+    heading.textContent = locked ? `${title} · 오늘 결정함` : title;
+    for (const button of row.querySelectorAll('button')) button.disabled = locked;
+  }
   const { date } = state.time;
   const summary = state.operations.summary;
   const dormText = Object.values(summary.dorms).map(dorm => `${dorm.name} 대기 ${dorm.waiting}명`).join(', ');

@@ -56,13 +56,18 @@ export function addReaction({ type, buildingId = null, cause = '', values = {} }
   return reaction;
 }
 
+// 새 게임을 막 시작해 아직 한 번도 확인하지 않은 상태. 시작할 때의 민원은 결정에 대한 반응이 아니므로 바로 보여 줍니다.
+function isFreshGame(area) {
+  return area.seq === 0 && Object.keys(area.snapshots ?? {}).length === 0;
+}
+
 function checkIssues() {
   const state = getState();
   if (!config || !state?.[AREA]) return;
   updateArea(AREA, area => updateIssues(area, config, lines, state, state.time.date).area);
 }
 
-// 조건이 읽는 값이 바뀌었는지 확인합니다. 운영 결정 직후 민원이 바로 생기거나 해결되도록 합니다.
+// 조건이 읽는 값이 바뀌었는지 확인합니다. 바뀌면 다음 날 민원을 다시 확인합니다.
 function watchedValues(state) {
   return config.rules.map(rule => getPath(state, rule.each ?? rule.path));
 }
@@ -84,15 +89,26 @@ export function initReactions() {
       }
       return next;
     });
-    if (getState()[AREA].dayCount % config.checkEveryDays === 0) checkIssues();
+    // 결정 등으로 값이 바뀐 날의 다음 날, 그리고 7일마다 확인합니다.
+    const { dayCount, pendingSince } = getState()[AREA];
+    const pendingDue = pendingSince !== null && pendingSince !== undefined && dayCount > pendingSince;
+    if (pendingDue || dayCount % config.checkEveryDays === 0) checkIssues();
   });
   subscribe(state => {
     if (!config || !state?.[AREA]) return;
     const values = watchedValues(state);
     if (changed(values)) {
       watched = values;
-      checkIssues();
-      return;
+      if (isFreshGame(state[AREA])) {
+        checkIssues();
+        return;
+      }
+      // 결정에 대한 반응은 다음 날부터 나옵니다(공통 약속 「플레이어 결정」). 오늘은 확인할 날짜만 기록합니다.
+      const area = state[AREA];
+      if (area.pendingSince === null || area.pendingSince === undefined) {
+        updateArea(AREA, current => ({ ...current, pendingSince: current.dayCount }));
+        return;
+      }
     }
     renderReactionPanel(state[AREA], config);
   });
@@ -104,7 +120,8 @@ export function initReactions() {
     registerDialogues(ownLines);
     if (getState()?.[AREA]) {
       watched = watchedValues(getState());
-      checkIssues();
+      if (isFreshGame(getState()[AREA])) checkIssues();
+      else renderReactionPanel(getState()[AREA], config);
     }
     return config;
   });

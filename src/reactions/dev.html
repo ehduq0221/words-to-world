@@ -15,6 +15,7 @@
     .dev p.dev-note { font-size: 11px; color: #708578; line-height: 1.7; margin: 0 0 6px; }
     .dev-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px 16px; }
     .dev-group h3 { font-size: 11px; margin: 0 0 5px; color: #4d6656; }
+    .dev button:disabled { opacity: .45; cursor: not-allowed; }
     .dev-group div { display: flex; flex-wrap: wrap; gap: 5px; }
     .dev button { border: 1px solid #d4e0d6; background: #fff; border-radius: 6px; padding: 5px 9px; font-size: 11px; color: #2f654d; }
     .dev button[aria-pressed=true] { background: #2f654d; border-color: #2f654d; color: #fff; }
@@ -34,7 +35,7 @@
     <section class="panel">
       <h1>학생 반응 확인</h1>
       <p class="dev-note">3단계 게임 상태와 4단계 운영이 합쳐지기 전, 임시 구현으로 5단계를 확인하는 개발용 화면입니다. 기숙사·학생식당·편의성 버튼은 4단계가 남기는 운영 요약 값(operations.summary)을 간단히 흉내 냅니다.</p>
-      <p class="dev-note">현재 선택은 진하게 표시됩니다. 버튼을 누르면 아래에 결과가 나오고, 반응이 없으면 그 이유를 알려 줍니다.</p>
+      <p class="dev-note">현재 선택은 진하게 표시됩니다. 버튼을 누르면 아래에 결과가 나오고, 반응이 없으면 그 이유를 알려 줍니다. 기숙사·학생식당 버튼은 플레이어 결정이라 확인 창이 뜨고, 같은 결정은 하루에 한 번만 할 수 있으며, 학생 반응은 다음 날(「+1일」)부터 나옵니다.</p>
       <div class="dev-groups" id="dev-controls"></div>
       <p class="dev-result" id="dev-result" role="status">버튼을 눌러 상황을 바꿔 보세요.</p>
       <h2>현재 상태</h2>
