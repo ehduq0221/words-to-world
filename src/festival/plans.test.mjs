@@ -64,3 +64,20 @@ test('같은 아이돌 연출도 가수별 무대·색·패턴을 다르게 사�
   assert.notDeepEqual(ive.colors, rescene.colors); assert.notEqual(ive.design, rescene.design);
   assert.notDeepEqual(ive.notes, rescene.notes); assert.notEqual(ive.formation, rescene.formation);
 });
+
+test('비트 판정은 템포와 반복 구간에 맞춰 성공·실패를 구분한다', async () => {
+  const { judgeBeat } = await import('./participation.js');
+  assert.equal(judgeBeat(300, 100).rating, 'PERFECT');
+  assert.equal(judgeBeat(210, 100).rating, 'GOOD');
+  assert.equal(judgeBeat(0, 100).rating, 'MISS');
+  assert.equal(judgeBeat(-300, 100).rating, 'PERFECT');
+  assert.equal(judgeBeat(150, 200).rating, 'PERFECT');
+});
+
+test('17·19·21시 공연의 배경을 시간대별로 구분한다', async () => {
+  const { getPerformanceEnvironment } = await import('./environment.js');
+  assert.equal(getPerformanceEnvironment('17:00').phase, 'sunset');
+  assert.equal(getPerformanceEnvironment('19:00').phase, 'twilight');
+  assert.equal(getPerformanceEnvironment('21:00').phase, 'night');
+  assert.throws(() => getPerformanceEnvironment('invalid'));
+});

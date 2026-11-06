@@ -6,12 +6,22 @@ const profiles = {
   aespa: { title: 'ELECTRIC CAMPUS', colors: ['#65c9ff', '#c9ff59'], sky: '#080f29', design: 'prism', formation: 'zigzag', tempo: 136, notes: [164, 330, 392, 311, 164, 466, 392, 330], dance: 'sharp' },
   nmixx: { title: 'BLUE WAVE LIVE', colors: ['#78efff', '#e694ff'], sky: '#101735', design: 'prism', formation: 'arc', tempo: 128, notes: [440, 659, 587, 880, 740, 659, 494, 587], dance: 'bounce' },
 };
+// 공개 아티스트 구성에 맞춘 성별 표현이며 헤어·의상은 게임용 창작입니다.
+// 구성 인원 출처: https://aespa-official.jp/ , https://ive-official.jp/
+const casts = {
+  aespa: { gender: 'female', count: 4 }, ive: { gender: 'female', count: 6 },
+  rescene: { gender: 'female' }, illit: { gender: 'female' }, nmixx: { gender: 'female' },
+  hanroro: { gender: 'female', count: 1 }, day6: { gender: 'male' }, jannabi: { gender: 'male' },
+  '10cm': { gender: 'male', count: 1 }, woodz: { gender: 'male', count: 1 },
+  'big-naughty': { gender: 'male', count: 1 }, crush: { gender: 'male', count: 1 },
+};
 export function getArtistProfile(artist) {
   const base = profiles[artist.id];
-  if (base) return { ...base, artistName: artist.name, genre: artist.genre };
+  const cast = casts[artist.id] || { gender: 'unspecified' };
+  if (base) return { ...base, cast, artistName: artist.name, genre: artist.genre };
   const seed = [...artist.id].reduce((sum, char) => sum + char.charCodeAt(0), 0);
   const indie = artist.genre === 'indie';
-  return { title: indie ? 'SUNSET LETTERS' : 'CAMPUS GROOVE', colors: artist.colors,
+  return { cast, title: indie ? 'SUNSET LETTERS' : 'CAMPUS GROOVE', colors: artist.colors,
     sky: indie ? '#b47d71' : '#22132e', design: indie ? 'sunset' : 'prism', formation: indie ? 'band' : 'solo',
     tempo: (indie ? 85 : 104) + seed % 18, notes: [261, 330, 392, 494, 440, 392, 330, 294].map(n => n * (1 + (seed % 4) * .125)),
     dance: indie ? 'wave' : 'sharp', artistName: artist.name, genre: artist.genre };

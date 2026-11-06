@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { getPerformanceEnvironment } from './environment.js';
 import { createFireworks } from './fireworks.js';
 import { getArtistProfile, FIREWORK_SITES } from './profiles.js';
 import { loadCampus } from '../data/loadCampus.js';
@@ -73,8 +74,13 @@ export async function createFestivalScene(container, location) {
     box(0, 9, 0, 2.4, 4, 1.6, outfit, person);
     box(-.7, 5.8, 0, .8, 3, .9, dark, person); box(.7, 5.8, 0, .8, 3, .9, dark, person);
     box(0, 12.2, 0, 2, 2, 1.8, skin, person); box(0, 13.2, -.2, 2.2, 1, 1.9, hair, person);
+    const longHair = new THREE.Group(); person.add(longHair);
+    box(-1.05, 11.5, -.3, .65, 3.3, 1.7, hair, longHair); box(1.05, 11.5, -.3, .65, 3.3, 1.7, hair, longHair); box(0, 11.2, -.95, 2.1, 4, .55, hair, longHair);
+    const ponytail = box(0, 12, -1.5, 1.1, 3.5, 1, hair, person);
+    const skirt = box(0, 7, 0, 2.8, 1.6, 2, outfit, person);
+    box(-.4, 12.3, .95, .2, .25, .12, dark, person); box(.4, 12.3, .95, .2, .25, .12, dark, person);
     const arms = [-1, 1].map(side => { const pivot = new THREE.Group(); pivot.position.set(side * 1.5, 10, 0); person.add(pivot); box(0, -1.3, 0, .7, 3, .8, outfit, pivot); return pivot; });
-    performers.push({ person, arms, outfit });
+    performers.push({ person, arms, outfit, longHair, ponytail, skirt });
   }
   const decor = new THREE.Group(); group.add(decor);
   const screenCanvas = document.createElement('canvas'); screenCanvas.width = 1024; screenCanvas.height = 512;
@@ -95,6 +101,31 @@ export async function createFestivalScene(container, location) {
     box(0, 5.1, -.15, 1.7, .7, 1.5, hairMat, person);
     crowd.push(person); group.add(person);
   }
+  // 무대(앞끝 z=11)와 첫 관객 열(z=23) 사이의 펜스·안내 통로.
+  const fence = new THREE.Group(); fence.name = 'festival-barrier'; group.add(fence);
+  const steel = material(0xb8c6cb), safetyLime = material(0xd5ff36), uniform = material(0x25344a), reflective = material(0xf5ffe0, true);
+  for (let x = -36; x <= 36; x += 6) {
+    box(x, 2.5, 18, .45, 5, .45, steel, fence); box(x, .2, 18, 3, .4, 2.5, steel, fence);
+  }
+  for (const y of [1.6, 4.7]) box(0, y, 18, 72, .4, .45, steel, fence);
+  for (let x = -34; x < 36; x += 2) box(x, 3.1, 18, .2, 2.8, .25, steel, fence);
+  const staff = new THREE.Group(); staff.name = 'festival-stewards'; group.add(staff);
+  const staffArms = [];
+  const badgeCanvas = document.createElement('canvas'); badgeCanvas.width = 128; badgeCanvas.height = 48;
+  const badgeContext = badgeCanvas.getContext('2d'); badgeContext.fillStyle = '#d5ff36'; badgeContext.fillRect(0, 0, 128, 48);
+  badgeContext.fillStyle = '#172a32'; badgeContext.textAlign = 'center'; badgeContext.font = 'bold 30px sans-serif'; badgeContext.fillText('STAFF', 64, 35);
+  const badgeTexture = new THREE.CanvasTexture(badgeCanvas); badgeTexture.colorSpace = THREE.SRGBColorSpace;
+  const badgeMaterial = new THREE.MeshBasicMaterial({ map: badgeTexture });
+  [-40, -18, 18, 40].forEach((x, i) => {
+    const steward = new THREE.Group(); steward.position.set(x, 0, 14); steward.scale.setScalar(1.12); staff.add(steward);
+    box(-.45, 1, 0, .65, 2, .8, uniform, steward); box(.45, 1, 0, .65, 2, .8, uniform, steward);
+    box(0, 2.9, 0, 1.9, 2, 1.2, safetyLime, steward);
+    box(0, 2.5, .62, 1.95, .22, .08, reflective, steward); box(0, 3.5, .62, 1.95, .22, .08, reflective, steward);
+    box(-.55, 3, .65, .18, 1.9, .08, reflective, steward); box(.55, 3, .65, .18, 1.9, .08, reflective, steward);
+    box(0, 4.65, 0, 1.4, 1.4, 1.2, skinTones[i % 3], steward); box(0, 5.4, .2, 1.7, .35, 1.7, uniform, steward);
+    [-1, 1].forEach(side => { const arm = new THREE.Group(); arm.position.set(side * 1.2, 3.6, 0); box(0, -.8, 0, .5, 1.7, .6, uniform, arm); steward.add(arm); staffArms.push(arm); });
+    const badge = new THREE.Mesh(new THREE.PlaneGeometry(1.2, .45), badgeMaterial); badge.position.set(0, 3.1, .7); steward.add(badge);
+  });
   const booths = new THREE.Group(); group.add(booths);
   [-48, 48].forEach(x => {
     [30, 50, 70].forEach(z => { box(x, 4, z, 12, 8, 10, white, booths); box(x, 9, z, 14, 2, 12, glow, booths); });
@@ -128,6 +159,16 @@ export async function createFestivalScene(container, location) {
   let overview = false, view = 'outside', restoreView = null, skyUntil = 0, cheerUntil = 0;
   let visitorX = 0, visitorZ = 100;
   let profile = getArtistProfile({ id: 'default', name: 'OUR CAMPUS', genre: 'indie', colors: ['#ffb76d', '#ffe5ad'] });
+  let environment = getPerformanceEnvironment('17:00');
+  const targetSky = new THREE.Color(environment.sky);
+  const sun = new THREE.Mesh(new THREE.SphereGeometry(27, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffd7a0 }));
+  sun.position.copy(origin).addScaledVector(right, -350).addScaledVector(down, -500); sun.position.y = 160; scene.add(sun);
+  const moon = new THREE.Mesh(new THREE.SphereGeometry(18, 12, 10), new THREE.MeshBasicMaterial({ color: 0xe6efff }));
+  moon.position.copy(origin).addScaledVector(right, 360).addScaledVector(down, -600); moon.position.y = 330; moon.visible = false; scene.add(moon);
+  const starGeometry = new THREE.BufferGeometry(), starPositions = new Float32Array(250 * 3);
+  for (let i = 0; i < 250; i++) { const angle = i * 2.399963; starPositions[i * 3] = origin.x + Math.cos(angle) * (600 + i % 200); starPositions[i * 3 + 1] = 280 + i % 350; starPositions[i * 3 + 2] = origin.z + Math.sin(angle) * (600 + i % 200); }
+  starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xe5eeff, size: 2.5, transparent: true, opacity: .8 })); stars.visible = false; scene.add(stars);
   let genre = 'indie', elapsed = 0, playing = true, frame, previous = performance.now(), finale = false, disposed = false;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const skyEffects = new THREE.Group(); skyEffects.position.copy(origin); skyEffects.rotation.y = group.rotation.y;
@@ -137,15 +178,25 @@ export async function createFestivalScene(container, location) {
   function theme(value) {
     genre = value;
     const t = themes[genre];
-    scene.background = new THREE.Color(profile.sky || t.sky); scene.fog = overview ? null : new THREE.Fog(profile.sky || t.sky, 600, 2200);
-    groundMaterial.color.setHex(t.ground);
+    targetSky.set(environment.sky);
+    if (!scene.background) scene.background = targetSky.clone();
+    scene.fog = overview ? null : new THREE.Fog(environment.sky, 600, 2200);
+    ambient.intensity = environment.ambient; ambient.color.set(environment.phase === 'sunset' ? 0xffdfc4 : 0xc8d8ff);
+    sun.visible = environment.phase === 'sunset'; moon.visible = environment.phase === 'night'; stars.visible = environment.phase === 'night';
+    groundMaterial.color.setHex(environment.ground);
     glow.color.set(profile.colors[0]); glow.emissive.set(profile.colors[0]);
     accent.color.set(profile.colors[1]); accent.emissive.set(profile.colors[1]); point.color.set(profile.colors[0]);
     beams.forEach((beam, i) => { beam.material.color.set(profile.colors[i % 2]); });
   }
   function setArtist(artist) {
     profile = getArtistProfile(artist); theme(artist.genre);
-    performers.forEach(({ outfit }, i) => outfit.color.set(profile.colors[i % 2]));
+    performers.forEach(({ outfit, longHair, ponytail, skirt }, i) => {
+      outfit.color.set(profile.colors[i % 2]);
+      const female = profile.cast.gender === 'female';
+      longHair.visible = female ? i % 3 !== 2 : i % 4 === 3;
+      longHair.scale.y = female && i % 3 === 0 ? .65 : 1;
+      ponytail.visible = female && i % 3 === 2; skirt.visible = female && i % 2 === 1;
+    });
     const ctx = screenCanvas.getContext('2d');
     ctx.fillStyle = '#101525'; ctx.fillRect(0, 0, 1024, 512);
     const gradient = ctx.createLinearGradient(0, 0, 1024, 512);
@@ -180,7 +231,7 @@ export async function createFestivalScene(container, location) {
     view = mode; overview = mode === 'map'; marker.visible = overview;
     campus.meshes.forEach(mesh => { mesh.material = originalMaterials.get(mesh); });
     if (outlineMaterial) outlineMaterial.opacity = mode === 'inside' ? .15 : .7;
-    scene.fog = overview ? null : new THREE.Fog(profile.sky, 600, 2200);
+    scene.fog = overview ? null : new THREE.Fog(environment.sky, 600, 2200);
     if (mode === 'inside') {
       nearby.forEach(({ mesh }) => { mesh.material = ghost; });
       camera.position.copy(localPoint(visitorX, 9, visitorZ)); controls.target.copy(localPoint(visitorX * .15, 19, -5));
@@ -211,16 +262,19 @@ export async function createFestivalScene(container, location) {
     const dt = Math.min((now - previous) / 1000, .25); previous = now;
     if (playing) elapsed += dt;
     const t = reducedMotion ? 0 : elapsed;
+    scene.background.lerp(targetSky, Math.min(1, dt * 2));
     if (restoreView && elapsed > skyUntil) { const next = restoreView; restoreView = null; applyView(next); }
     performers.forEach(({ person, arms }, i) => {
-      person.position.x = (i - 2.5) * 5;
+      const count = profile.cast.count || (profile.formation === 'solo' ? 1 : 6);
+      person.position.x = (i - (count - 1) / 2) * 5;
       person.position.z = profile.formation === 'arc' ? Math.abs(i - 2.5) * 1.4 : profile.formation === 'zigzag' ? (i % 2) * 4 : 0;
-      person.visible = profile.formation !== 'solo' || i === 2;
+      person.visible = i < count;
       const beat = t * profile.tempo / 60 * Math.PI;
       person.position.y = profile.dance === 'bounce' ? Math.max(0, Math.sin(beat + i)) * 1.1 : 0;
       person.rotation.z = Math.sin(beat * (profile.dance === 'wave' ? .35 : .7) + i * .4) * .08;
       arms.forEach((arm, side) => { arm.rotation.z = Math.sin(beat * .5 + i + side) * (profile.dance === 'sharp' ? 1.4 : .8); });
     });
+    staffArms.forEach((arm, i) => { arm.rotation.z = Math.sin(t * .6 + i) * .09; });
     decor.rotation.z = profile.design === 'bloom' ? Math.sin(t * .4) * .02 : 0;
     crowd.forEach((person, i) => {
       const phase = t * (genre === 'indie' ? 1.4 : genre === 'idol' ? 5 : 7) + i * .7;
@@ -229,7 +283,7 @@ export async function createFestivalScene(container, location) {
     });
     beams.forEach((beam, i) => { beam.rotation.z = Math.sin(t * (genre === 'indie' ? .3 : genre === 'idol' ? 1.7 : 2.3) + i) * .55; beam.rotation.x = Math.cos(t * .7 + i) * .4; });
     // Continuous, non-strobing light motion.
-    point.intensity = genre === 'indie' ? 8 : 10 + Math.sin(t * 2) * 2;
+    point.intensity = (genre === 'indie' ? 8 : 10 + Math.sin(t * 2) * 2) * environment.light;
     confetti.visible = finale;
     if (finale && playing && !reducedMotion) {
       for (let i = 0; i < 240; i++) { positions[i * 3 + 1] -= dt * 10; if (positions[i * 3 + 1] < 2) positions[i * 3 + 1] = 80; }
@@ -241,10 +295,22 @@ export async function createFestivalScene(container, location) {
   resize(container.clientWidth, container.clientHeight); frame = requestAnimationFrame(animate);
   return {
     theme, setArtist,
+    setPerformanceTime(time) { environment = getPerformanceEnvironment(time); theme(genre); },
     setView(mode) { restoreView = null; applyView(mode); },
     setFireworkPosition(id) { positionFireworks(id); if (view === 'fireworks') applyView('fireworks'); },
-    moveVisitor(dx, dz) { visitorX = THREE.MathUtils.clamp(visitorX + dx, -25, 25); visitorZ = THREE.MathUtils.clamp(visitorZ + dz, 38, 145); restoreView = null; applyView('inside'); },
+    moveVisitor(dx, dz) { visitorX = THREE.MathUtils.clamp(visitorX + dx, -25, 25); visitorZ = THREE.MathUtils.clamp(visitorZ + dz, 26, 145); restoreView = null; applyView('inside'); },
     cheer() { cheerUntil = elapsed + 2; },
+    waveLightstick() { cheerUntil = elapsed + 1.5; },
+    capturePhoto() {
+      renderer.render(scene, camera);
+      const photo = document.createElement('canvas'); photo.width = renderer.domElement.width; photo.height = renderer.domElement.height;
+      const ctx = photo.getContext('2d'); ctx.drawImage(renderer.domElement, 0, 0);
+      ctx.fillStyle = '#10172bcc'; ctx.fillRect(0, photo.height - 58, photo.width, 58); ctx.fillStyle = 'white';
+      ctx.font = `${Math.min(18, Math.max(10, photo.width / 45))}px sans-serif`;
+      ctx.fillText(`${profile.artistName} · WORDS TO WORLD · FANTASY LIVE`, 18, photo.height - 34, photo.width - 36);
+      ctx.fillText('© OpenStreetMap contributors · ODbL', 18, photo.height - 13, photo.width - 36);
+      return photo.toDataURL('image/png');
+    },
     burstFireworks() { fireworks.burst(); if (!restoreView) restoreView = view; skyUntil = elapsed + 7.2; applyView('fireworks'); },
     resetFireworks() { fireworks.reset(); },
     configure(extras) { booths.visible = extras.includes('booths'); crowd.forEach(p => { p.children[2].visible = extras.includes('lights') || genre === 'indie'; }); },
@@ -252,7 +318,7 @@ export async function createFestivalScene(container, location) {
     setPreparation(progress) { group.scale.setScalar(baseScale * (reducedMotion ? 1 : Math.max(.01, Math.min(1, progress)))); },
     setPlaying(value) { playing = value; },
     dispose() {
-      disposed = true; screenTexture.dispose(); fireworks.dispose(); cancelAnimationFrame(frame); observer.disconnect(); controls.dispose();
+      disposed = true; badgeTexture.dispose(); screenTexture.dispose(); fireworks.dispose(); cancelAnimationFrame(frame); observer.disconnect(); controls.dispose();
       const geometries = new Set(), materials = new Set();
       scene.traverse(object => { if (object.geometry) geometries.add(object.geometry); if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach(m => materials.add(m)); });
       geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); ghost.dispose(); renderer.dispose(); renderer.domElement.remove();
