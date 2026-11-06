@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학생 반응 확인 · Words to World</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="./reactions.css">
+  <style>
+    body { overflow: auto; padding: 24px; }
+    .dev { display: grid; grid-template-columns: 1fr 300px; gap: 20px; max-width: 980px; margin: 0 auto; align-items: start; }
+    .dev > .panel { padding: 16px; }
+    .dev h1 { font-size: 18px; margin: 0 0 6px; }
+    .dev p.dev-note { font-size: 11px; color: #708578; line-height: 1.7; margin: 0 0 12px; }
+    .dev-group { margin-bottom: 14px; }
+    .dev-group h2 { font-size: 12px; margin: 0 0 6px; }
+    .dev-group div { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dev button { border: 1px solid #d4e0d6; background: #fff; border-radius: 6px; padding: 5px 9px; font-size: 11px; color: #2f654d; }
+    .dev button[aria-pressed=true] { background: #edf4e9; border-color: #9fc2a8; font-weight: 650; }
+    .dev-status { font-size: 12px; margin: 10px 0; }
+    .dev-log { font-size: 11px; color: #61766a; padding-left: 18px; max-height: 320px; overflow: auto; line-height: 1.7; }
+    .dev .reactions { padding: 19px 17px; }
+    @media (max-width: 720px) { .dev { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="dev">
+    <section class="panel">
+      <h1>학생 반응 확인</h1>
+      <p class="dev-note">3단계 게임 상태와 4단계 운영이 합쳐지기 전, 임시 구현으로 5단계를 확인하는 개발용 화면입니다. 아래 버튼은 4단계가 남기는 운영 요약 값(operations.summary)을 흉내 냅니다.</p>
+      <div id="dev-controls"></div>
+      <div class="dev-status" id="dev-status"></div>
+      <ol class="dev-log" id="dev-log" reversed></ol>
+    </section>
+    <section class="panel reactions"><div class="section-heading"><h2>학생들의 목소리</h2><span class="count" id="reaction-count">0</span></div><p class="section-sub">캠퍼스에서 들려오는 이야기</p>
+      <div id="reaction-list"></div>
+    </section>
+  </main>
+  <script type="module" src="./dev.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{
+  "note": "학생 민원 발생 조건과 학생 인물 설정입니다. 모두 게임 균형과 표현을 위한 설정값입니다.",
+  "checkEveryDays": 7,
+  "remindEveryDays": 28,
+  "maxFeed": 30,
+  "recentLines": 6,
+  "panelSize": 4,
+  "rules": [
+    {
+      "id": "dorm-shortage",
+      "each": "operations.summary.dorms",
+      "when": [{ "field": "waiting", "op": ">", "value": 0 }],
+      "type": "dorm.shortage",
+      "cause": "기숙사 수용 인원",
+      "values": { "building": "name", "value": "waiting" },
+      "persona": { "role": "기숙사 입사 대기 학생" }
+    },
+    {
+      "id": "dorm-fee",
+      "path": "operations.summary.feeLevel",
+      "when": [{ "op": "==", "value": "high" }],
+      "type": "dorm.fee",
+      "cause": "기숙사비",
+      "persona": { "role": "기숙사 거주 학생" }
+    },
+    {
+      "id": "cafeteria-lease",
+      "each": "operations.summary.facilities",
+      "when": [{ "field": "type", "op": "==", "value": "cafeteria" }, { "field": "mode", "op": "==", "value": "lease" }],
+      "type": "food.price",
+      "cause": "학생식당 가격",
+      "values": { "building": "name" }
+    },
+    {
+      "id": "convenience-low",
+      "path": "operations.summary.convenience",
+      "when": [{ "op": "<", "value": 68 }],
+      "type": "convenience.low",
+      "cause": "편의시설"
+    },
+    {
+      "id": "housing-low",
+      "path": "operations.summary.housing",
+      "when": [{ "op": "<", "value": 55 }],
+      "type": "housing.low",
+      "cause": "주거 만족도",
+      "persona": { "role": "기숙사 거주 학생" }
+    },
+    {
+      "id": "satisfaction-low",
+      "path": "metrics.satisfaction",
+      "when": [{ "op": "<", "value": 45 }],
+      "type": "satisfaction.low",
+      "cause": "학생 만족도"
+    }
+  ],
+  "personas": {
+    "surnames": ["김", "이", "박", "최", "정", "강", "조", "윤", "장", "임", "한", "오"],
+    "majors": ["국어국문학과", "영어영문학과", "경영학부", "경제학과", "무역학부", "물리학과", "화학과", "도시공학과", "기계공학과", "전기공학과", "컴퓨터공학부", "생명과학부"],
+    "byBuilding": {
+      "way/1244533005": ["컴퓨터공학부", "정보통신공학과", "임베디드시스템공학과"],
+      "way/367504004": ["기계공학과", "전기공학과", "전자공학과", "산업경영공학과"],
+      "way/367504012": ["수학과", "물리학과", "화학과"],
+      "way/1394978457": ["생명과학부", "생명공학부"],
+      "way/367504011": ["사회복지학과", "신문방송학과", "법학부"],
+      "way/367512821": ["국어국문학과", "영어영문학과", "일어일문학과"],
+      "way/367512820": ["체육학부", "디자인학부", "공연예술학과"]
+    }
+  }
+}
