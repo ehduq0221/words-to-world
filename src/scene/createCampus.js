@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { getPassageOffset } from './passageLayout.js';
+import { buildingDesigns } from './buildingAppearance.js';
+import { makeDetailedBuilding } from './createDetailedBuilding.js';
 import { createSportsField } from './createSportsField.js';
 
 function traceRing(path, points) {
@@ -27,6 +29,24 @@ export function createCampus(buildings) {
       anchors.push({ name: building.name, position: field.anchor, building });
       continue;
     }
+    const design = buildingDesigns.find(item => item.id === building.id);
+    if (design) {
+      const detailed = makeDetailedBuilding(building, design);
+      const R = { x: -.7821357123, z: -.6231081186 }, D = { x: .6231081186, z: -.7821357123 };
+      const hs = building.outline.map(([x,z]) => x*R.x+z*R.z), vs = building.outline.map(([x,z]) => x*D.x+z*D.z);
+      const h = (Math.min(...hs)+Math.max(...hs))/2, v = (Math.min(...vs)+Math.max(...vs))/2;
+      const offset = getPassageOffset(building.outline);
+      detailed.rotation.y = Math.atan2(D.x, R.x);
+      detailed.position.set(R.x*h+D.x*v+offset.x, 0, R.z*h+D.z*v+offset.z);
+      detailed.traverse(child => {
+        if (!child.isMesh) return;
+        child.userData.building = selectionBuilding;
+        meshes.push(child);
+      });
+      group.add(detailed);
+      if (building.showLabel !== false) anchors.push({ name: building.name, position: new THREE.Vector3(), building });
+      continue;
+    }
     const shape = new THREE.Shape();
     traceRing(shape, building.outline);
     for (const ring of building.holes) {
@@ -40,7 +60,11 @@ export function createCampus(buildings) {
     geometry.rotateX(-Math.PI / 2);
     const offset = getPassageOffset(building.outline);
     geometry.translate(offset.x, 0, offset.z);
-    const mesh = new THREE.Mesh(geometry, material);
+    const college = /대학|정보대/.test(building.name);
+    const mesh = new THREE.Mesh(geometry, college ? [
+      new THREE.MeshLambertMaterial({ color: 0xacaaa1 }),
+      new THREE.MeshLambertMaterial({ color: 0xe58a3b }),
+    ] : material);
     mesh.userData.building = selectionBuilding;
     meshes.push(mesh);
     group.add(mesh);

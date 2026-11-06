@@ -37,20 +37,30 @@ async function start() {
     scene.add(campus.group);
     const scenery = createScenery(buildings, scene);
     const { camera, controls, resize, fit } = createCamera(renderer, campus.bounds.clone().union(scenery.bounds));
-    const selectedMaterial = new THREE.MeshLambertMaterial({ color: 0xe9b56b, emissive: 0x30200d, side: THREE.DoubleSide });
+    const selectionTint = new THREE.Color(0xe9b56b);
     const selectionHighlight = createSelectionHighlight(container, scene);
     let selectedMesh = null;
     let selectedMeshes = [];
     const previousMaterials = new Map();
     function selectBuilding(building, { placeId = null, focusMap = false } = {}) {
       building = buildings.find(item => item.id === building.selectionGroupId) || building;
-      for (const mesh of selectedMeshes) mesh.material = previousMaterials.get(mesh);
+      for (const mesh of selectedMeshes) {
+        const tinted = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        tinted.forEach(material => material.dispose());
+        mesh.material = previousMaterials.get(mesh);
+      }
       previousMaterials.clear();
       selectedMeshes = campus.meshes.filter(mesh => mesh.userData.building.id === building.id);
       selectedMesh = campus.meshes.find(mesh => mesh.userData.building.id === building.id);
       for (const mesh of selectedMeshes) {
         previousMaterials.set(mesh, mesh.material);
-        mesh.material = selectedMaterial;
+        const tint = material => {
+          const selected = material.clone();
+          selected.color?.lerp(selectionTint, .15);
+          selected.emissive?.setHex(0x201408);
+          return selected;
+        };
+        mesh.material = Array.isArray(mesh.material) ? mesh.material.map(tint) : tint(mesh.material);
       }
       selectionHighlight.setSelection(selectedMeshes);
       updateLabels.setSelected(building.id);

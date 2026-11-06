@@ -5,11 +5,11 @@
 .decision-bubble:hover, .decision-bubble:focus-visible { background: #a86018; outline: 3px solid #efc997; outline-offset: 2px; }
 .decision-bubble.is-opened { background: #477b5d; }
 .decision-bubble[hidden] { display: none; }
-#decision-feed { position: relative; max-height: 430px; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+#decision-feed { position: relative; max-height: 430px; overflow-y: auto; overscroll-behavior: contain; padding: 4px; }
 #decision-notice:empty { display: none; }
 #decision-notice, .decision-error { font-size: 11px; line-height: 1.7; color: #9b5137; }
 .decision-empty { margin: 0; padding: 14px 0; font-size: 12px; line-height: 1.9; color: #82927e; }
-.reactions .decision-card { padding: 16px 0; border-top: 1px solid #e7ede2; }
+.reactions .decision-card { padding: 16px 12px; margin: 4px 0 10px; border: 3px solid transparent; border-radius: 12px; overflow-wrap: anywhere; }
 .decision-heading { display: flex; align-items: center; gap: 7px; }
 .decision-avatar { display: grid; place-items: center; width: 27px; height: 29px; flex-shrink: 0; background: #e7eddf; border-radius: 8px; font-size: 11px; color: #6b8463; }
 .decision-heading b { font-size: 10px; line-height: 1.6; }
@@ -25,4 +25,4 @@
 .decision-result p { font-size: 11px; line-height: 1.8; color: #6a8067; margin: 7px 0 0; }
 .decision-result .decision-effects { color: #8d6529; font-weight: 650; }
 .decision-card.is-resolved .decision-status { color: #71896a; }
-.decision-card:focus { outline: 2px solid #92ac80; outline-offset: -2px; border-radius: 8px; }
+.decision-card:focus, .decision-card:focus-within { outline: none; border-color: #789c68; background: #fbfdf8; }
