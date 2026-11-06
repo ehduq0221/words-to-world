@@ -1,17 +1,27 @@
 {
-  "note": "학생 민원 발생 조건과 학생 인물 설정입니다. 모두 게임 균형과 표현을 위한 설정값입니다.",
+  "note": "학생 민원·칭찬 조건, 학사 일정 반응, 학생 인물 설정입니다. 모두 게임 균형과 표현을 위한 설정값입니다. 학사 일정 날짜는 게임용 대표 날짜입니다.",
   "checkEveryDays": 7,
   "remindEveryDays": 28,
-  "maxFeed": 30,
-  "recentLines": 6,
-  "panelSize": 4,
+  "maxFeed": 40,
+  "recentLines": 8,
+  "panelSize": 5,
   "rules": [
     {
       "id": "dorm-shortage",
       "each": "operations.summary.dorms",
       "when": [{ "field": "waiting", "op": ">", "value": 0 }],
+      "levels": [{ "field": "waiting", "op": ">=", "value": 300 }],
       "type": "dorm.shortage",
       "cause": "기숙사 수용 인원",
+      "values": { "building": "name", "value": "waiting" },
+      "persona": { "role": "기숙사 입사 대기 학생" }
+    },
+    {
+      "id": "dorm-closed",
+      "each": "operations.summary.dorms",
+      "when": [{ "field": "openBeds", "op": "<", "valueField": "capacity" }, { "field": "waiting", "op": ">", "value": 0 }],
+      "type": "dorm.closed",
+      "cause": "닫아 둔 기숙사 방",
       "values": { "building": "name", "value": "waiting" },
       "persona": { "role": "기숙사 입사 대기 학생" }
     },
@@ -20,6 +30,15 @@
       "path": "operations.summary.feeLevel",
       "when": [{ "op": "==", "value": "high" }],
       "type": "dorm.fee",
+      "cause": "기숙사비",
+      "persona": { "role": "기숙사 거주 학생" }
+    },
+    {
+      "id": "dorm-fee-low",
+      "kind": "praise",
+      "path": "operations.summary.feeLevel",
+      "when": [{ "op": "==", "value": "low" }],
+      "type": "dorm.fee-low",
       "cause": "기숙사비",
       "persona": { "role": "기숙사 거주 학생" }
     },
@@ -35,14 +54,33 @@
       "id": "convenience-low",
       "path": "operations.summary.convenience",
       "when": [{ "op": "<", "value": 68 }],
+      "levels": [{ "op": "<", "value": 60 }],
       "type": "convenience.low",
+      "cause": "편의시설"
+    },
+    {
+      "id": "convenience-high",
+      "kind": "praise",
+      "path": "operations.summary.convenience",
+      "when": [{ "op": ">=", "value": 80 }],
+      "type": "convenience.high",
       "cause": "편의시설"
     },
     {
       "id": "housing-low",
       "path": "operations.summary.housing",
       "when": [{ "op": "<", "value": 55 }],
+      "levels": [{ "op": "<", "value": 40 }],
       "type": "housing.low",
+      "cause": "주거 만족도",
+      "persona": { "role": "기숙사 거주 학생" }
+    },
+    {
+      "id": "housing-high",
+      "kind": "praise",
+      "path": "operations.summary.housing",
+      "when": [{ "op": ">=", "value": 82 }],
+      "type": "housing.high",
       "cause": "주거 만족도",
       "persona": { "role": "기숙사 거주 학생" }
     },
@@ -50,13 +88,60 @@
       "id": "satisfaction-low",
       "path": "metrics.satisfaction",
       "when": [{ "op": "<", "value": 45 }],
+      "levels": [{ "op": "<", "value": 35 }],
       "type": "satisfaction.low",
       "cause": "학생 만족도"
+    },
+    {
+      "id": "satisfaction-high",
+      "kind": "praise",
+      "path": "metrics.satisfaction",
+      "when": [{ "op": ">=", "value": 75 }],
+      "type": "satisfaction.high",
+      "cause": "학생 만족도"
+    },
+    {
+      "id": "reputation-low",
+      "path": "metrics.reputation",
+      "when": [{ "op": "<", "value": 40 }],
+      "type": "reputation.low",
+      "cause": "학교 평판"
+    },
+    {
+      "id": "reputation-high",
+      "kind": "praise",
+      "path": "metrics.reputation",
+      "when": [{ "op": ">=", "value": 75 }],
+      "type": "reputation.high",
+      "cause": "학교 평판"
+    },
+    {
+      "id": "budget-deficit",
+      "path": "metrics.budget",
+      "when": [{ "op": "<", "value": 0 }],
+      "type": "budget.deficit",
+      "cause": "학교 재정",
+      "persona": { "role": "총학생회 학생" }
     }
   ],
+  "calendar": [
+    { "month": 2, "day": 20, "type": "calendar.orientation", "cause": "새내기 준비", "label": "학사 일정", "persona": { "role": "새내기" } },
+    { "month": 3, "day": 9, "type": "calendar.course", "cause": "수강 정정", "label": "학사 일정" },
+    { "month": 3, "day": 23, "type": "calendar.lunch-rush", "cause": "점심시간", "label": "캠퍼스 생활", "buildingId": "way/367504010", "values": { "building": "복지회관 학생식당" } },
+    { "month": 4, "day": 20, "type": "calendar.midterm", "cause": "중간고사", "label": "학사 일정", "buildingId": "way/367504016", "values": { "building": "학산도서관" } },
+    { "month": 5, "day": 18, "type": "calendar.festival-soon", "cause": "축제", "label": "캠퍼스 생활" },
+    { "month": 6, "day": 15, "type": "calendar.final", "cause": "기말고사", "label": "학사 일정", "buildingId": "way/367504016", "values": { "building": "학산도서관" } },
+    { "month": 6, "day": 24, "type": "calendar.summer", "cause": "여름방학", "label": "학사 일정" },
+    { "month": 8, "day": 24, "type": "calendar.term-soon", "cause": "개강 준비", "label": "학사 일정" },
+    { "month": 9, "day": 1, "type": "calendar.second-term", "cause": "2학기 개강", "label": "학사 일정" },
+    { "month": 10, "day": 20, "type": "calendar.midterm", "cause": "중간고사", "label": "학사 일정", "buildingId": "way/367504016", "values": { "building": "학산도서관" } },
+    { "month": 11, "day": 20, "type": "calendar.cold", "cause": "송도 바닷바람", "label": "캠퍼스 생활" },
+    { "month": 12, "day": 14, "type": "calendar.final", "cause": "기말고사", "label": "학사 일정", "buildingId": "way/367504016", "values": { "building": "학산도서관" } },
+    { "month": 12, "day": 22, "type": "calendar.winter", "cause": "겨울방학", "label": "학사 일정" }
+  ],
   "personas": {
-    "surnames": ["김", "이", "박", "최", "정", "강", "조", "윤", "장", "임", "한", "오"],
-    "majors": ["국어국문학과", "영어영문학과", "경영학부", "경제학과", "무역학부", "물리학과", "화학과", "도시공학과", "기계공학과", "전기공학과", "컴퓨터공학부", "생명과학부"],
+    "surnames": ["김", "이", "박", "최", "정", "강", "조", "윤", "장", "임", "한", "오", "서", "신", "권", "황"],
+    "majors": ["국어국문학과", "영어영문학과", "경영학부", "경제학과", "무역학부", "물리학과", "화학과", "도시공학과", "기계공학과", "전기공학과", "컴퓨터공학부", "생명과학부", "사회복지학과", "디자인학부"],
     "byBuilding": {
       "way/1244533005": ["컴퓨터공학부", "정보통신공학과", "임베디드시스템공학과"],
       "way/367504004": ["기계공학과", "전기공학과", "전자공학과", "산업경영공학과"],
