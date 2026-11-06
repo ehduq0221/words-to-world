@@ -96,6 +96,8 @@ AI에게 작업을 맡길 때는 맡을 단계 번호와 이번에 도달할 합
 - 저장은 브라우저 `localStorage`의 `words-to-world:save` 키에 버전 번호와 함께 저장합니다.
 - 대사 데이터 형식은 `{ "type": "festival.after", "when": { ... }, "text": "{building} 축제 무대가 정말 좋았어요!" }` 항목의 배열입니다. `when`이 없는 항목은 해당 유형의 기본 대사입니다. 빈칸은 `{building}`, `{major}`, `{year}`, `{value}`를 사용합니다.
 
+**기능 사이에 값 알리기** — 다른 기능이 알아야 하는 값(예: 기숙사 대기 인원)은 자기 상태 영역의 `summary`에 두고, 설정이 바뀔 때 함께 갱신합니다. 다른 기능은 `getState().<기능>?.summary`로 읽기만 하며, 해당 기능이 아직 합쳐지지 않았으면 값이 없는 경우로 처리합니다. `summary`의 형태는 해당 단계의 「정한 내용」에 적습니다.
+
 **건물 선택 이벤트** — 지도에서 건물을 선택하면 `window.dispatchEvent(new CustomEvent('campus:select', { detail: { buildingId, name } }))`를 보냅니다. `buildingId`는 `campus.json`의 `id`이며, 1차 합치기 후에는 바꾸지 않습니다. 지도는 선택할 때마다 `#facility-actions`를 비우고 이벤트를 보내며, 다른 기능은 이 이벤트를 받아 해당 건물의 운영 메뉴를 `#facility-actions`에 추가합니다.
 
 **`src/main.js` 연결 순서** — 지도 초기화 → 각 기능의 `init<기능>()` 호출(이 안에서 `registerArea`, `registerDialogues`, 이벤트 등록) → 마지막에 `startGame()` 순서로 호출합니다. 각 기능 폴더는 `index.js`에서 `init<기능>()` 하나를 내보냅니다. 예: `src/festival/index.js`의 `initFestival()`.
