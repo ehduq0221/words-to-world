@@ -1,1 +1,7 @@
 export const baseAvatar = '<svg viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true">\n <path fill="#34443b" opacity=".12" d="M5 41h22v2H5z"/>\n <path fill="#242b2c" d="M8 33h7v7H8zm10 0h6v7h-6zM6 39h9v3H6zm12 0h8v3h-8z"/>\n <path fill="#f0d0ae" d="M4 23h4v10H4zm21 0h4v10h-4z"/>\n <path fill="#283d58" d="M8 21h17v14H8zM5 23h4v6H5zm19 0h4v6h-4z"/>\n <path fill="#ecf0e4" d="M13 22h7v12h-7z"/>\n <path fill="#7b9a7d" d="m16 24 2 2-1 6h-2l-1-6z"/>\n <path fill="#172a41" d="m8 21 6 1-3 10-3-3zm17 0-6 1 3 10 3-3z"/>\n <path fill="#e8bf99" d="M13 18h7v5h-7z"/>\n <path fill="#f0d0ae" d="M7 7h19v10h-2v3H10v-3H7zM5 12h3v5H5zm20 0h3v5h-3z"/>\n <path fill="#352c29" d="M7 4h3V2h6V1h4v2h4v2h3v8h-4V8h-3v3h-4V8h-3v3H9v3H6V6h1z"/>\n <path fill="#55413a" d="M10 4h5v2h-5zm8 0h5v2h-5z"/>\n <path fill="#2f3030" d="M11 13h2v3h-2zm10 0h2v3h-2z"/>\n <path fill="#ce9d83" d="M15 18h4v1h-4z"/>\n </svg>';
+
+// 같은 픽셀 비율과 캠퍼스 복장을 유지한 여성 외형입니다.
+export const baseFemaleAvatar = baseAvatar
+ .replace('<path fill="#f0d0ae" d="M4 23', '<path fill="#352c29" d="M7 6h19v19h-5V14H12v11H6V8h1z"/><path fill="#f0d0ae" d="M4 23')
+ .replace('M7 4h3V2h6V1h4v2h4v2h3v8h-4V8h-3v3h-4V8h-3v3H9v3H6V6h1z', 'M7 5h2V3h4V2h8v1h3v2h2v9h-3V9h-2V7h-2v3h-4V8h-3v3H9v4H6V7h1z')
+ .replace('M10 4h5v2h-5zm8 0h5v2h-5z', 'M10 5h5v1h-5zm9-1h3v2h-3z');

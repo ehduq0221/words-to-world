@@ -1,6 +1,6 @@
 import { readCharacter } from './storage.js';
-import { baseAvatar } from './baseAvatar.js';
-import { renderAvatar } from './avatars.js';
+import { baseAvatar } from './baseAvatar.js?v=2';
+import { renderAvatar, resolveAvatarIndex } from './avatars.js?v=2';
 
 export function initCharacterMap() {
   const profile = readCharacter();
@@ -13,7 +13,7 @@ export function initCharacterMap() {
     <div class="character-profile"><div class="character-portrait"></div>
     <div class="character-identity"><strong></strong><span></span><small>송도캠퍼스</small></div></div>
     <dl></dl><a class="character-edit" href="./character-create.html">캐릭터 바꾸기</a>`;
-  card.querySelector('.character-portrait').innerHTML = renderAvatar(baseAvatar, profile.avatar);
+  card.querySelector('.character-portrait').innerHTML = renderAvatar(baseAvatar, resolveAvatarIndex(profile.avatar, profile.gender));
   card.querySelector('.character-identity strong').textContent = profile.name;
   card.querySelector('.character-identity span').textContent = profile.department;
   const fields = [['nationality', '국적'], ['city', '사는 도시'], ['gender', '성별'],

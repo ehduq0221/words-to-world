@@ -1,7 +1,7 @@
-import { variants, renderAvatar } from './avatars.js';
-import { baseAvatar } from './baseAvatar.js';
+import { variants, renderAvatar, resolveAvatarIndex } from './avatars.js?v=2';
+import { baseAvatar } from './baseAvatar.js?v=2';
 import { readCharacter } from './storage.js';
-import { initDepartmentPicker } from './departmentPicker.js';
+import { initDepartmentPicker } from './departmentPicker.js?v=2';
 
 export async function initCharacter() {
   const baseSvg = baseAvatar;
@@ -21,8 +21,10 @@ export async function initCharacter() {
     error.scrollIntoView({ block: 'nearest' });
   }
 
-  function selectAvatar(index) {
+  function selectAvatar(index, syncGender = true) {
     selected = index;
+    const gender = document.querySelector('input[name="gender"][value="' + variants[index].gender + '"]');
+    if (syncGender && gender) gender.checked = true;
     document.querySelector('#selected-avatar').innerHTML = avatar(index);
     document.querySelectorAll('.avatar-option').forEach((button, optionIndex) => {
       button.setAttribute('aria-pressed', String(optionIndex === index));
@@ -33,12 +35,17 @@ export async function initCharacter() {
     const button = document.createElement('button');
     button.className = 'avatar-option';
     button.type = 'button';
-    button.setAttribute('aria-label', '외형 ' + (index + 1));
+    button.setAttribute('aria-label', look.gender + ' 외형 ' + (index % 8 + 1));
+    button.title = look.gender + ' 외형 ' + (index % 8 + 1);
     button.innerHTML = avatar(index);
+    const label = document.createElement('span');
+    label.className = 'avatar-caption';
+    label.textContent = button.title;
+    button.append(label);
     button.addEventListener('click', () => selectAvatar(index));
     document.querySelector('#avatars').append(button);
   });
-  selectAvatar(Number.isInteger(existing?.avatar) && variants[existing.avatar] ? existing.avatar : 0);
+  selectAvatar(resolveAvatarIndex(existing?.avatar, existing?.gender));
   const majorSelection = await initDepartmentPicker(existing);
   if (existing) {
     for (const key of ['name', 'nationality', 'city']) {
@@ -49,6 +56,10 @@ export async function initCharacter() {
     }
     document.querySelector('#subtitle').textContent = '내 캐릭터 정보를 수정해요';
   }
+
+  document.querySelectorAll('input[name="gender"]').forEach(input => {
+    input.addEventListener('change', () => selectAvatar(resolveAvatarIndex(selected, input.value), false));
+  });
 
   function showStep(value) {
     step = value;

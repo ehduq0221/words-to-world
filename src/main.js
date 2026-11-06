@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { initCharacterMap } from './character/card.js';
+import { initCharacterMap } from './character/card.js?v=2';
 import { loadCampus } from './data/loadCampus.js';
 import { createCampus } from './scene/createCampus.js?v=building-selection-2';
 import { createCamera } from './interaction/createCamera.js';
