@@ -16,25 +16,40 @@ README의 1~14번은 시스템 번호로 유지합니다. 아래 구현 순서�
 
 첫 버전(1~6단계)은 세 명이 나누어 동시에 개발하고, 정해진 시점마다 `main` 브랜치로 합칩니다.
 
-| 담당 | 단계 | 주로 만드는 파일 |
-| --- | --- | --- |
-| 팀원 A | 1~2단계 캠퍼스 데이터와 지도 | `public/data/campus.json`, `public/data/facilities.json`, `src/data/`, `src/scene/`, `src/interaction/` |
-| 팀원 B | 3~5단계 시간·지표, 편의시설·기숙사, 학생 반응 | `src/game/`, `src/operations/`, `src/reactions/`, `public/data/operations.json`, `public/data/dialogues.json` |
-| 팀원 C | 6단계 축제와 첫 버전 완성 | `src/festival/`, `public/data/festival.json` |
+| 담당 | 단계 | 브랜치 | 주로 만드는 파일 |
+| --- | --- | --- | --- |
+| 팀원 A | 1~2단계 캠퍼스 데이터와 지도 | `feature/map` | `public/data/campus.json`, `public/data/facilities.json`, `src/data/`, `src/scene/`, `src/interaction/` |
+| 팀원 B | 3~5단계 시간·지표, 편의시설·기숙사, 학생 반응 | `feature/game`, `feature/operations`, `feature/reactions` | `src/game/`, `src/operations/`, `src/reactions/`, `public/data/operations.json`, `public/data/dialogues/` |
+| 팀원 C | 6단계 축제와 첫 버전 완성 | `feature/festival` | `src/festival/`, `public/data/festival.json`, `public/data/dialogues/festival.json` |
+
+지도 관련 폴더(`src/data/`, `src/scene/`, `src/interaction/`)는 이미 만들어진 구조를 유지하며, 새 기능부터 아래 폴더 규칙을 따릅니다.
+
+### AI 도구로 작업할 때
+
+AI에게 작업을 맡길 때는 담당(팀원 A·B·C 또는 단계 번호)과 이번에 도달할 합치기 차수를 함께 알려줍니다. AI는 다음 순서로 작업합니다.
+
+1. 이 문서의 작업 규칙·공통 약속·합치는 시점과 해당 단계 내용을 읽습니다.
+2. `git pull --rebase origin main`으로 최신 `main`을 받고, 담당 브랜치를 `main`에서 만듭니다. 이미 있으면 해당 브랜치로 이동해 최신 `main`을 반영합니다.
+3. 담당 폴더와 담당 데이터 파일 안에서 구현합니다. 함께 쓰는 파일은 아래 규칙에 정한 범위만 고칩니다.
+4. 공통 약속의 함수 이름·인자·이벤트 이름을 그대로 사용합니다. 바꿔야 하면 코드를 고치기 전에 사람에게 알리고 이 문서를 먼저 수정합니다.
+5. 프로젝트 루트에서 `python3 -m http.server 8000 --bind 127.0.0.1`로 실행해 해당 합치기의 확인 항목을 점검하고, 브라우저 콘솔에 오류가 없는지 확인합니다.
+6. 커밋 후 브랜치를 올리고 `main`으로 향하는 Pull Request를 `gh pr create` 또는 GitHub 웹에서 만듭니다. 이미 올린 브랜치에 최신 `main`을 반영했다면 `git push --force-with-lease`로 올립니다. Pull Request 설명에는 충족한 완료 기준과 확인한 항목을 적습니다.
+7. Pull Request는 다른 팀원이 확인한 뒤 합칩니다. AI는 코드 변경을 직접 `main`에 합치거나 올리지 않습니다.
 
 ### 작업 규칙
 
 - **폴더는 기능별로 나눕니다** — 사람 이름 폴더를 만들지 않고 `src/<기능>/`에 코드를, `public/data/<기능>.json`에 데이터를 둡니다. 담당자가 바뀌어도 폴더는 그대로 유지합니다.
-- **브랜치도 기능별로 만듭니다** — `feature/<기능>` 이름으로 `main`에서 만들고, 첫 버전은 `feature/map`, `feature/operations`, `feature/festival`을 사용합니다. 담당 폴더 밖의 파일은 필요한 경우에만 고칩니다.
-- **`main`은 항상 실행되는 상태로 둡니다** — `main`에 직접 올리지 않고 Pull Request로 합칩니다. 합치기 전에 로컬 서버로 실행해 아래 확인 항목을 점검하고, 다른 팀원 한 명이 확인합니다.
+- **브랜치도 기능별로 만듭니다** — `feature/<기능>` 이름으로 `main`에서 만듭니다. 담당 폴더 밖의 파일은 필요한 경우에만 고칩니다.
+- **`main`은 항상 실행되는 상태로 둡니다** — 코드는 `main`에 직접 올리지 않고 Pull Request로 합칩니다. 합치기 전에 로컬 서버로 실행해 확인 항목을 점검하고, 다른 팀원 한 명이 확인합니다. 문서만 고치는 변경은 팀에 알리고 `main`에 직접 올릴 수 있습니다.
 - **브랜치는 짧게 유지합니다** — 1·2·3차 합치기는 반드시 지켜야 할 시점입니다. 그 사이에도 완료 기준을 하나 채울 때마다 Pull Request로 합치고, 합친 브랜치는 지운 뒤 다음 작업은 최신 `main`에서 새로 만듭니다.
-- **매일 최신 `main`을 받습니다** — 작업을 시작할 때와 Pull Request를 올리기 전에 `git pull --rebase origin main`으로 최신 내용을 받습니다. 충돌이 나면 해당 파일의 담당자와 함께 정리합니다.
-- **함께 쓰는 파일은 최소한으로 고칩니다** — `index.html`, `src/main.js`에는 담당 기능의 화면 영역과 초기화 코드 한두 줄만 추가합니다. 스타일은 담당 폴더에 별도 CSS 파일로 만들어 `index.html`에 연결합니다. `src/game/`의 공통 약속을 바꿀 때는 사용하는 팀원에게 먼저 알립니다.
-- 화면 영역은 지도·왼쪽 시설 패널(A), 상단 지표·날짜·오른쪽 학생 반응과 예산 패널(B), 축제 창(C)으로 나눕니다.
+- **매일 최신 `main`을 받습니다** — 작업을 시작할 때와 Pull Request를 올리기 전에 `git pull --rebase origin main`으로 최신 내용을 받습니다. 같은 시점에 Pull Request가 여러 개면 먼저 올린 것부터 합치고, 나머지는 다시 최신 `main`을 받은 뒤 확인합니다.
+- **충돌은 양쪽을 모두 살립니다** — 함께 쓰는 파일에서 충돌이 나면 한쪽을 지우지 않고 양쪽에서 추가한 줄을 모두 남깁니다. 같은 줄을 서로 다르게 고쳤다면 해당 파일의 담당자와 함께 정리합니다.
+- **함께 쓰는 파일은 정한 범위만 고칩니다** — `index.html`에는 담당 화면 영역 요소와 CSS 연결 한 줄, `src/main.js`에는 담당 기능의 import 한 줄과 초기화 호출 한 줄만 추가합니다. 스타일은 담당 폴더에 별도 CSS 파일로 만듭니다.
+- **화면 영역** — 지도·왼쪽 시설 패널(A), 상단 지표·날짜·오른쪽 학생 반응과 예산 패널(B), 축제 창(C)으로 나눕니다. 건물별 운영 메뉴는 A가 왼쪽 시설 패널에 만드는 `#facility-actions` 영역에 각 기능이 직접 추가합니다.
 
 ### 7단계 이후의 분리 규칙
 
-7단계 이후에도 같은 규칙으로 기능마다 폴더·데이터·브랜치를 하나씩 만듭니다. 새 기능은 공통 약속(`applyEffect`, `onSettlement`, `addReaction`, `campus:select`)으로만 다른 기능과 연결하고, 다른 기능의 폴더 안 코드를 직접 부르지 않습니다.
+7단계 이후에도 같은 규칙으로 기능마다 폴더·데이터·브랜치를 하나씩 만듭니다. 새 기능은 공통 약속(`src/game/index.js`의 함수와 `campus:select` 이벤트)으로만 다른 기능과 연결하고, 다른 기능의 폴더 안 코드를 직접 부르지 않습니다.
 
 | 단계 | 폴더 | 데이터 | 브랜치 |
 | --- | --- | --- | --- |
@@ -45,39 +60,65 @@ README의 1~14번은 시스템 번호로 유지합니다. 아래 구현 순서�
 | 11단계 교육·창업 프로그램 | `src/programs/` | `public/data/programs.json` | `feature/programs` |
 | 12단계 시설 개선과 캠퍼스 확장 | `src/construction/` | `public/data/construction.json` | `feature/construction` |
 
-한 단계를 여러 명이 나누면 `feature/research-lab`, `feature/research-company`처럼 브랜치를 더 나누고, 폴더 안에서 파일을 나눕니다. 새 상태가 필요하면 게임 상태에 해당 기능 이름의 영역을 추가해 저장·불러오기에 함께 포함되게 합니다.
+한 단계를 여러 명이 나누면 `feature/research-lab`, `feature/research-company`처럼 브랜치를 더 나누고, 폴더 안에서 파일을 나눕니다. 새 기능의 상태는 `registerArea`로 해당 기능 이름의 영역을 등록해 저장·불러오기에 함께 포함되게 하고, 학생 대사는 `public/data/dialogues/<기능>.json`에 둡니다.
 
 ### 공통 약속
 
-B와 C가 동시에 개발할 수 있도록 함수 이름과 데이터 형태를 먼저 정합니다. B가 3단계에서 만들고 A·C가 사용하며, 바꿀 때는 사용하는 팀원과 먼저 합의합니다.
+B와 C가 동시에 개발할 수 있도록 함수 이름과 데이터 형태를 먼저 정합니다. B가 3단계에서 만들고 A·C와 이후 기능이 사용합니다. 바꿀 때는 사용하는 팀원과 먼저 합의하고 이 문서를 먼저 고칩니다.
 
-- **게임 상태** — `src/game/state.js`가 하나의 상태 객체를 관리합니다. 시스템마다 자기 영역(`time`, `finance`, `metrics`, `facilities`, `dorms`, `reactions`, `festival`)만 씁니다. 저장·불러오기는 상태 객체 전체를 저장하므로 축제 상태도 `festival` 영역에 두면 함께 저장됩니다.
-- **예산과 지표 변경** — 예산·만족도·평판은 직접 바꾸지 않고 `applyEffect({ id, budget, satisfaction, reputation, reason, source })`로만 바꿉니다. 같은 `id`는 한 번만 반영되어 중복 정산을 막고, 모든 변경이 정산 기록에 남습니다.
-- **시간 알림** — 날짜가 바뀌면 `onTimeAdvance(listener)`, 학기 정산 시점에는 `onSettlement(listener)`로 알림을 받습니다.
-- **학생 반응** — `addReaction({ type, buildingId, cause, values })`로 반응을 추가합니다. 대사는 `dialogues.json`에서 고르며, C는 축제용 대사를 `festival` 유형의 별도 항목으로 추가합니다.
-- **건물 선택** — 지도에서 건물을 선택하면 `campus.json`의 건물 ID를 담은 `campus:select` 이벤트를 보냅니다. B와 C는 이 이벤트로 건물별 운영 메뉴를 엽니다.
-- **임시 구현** — C는 B의 코드가 합쳐지기 전까지 같은 함수 이름을 흉내 내는 `src/festival/stubState.js`로 개발하고, 2차 합치기에서 실제 모듈로 바꾼 뒤 삭제합니다.
+**공개 함수** — 다른 기능은 `src/game/index.js` 한 파일에서만 가져옵니다. `src/game/`과 `src/reactions/`의 내부 파일을 직접 가져오지 않습니다.
+
+| 함수 | 역할 |
+| --- | --- |
+| `registerArea(name, createInitial)` | 기능의 상태 영역을 등록합니다. `createInitial()`은 새 게임의 초기값을 돌려줍니다. 게임 시작 전에 호출합니다. |
+| `getState()` | 현재 상태를 읽기 전용으로 돌려줍니다. 돌려받은 객체를 직접 고치지 않습니다. |
+| `updateArea(name, updater)` | 자기 기능의 영역만 바꿉니다. `updater(area)`는 바뀐 영역을 돌려줍니다. 예산·만족도·평판은 이 함수로 바꾸지 않습니다. |
+| `applyEffect({ id, budget, satisfaction, reputation, reason, source })` | 예산·만족도·평판을 바꾸는 유일한 방법입니다. 같은 `id`는 한 번만 반영되고, 이미 반영된 `id`면 `false`를 돌려줍니다. 모든 변경은 정산 기록에 남습니다. |
+| `onTimeAdvance(listener)` | 게임 날짜가 바뀔 때마다 `listener({ date, semester })`를 호출합니다. |
+| `onSettlement(listener)` | 학기 정산 시점에 `listener({ semester })`를 호출합니다. 각 기능은 여기서 학기 수입·지출을 `applyEffect`로 반영합니다. |
+| `onSettlementEnd(listener)` | 모든 `onSettlement` 처리가 끝난 뒤 `listener({ semester, budget })`를 호출합니다. 게임 종료 판정에 사용합니다. |
+| `subscribe(listener)` | 상태가 바뀔 때마다 `listener(state)`를 호출합니다. 화면을 다시 그릴 때 사용합니다. |
+| `addReaction({ type, buildingId, cause, values })` | 학생 반응을 추가합니다. 대사는 `type`에 맞는 대사 데이터에서 고릅니다. |
+| `registerDialogues(lines)` | 기능별 대사 데이터를 등록합니다. 각 기능은 `public/data/dialogues/<기능>.json`을 불러와 넘깁니다. |
+| `startGame()` | 모든 기능이 등록된 뒤 `src/main.js`에서 한 번 호출합니다. 저장 데이터가 있으면 불러오고, 없으면 새 게임을 시작합니다. |
+
+**값의 형태**
+
+- `budget`은 원 단위 정수 증감값입니다. 수입은 양수, 지출은 음수입니다. `satisfaction`·`reputation`은 0~100 지표의 증감값이며, 바꾸지 않는 값은 생략합니다.
+- `id`는 `<기능>:<대상>:<기간>` 형식으로 정합니다. 예: `festival:artist-a:2026-1`, `operations:dorm-rent:2026-1`.
+- `date`는 `{ year, month, day }`, `semester`는 `"2026-1"`, `"2026-2"`처럼 연도와 학기로 표시합니다.
+- 상태 영역 이름은 기능 폴더 이름과 같게 하고, 값은 JSON으로 저장할 수 있는 데이터만 둡니다. 함수나 3D 객체는 넣지 않습니다.
+- 저장은 브라우저 `localStorage`의 `words-to-world:save` 키에 버전 번호와 함께 저장합니다.
+- 대사 데이터 형식은 `{ "type": "festival.after", "when": { ... }, "text": "{building} 축제 무대가 정말 좋았어요!" }` 항목의 배열입니다. `when`이 없는 항목은 해당 유형의 기본 대사입니다. 빈칸은 `{building}`, `{major}`, `{year}`, `{value}`를 사용합니다.
+
+**건물 선택 이벤트** — 지도에서 건물을 선택하면 `window.dispatchEvent(new CustomEvent('campus:select', { detail: { buildingId, name } }))`를 보냅니다. `buildingId`는 `campus.json`의 `id`이며, 1차 합치기 후에는 바꾸지 않습니다. A는 선택할 때마다 `#facility-actions`를 비우고 이벤트를 보내며, 다른 기능은 이 이벤트를 받아 해당 건물의 운영 메뉴를 `#facility-actions`에 추가합니다.
+
+**`src/main.js` 연결 순서** — 지도 초기화 → 각 기능의 `init<기능>()` 호출(이 안에서 `registerArea`, `registerDialogues`, 이벤트 등록) → 마지막에 `startGame()` 순서로 호출합니다. 각 기능 폴더는 `index.js`에서 `init<기능>()` 하나를 내보냅니다. 예: `src/festival/index.js`의 `initFestival()`.
+
+**import 경로** — `src/game/index.js`는 모든 파일에서 `?v=` 같은 쿼리 없이 같은 상대 경로로 가져옵니다. 경로가 다르면 브라우저가 별개의 모듈로 불러와 게임 상태가 두 개로 나뉩니다.
+
+**임시 구현** — C는 1차 합치기 전까지 `src/game/index.js`와 같은 함수를 흉내 내는 `src/festival/stubGame.js`로 개발합니다. 1차 합치기 후 import 경로를 `../game/index.js`로 바꾸고 임시 파일을 삭제합니다.
 
 ### 합치는 시점과 구현 범위
 
 **1차 합치기 — 지도와 게임 상태 기반**
 
-- **팀원 A** — 2단계 완료 기준까지 구현합니다. 건물 ID를 확정하고 `campus:select` 이벤트를 보내며, `src/interaction/gamePreview.js`의 예시 시설 안내를 `facilities.json`으로 옮깁니다.
-- **팀원 B** — 3단계 완료 기준까지 구현합니다. 게임 상태, `applyEffect`, 시간 진행·일시정지, 상단 지표 표시, 저장·불러오기·새 게임이 동작해야 합니다.
-- **팀원 C** — 이번에는 합치지 않고 임시 상태로 개발합니다. 축제 일정 설정, 개발용 축제 기간 재현, 축제 창과 연예인·행사 목록, 예산 배분 화면까지 만듭니다.
-- **확인** — 지도에서 건물을 선택할 수 있고, 시간을 진행하면 날짜와 예산이 바뀌며, 저장 후 불러오면 같은 상태에서 이어집니다.
+- **팀원 A** — 2단계 완료 기준까지 구현합니다. 건물 ID를 확정하고 `campus:select` 이벤트와 `#facility-actions` 영역을 만들며, `src/interaction/gamePreview.js`의 예시 시설 안내를 건물 ID를 키로 하는 `facilities.json`으로 옮깁니다.
+- **팀원 B** — 3단계 완료 기준까지 구현합니다. `src/game/index.js`의 공개 함수를 모두 만들고, 시간 진행·일시정지, 상단 지표 표시, 저장·불러오기·새 게임이 동작해야 합니다. `addReaction`과 `registerDialogues`는 이때 상태에 기록만 해도 됩니다.
+- **팀원 C** — `src/festival/` 안에서 임시 구현으로 축제 일정 설정, 개발용 축제 기간 재현, 축제 창과 연예인·행사 목록, 예산 배분 화면까지 만듭니다. `src/main.js`에는 아직 연결하지 않으므로 `src/festival/`만 담은 Pull Request는 언제든 합칠 수 있습니다.
+- **확인** — 지도에서 건물을 선택할 수 있고, 시간을 진행하면 날짜와 예산이 바뀌며, 저장 후 불러오면 같은 상태에서 이어집니다. 같은 `id`로 `applyEffect`를 두 번 호출해도 예산이 한 번만 바뀝니다.
 
 **2차 합치기 — 운영 시스템과 축제 연결**
 
-- **팀원 B** — 4단계 완료 기준까지 구현하고, 5단계의 민원 발생 조건, `addReaction`, 대사 데이터, 학생 반응 패널 표시까지 만듭니다.
-- **팀원 C** — 임시 상태를 실제 모듈로 바꿉니다. 축제 비용을 `applyEffect`로 차감하고, 만족도 변화와 축제 후 학생 반응을 `addReaction`으로 연결합니다.
-- **팀원 A** — 건물을 선택하면 B·C의 운영 메뉴가 시설 패널에 열리도록 연결하고 시설 안내를 보완합니다.
+- **팀원 B** — 4단계 완료 기준까지 구현하고, 5단계의 민원 발생 조건, `addReaction`의 대사 선택, `public/data/dialogues/` 대사 데이터, 학생 반응 패널 표시까지 만듭니다.
+- **팀원 C** — 1차 합치기 직후 임시 구현을 실제 모듈로 바꾸고 `src/main.js`에 `initFestival()`을 연결합니다. 축제 비용을 `applyEffect`로 차감하고, 만족도 변화와 축제 후 학생 반응을 `addReaction`으로 연결합니다.
+- **팀원 A** — 건물을 선택하면 B·C의 운영 메뉴가 `#facility-actions`에 표시되는지 확인하고 시설 안내를 보완합니다.
 - **확인** — 한 학기 동안 편의시설·기숙사 운영과 축제 지출이 같은 예산과 정산 기록에 나타나고, 축제 후 학생 반응이 표시됩니다. 같은 지출이 두 번 반영되지 않습니다.
 
 **3차 합치기 — 첫 버전 완성**
 
 - **팀원 B** — 5단계 완료 기준까지 구현합니다. 운영 결정 이후 민원이 바뀌거나 해결됩니다.
-- **팀원 C** — 6단계 완료 기준까지 구현합니다. 학교가 문을 닫는 게임 종료 조건과 새 게임 안내를 추가합니다.
+- **팀원 C** — 6단계 완료 기준까지 구현합니다. `onSettlementEnd`에서 예산이 0 미만이면 학교가 문을 닫는 게임 종료를 처리하고, 새 게임 안내를 추가합니다.
 - **팀원 A** — 전체 화면 배치를 정리하고 지도 로딩·화면 이동·건물 선택 성능을 확인합니다.
 - **확인** — 6단계 완료 기준처럼 새 게임부터 시설 운영·학생 민원·축제·학기 정산까지 한 번의 플레이 흐름으로 이어지고, 예산 부족에 따른 게임 종료도 동작합니다.
 
@@ -110,7 +151,7 @@ B와 C가 동시에 개발할 수 있도록 함수 이름과 데이터 형태를
 
 ## 3단계 — 시간과 학교 운영 지표
 
-**담당** — 팀원 B · 1차 합치기까지 완료
+**담당** — 팀원 B · 1차 합치기까지 완료, 공통 약속의 공개 함수 포함
 
 README 시스템 3의 기반을 먼저 만듭니다.
 
@@ -145,7 +186,7 @@ README 시스템 4를 구현합니다.
 - 시설 부족, 장비 노후, 만족도 변화 등 민원 발생 조건을 정의합니다.
 - 민원에 관련 건물 ID와 발생 원인을 연결합니다.
 - 게임 상태로 민원 발생과 지표 변화를 결정하고, 게임에 포함된 대사 데이터에서 해당 상황에 맞는 학생의 말을 고릅니다.
-- 민원 유형별 대사 템플릿을 JSON으로 작성하고 건물 이름·전공·학년·수치를 빈칸으로 채워 표현을 다양하게 합니다. 같은 대사가 연달아 나오지 않도록 최근에 쓴 대사를 기록합니다.
+- 민원 유형별 대사 템플릿을 `public/data/dialogues/<기능>.json`으로 작성하고 건물 이름·전공·학년·수치를 빈칸으로 채워 표현을 다양하게 합니다. 같은 대사가 연달아 나오지 않도록 최근에 쓴 대사를 기록합니다.
 - 대사 초안은 개발 중 AI 도구로 만들 수 있지만, 검토를 거쳐 데이터 파일로 저장합니다. 게임 실행 중에는 외부 AI API를 호출하지 않고 API 키도 두지 않습니다.
 - 해당 상황의 대사가 없으면 민원 유형별 기본 대사를 표시합니다.
 - 편의시설 운영 방식 변경, 기숙사 입주 조정 등 운영 결정 이후 관련 민원의 변화와 해결 여부를 보여줍니다. 시설 개선·건설에 따른 반응은 12단계에서 연결합니다.
@@ -154,7 +195,7 @@ README 시스템 4를 구현합니다.
 
 ## 6단계 — 축제와 첫 버전 완성
 
-**담당** — 팀원 C · 임시 상태로 개발 후 2차 합치기에서 연결, 완료 기준은 3차 합치기
+**담당** — 팀원 C · 1차 합치기 전에는 임시 구현으로 개발, 예산·학생 반응 연결은 2차, 완료 기준은 3차 합치기
 
 README 시스템 9를 구현합니다.
 
