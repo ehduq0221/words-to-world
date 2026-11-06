@@ -24,10 +24,28 @@ README의 1~14번은 시스템 번호로 유지합니다. 아래 구현 순서�
 
 ### 작업 규칙
 
-- 각자 `feature/map`, `feature/operations`, `feature/festival` 브랜치에서 작업하고, 담당 폴더 밖의 파일은 필요한 경우에만 고칩니다.
-- 함께 쓰는 `index.html`, `src/main.js`에는 담당 기능의 화면 영역과 초기화 코드 한두 줄만 추가합니다. 스타일은 담당 폴더에 별도 CSS 파일로 만들어 `index.html`에 연결합니다.
+- **폴더는 기능별로 나눕니다** — 사람 이름 폴더를 만들지 않고 `src/<기능>/`에 코드를, `public/data/<기능>.json`에 데이터를 둡니다. 담당자가 바뀌어도 폴더는 그대로 유지합니다.
+- **브랜치도 기능별로 만듭니다** — `feature/<기능>` 이름으로 `main`에서 만들고, 첫 버전은 `feature/map`, `feature/operations`, `feature/festival`을 사용합니다. 담당 폴더 밖의 파일은 필요한 경우에만 고칩니다.
+- **`main`은 항상 실행되는 상태로 둡니다** — `main`에 직접 올리지 않고 Pull Request로 합칩니다. 합치기 전에 로컬 서버로 실행해 아래 확인 항목을 점검하고, 다른 팀원 한 명이 확인합니다.
+- **브랜치는 짧게 유지합니다** — 1·2·3차 합치기는 반드시 지켜야 할 시점입니다. 그 사이에도 완료 기준을 하나 채울 때마다 Pull Request로 합치고, 합친 브랜치는 지운 뒤 다음 작업은 최신 `main`에서 새로 만듭니다.
+- **매일 최신 `main`을 받습니다** — 작업을 시작할 때와 Pull Request를 올리기 전에 `git pull --rebase origin main`으로 최신 내용을 받습니다. 충돌이 나면 해당 파일의 담당자와 함께 정리합니다.
+- **함께 쓰는 파일은 최소한으로 고칩니다** — `index.html`, `src/main.js`에는 담당 기능의 화면 영역과 초기화 코드 한두 줄만 추가합니다. 스타일은 담당 폴더에 별도 CSS 파일로 만들어 `index.html`에 연결합니다. `src/game/`의 공통 약속을 바꿀 때는 사용하는 팀원에게 먼저 알립니다.
 - 화면 영역은 지도·왼쪽 시설 패널(A), 상단 지표·날짜·오른쪽 학생 반응과 예산 패널(B), 축제 창(C)으로 나눕니다.
-- 합치기 전에 `git pull --rebase origin main`으로 최신 내용을 받고, 로컬 서버로 실행해 아래 확인 항목을 점검한 뒤 올립니다.
+
+### 7단계 이후의 분리 규칙
+
+7단계 이후에도 같은 규칙으로 기능마다 폴더·데이터·브랜치를 하나씩 만듭니다. 새 기능은 공통 약속(`applyEffect`, `onSettlement`, `addReaction`, `campus:select`)으로만 다른 기능과 연결하고, 다른 기능의 폴더 안 코드를 직접 부르지 않습니다.
+
+| 단계 | 폴더 | 데이터 | 브랜치 |
+| --- | --- | --- | --- |
+| 7단계 시설 대관 | `src/rental/` | `public/data/rental.json` | `feature/rental` |
+| 8단계 연구 성과와 기업 프로젝트 | `src/research/` | `public/data/research.json` | `feature/research` |
+| 9단계 지원사업·학교 평가·발전기금 | `src/funding/` | `public/data/funding.json` | `feature/funding` |
+| 10단계 교수 영입 | `src/faculty/` | `public/data/faculty.json` | `feature/faculty` |
+| 11단계 교육·창업 프로그램 | `src/programs/` | `public/data/programs.json` | `feature/programs` |
+| 12단계 시설 개선과 캠퍼스 확장 | `src/construction/` | `public/data/construction.json` | `feature/construction` |
+
+한 단계를 여러 명이 나누면 `feature/research-lab`, `feature/research-company`처럼 브랜치를 더 나누고, 폴더 안에서 파일을 나눕니다. 새 상태가 필요하면 게임 상태에 해당 기능 이름의 영역을 추가해 저장·불러오기에 함께 포함되게 합니다.
 
 ### 공통 약속
 
