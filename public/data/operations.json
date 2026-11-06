@@ -11,7 +11,7 @@
     "사범대식당_생협(미추홀 별관 A동): 송도캠퍼스 밖이므로 제외",
     "제2학생복지관(팝업스토어 몰)의 팔뚝김밥·봉구스밥버거·카페제이에스·팔공티·유니상점: 지도 데이터에 해당 건물이 없어 제외"
   ],
-  "daysPerSemester": 182,
+  "planningDaysBefore": 30,
   "tuition": {
     "students": 11247,
     "perStudent": 2350000,
@@ -19,6 +19,7 @@
   },
   "satisfaction": { "baseline": 60, "divisor": 4, "maxChange": 5 },
   "switchCost": 10000000,
+  "switchCostNote": "운영 방식이 바뀌는 학기 첫날 시설마다 한 번 지출합니다.",
   "facilityTypes": {
     "cafeteria": {
       "label": "학생식당",
