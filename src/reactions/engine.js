@@ -2,7 +2,7 @@
 // area는 게임 상태의 reactions 영역, config는 public/data/reactions.json입니다.
 
 export function createInitialArea() {
-  return { seq: 0, dayCount: 0, issues: {}, feed: [], recent: [] };
+  return { seq: 0, dayCount: 0, issues: {}, snapshots: {}, feed: [], recent: [] };
 }
 
 export function getPath(source, path) {
@@ -27,30 +27,48 @@ function levelOf(rule, read) {
   return (rule.levels ?? []).filter(condition => compare(read(condition.field), condition)).length;
 }
 
-// 지금 상태에서 성립하는 민원·칭찬 목록. 해당 기능이 아직 없으면(값이 undefined) 생기지 않습니다.
+// 지금 상태에서 성립하는 민원·칭찬 목록(found)과, 조건과 관계없이 모든 항목의 현재 값(snapshots).
+// snapshots는 다음 확인 때 「무엇이 바뀌어서」 민원이 생기거나 사라졌는지 알아내는 데 씁니다.
+// 해당 기능이 아직 없으면(값이 undefined) 생기지 않습니다.
 export function findIssues(state, rules) {
   const issues = new Map();
+  const snapshots = new Map();
   for (const rule of rules) {
     if (rule.each) {
       const items = getPath(state, rule.each);
       if (!items || typeof items !== 'object') continue;
       for (const [key, item] of Object.entries(items)) {
         const read = field => item?.[field];
+        const values = Object.fromEntries(Object.entries(rule.values ?? {}).map(([name, field]) => [name, item?.[field]]));
+        snapshots.set(`${rule.id}:${key}`, values);
         // valueField가 있으면 고정값 대신 같은 항목의 다른 값과 비교합니다. 예: openBeds < capacity
         const check = condition => compare(read(condition.field), condition.valueField ? { ...condition, value: read(condition.valueField) } : condition);
         if (!rule.when.every(check)) continue;
-        const values = Object.fromEntries(Object.entries(rule.values ?? {}).map(([name, field]) => [name, item[field]]));
         issues.set(`${rule.id}:${key}`, { rule, buildingId: item.buildingId ?? null, values, level: levelOf(rule, read) });
       }
     } else {
       const value = getPath(state, rule.path);
       const read = () => value;
+      if (value !== undefined) snapshots.set(rule.id, { value, ...(rule.fixedValues ?? {}) });
       if (rule.when.every(condition => compare(value, condition))) {
         issues.set(rule.id, { rule, buildingId: rule.buildingId ?? null, values: { value, ...(rule.fixedValues ?? {}) }, level: levelOf(rule, read) });
       }
     }
   }
-  return issues;
+  return { found: issues, snapshots };
+}
+
+// 이전 확인 때보다 바뀐 숫자 값을 <이름>Change로 더합니다. 바뀌지 않은 값은 넣지 않습니다.
+// 예: 기숙사비 인상으로 신청이 줄면 applicantsChange < 0, 방을 더 열면 openBedsChange > 0
+export function withChanges(values, previous) {
+  const result = { ...values };
+  if (!previous) return result;
+  for (const [key, value] of Object.entries(values)) {
+    if (typeof value === 'number' && typeof previous[key] === 'number' && value !== previous[key]) {
+      result[`${key}Change`] = value - previous[key];
+    }
+  }
+  return result;
 }
 
 // 학사 일정 같은 날짜 반응. 해당 날짜가 되면 한 번 나옵니다.
@@ -77,7 +95,7 @@ export function fill(text, values) {
   });
 }
 
-// 조건(when)이 맞는 대사를 우선하고, 최근에 쓴 대사는 다른 대사가 있으면 피합니다.
+// 조건(when)이 맞는 대사를 우선하고, 최근에 쓴 대사는 다른 대사가 있으면 피합니다. 대사에 priority가 있으면 반응의 표시 이름으로 씁니다.
 // 해당 유형의 대사가 없으면 default(해결이면 default.resolved) 대사를 씁니다.
 export function pickLine(lines, type, values, recent, seq) {
   let candidates = lines.filter(line => line.type === type && matches(line.when, values));
@@ -87,8 +105,10 @@ export function pickLine(lines, type, values, recent, seq) {
     candidates = lines.filter(line => line.type === fallback);
   }
   if (!candidates.length) return null;
-  const specific = candidates.filter(line => line.when);
-  const pool = specific.length ? specific : candidates;
+  // 바뀐 이유(<이름>Change)를 설명하는 대사 > 다른 조건이 있는 대사 > 조건 없는 대사 순으로 고릅니다.
+  const score = line => Object.keys(line.when ?? {}).reduce((sum, key) => sum + (key.endsWith('Change') ? 10 : 1), 0);
+  const best = Math.max(...candidates.map(score));
+  const pool = candidates.filter(line => score(line) === best);
   const fresh = pool.filter(line => !recent.includes(line.id));
   const choices = fresh.length ? fresh : pool;
   return choices[seq % choices.length];
@@ -118,7 +138,7 @@ export function addToArea(area, config, lines, { type, kind = 'event', issueId =
     issueId,
     buildingId,
     cause,
-    priority,
+    priority: line?.priority ?? priority,
     avatar: who.avatar,
     who: values.major ?? who.label,
     year: values.year ?? who.year,
@@ -138,7 +158,8 @@ export function addToArea(area, config, lines, { type, kind = 'event', issueId =
 // - 같은 민원이 remindEveryDays 넘게 이어지면 「계속 요청」
 // - 민원이 사라지면 「해결」(유형.resolved 대사), 칭찬이 사라지면 조용히 뺍니다.
 export function updateIssues(area, config, lines, state, date) {
-  const found = findIssues(state, config.rules);
+  const { found, snapshots } = findIssues(state, config.rules);
+  const previous = area.snapshots ?? {};
   let next = { ...area, issues: { ...area.issues } };
   const added = [];
   const push = input => {
@@ -149,7 +170,7 @@ export function updateIssues(area, config, lines, state, date) {
   for (const [issueId, { rule, buildingId, values, level }] of found) {
     const existing = next.issues[issueId];
     const kind = rule.kind ?? 'complaint';
-    const base = { issueId, buildingId, cause: rule.cause, values, persona: rule.persona };
+    const base = { issueId, buildingId, cause: rule.cause, values: withChanges(values, previous[issueId]), persona: rule.persona };
     let spoke = true;
     if (!existing) {
       push(kind === 'praise'
@@ -173,7 +194,9 @@ export function updateIssues(area, config, lines, state, date) {
     if (found.has(issueId)) continue;
     delete next.issues[issueId];
     if (issue.kind === 'praise') continue;
-    push({ type: `${issue.type}.resolved`, kind: 'resolved', issueId, buildingId: issue.buildingId, cause: issue.cause, priority: '해결', values: issue.values, persona: issue.persona });
+    const current = snapshots.get(issueId) ?? issue.values;
+    push({ type: `${issue.type}.resolved`, kind: 'resolved', issueId, buildingId: issue.buildingId, cause: issue.cause, priority: '해결', values: withChanges(current, previous[issueId] ?? issue.values), persona: issue.persona });
   }
+  next.snapshots = Object.fromEntries(snapshots);
   return { area: next, added };
 }

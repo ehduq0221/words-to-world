@@ -13,7 +13,7 @@
       "levels": [{ "field": "waiting", "op": ">=", "value": 300 }],
       "type": "dorm.shortage",
       "cause": "기숙사 수용 인원",
-      "values": { "building": "name", "value": "waiting" },
+      "values": { "building": "name", "value": "waiting", "applicants": "applicants", "openBeds": "openBeds" },
       "persona": { "role": "기숙사 입사 대기 학생" }
     },
     {
@@ -22,7 +22,7 @@
       "when": [{ "field": "openBeds", "op": "<", "valueField": "capacity" }, { "field": "waiting", "op": ">", "value": 0 }],
       "type": "dorm.closed",
       "cause": "닫아 둔 기숙사 방",
-      "values": { "building": "name", "value": "waiting" },
+      "values": { "building": "name", "value": "waiting", "applicants": "applicants", "openBeds": "openBeds" },
       "persona": { "role": "기숙사 입사 대기 학생" }
     },
     {
