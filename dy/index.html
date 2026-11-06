@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Words to World · 인천대학교</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">W</span><div><span class="eyebrow">WORDS TO WORLD</span><h1>인천대학교 <span>송도캠퍼스</span></h1></div></div>
+    <div class="metrics" aria-label="학교 운영 지표 예시"><div><span>운영 예산</span><strong>₩ 12.8억</strong><small>이번 달 +2,400만</small></div><div><span>학생 만족도</span><strong>76<em>/ 100</em></strong><small>지난달 대비 +4</small></div><div><span>학교 평판</span><strong>68<em>/ 100</em></strong><small>안정적인 성장</small></div></div>
+    <div class="date"><b>2026년 3월</b><span>1학기 · 화면 예시</span></div>
+  </header>
+  <main id="map" aria-label="인천대학교 송도캠퍼스 3D 지도"></main>
+  <section class="campus-caption"><span class="live-dot"></span> 송도캠퍼스 <span>기본 캠퍼스</span></section>
+  <aside class="left-panel panel">
+    <div class="section-heading"><h2>캠퍼스 운영</h2><span>시설 안내</span></div>
+    <nav class="category-tabs" aria-label="시설 분류"><button data-category="study" aria-pressed="true">학습</button><button data-category="life" aria-pressed="false">생활</button><button data-category="research" aria-pressed="false">연구</button></nav>
+    <div id="facility-list" class="facility-list"></div>
+    <div class="facility-detail" id="facility-detail" aria-live="polite"></div>
+
+  </aside>
+  <aside class="right-panel">
+    <section class="panel reactions"><div class="section-heading"><h2>학생들의 목소리</h2><span class="count">2</span></div><p class="section-sub">캠퍼스에서 들려오는 이야기</p>
+      <article><div class="student"><span class="avatar">김</span><div><b>컴퓨터공학과</b><small>3학년 · 실습 환경</small></div><span class="priority">개선 요청</span></div><p>“총장님, 실습실 컴퓨터가 너무 느려요. 과제를 못 하겠어요!”</p><span class="tag">실습 장비 개선</span></article>
+      <article><div class="student"><span class="avatar sage">이</span><div><b>기숙사 거주 학생</b><small>1학년 · 주거 환경</small></div></div><p>“학교에 공부할 곳은 많은데 기숙사 자리가 너무 부족해요.”</p><span class="tag">기숙사 수용 인원</span></article>
+    </section>
+    <section class="panel finance"><div class="section-heading"><h2>이번 달 예산</h2><span>예시</span></div><div class="finance-row"><span>예상 수입</span><b>+8,600만</b></div><div class="finance-row"><span>예상 지출</span><b>−6,200만</b></div><div class="balance"><span>예상 운영 잔액</span><strong>+2,400만 원</strong></div></section>
+  </aside>
+  <div class="map-controls">왼쪽 드래그 · 회전 <span>오른쪽 드래그 · 이동</span> 휠 · 확대·축소</div>
+  <footer><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors · ODbL</a> · <a href="./public/data/SOURCE.md">지도 출처</a></span><span>운영 수치와 학생 반응은 화면 예시입니다.</span></footer>
+  <p id="status" role="status">캠퍼스를 불러오고 있습니다.</p>
+  <script type="module" src="./src/main.js?v=building-selection-2"></script>
+</body>
+</html>

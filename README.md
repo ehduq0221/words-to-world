@@ -4,7 +4,7 @@ Words to World는 신입생이 인천대학교 총장이 되어 학교를 알아
 
 ## 로컬 개발 실행
 
-현재 3D 맵은 로컬 작업 폴더의 `dy/`에서 개발하고 있습니다. 해당 폴더가 있는 환경에서 프로젝트 루트를 기준으로 실행한 뒤 브라우저로 http://localhost:8000 에 접속합니다.
+3D 맵과 게임 화면 예시는 [dy 폴더](dy/README.md)에 있습니다. 프로젝트 루트에서 실행한 뒤 브라우저로 http://localhost:8000 에 접속합니다.
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1 --directory dy

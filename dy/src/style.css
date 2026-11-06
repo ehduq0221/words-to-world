@@ -1,0 +1,85 @@
+* { box-sizing: border-box; }
+:root { color: #243d37; font-family: system-ui, -apple-system, sans-serif; font-synthesis: none; }
+body { margin: 0; overflow: hidden; background: #e7ede8; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid #35836a; outline-offset: 3px; }
+.topbar { position: absolute; z-index: 3; top: 0; left: 0; right: 0; height: 100px; padding: 20px 28px; background: #fffffff5; border-bottom: 1px solid #dce5df; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { display: grid; place-items: center; background: #254e40; color: #edf6dc; border-radius: 12px; width: 42px; height: 46px; font-family: Georgia, serif; font-size: 25px; }
+.eyebrow { font-size: 9px; letter-spacing: .2em; font-weight: 750; color: #6f877b; }
+h1 { font-size: 19px; margin: 7px 0 0; letter-spacing: -.06em; }
+h1 span { font-size: 12px; font-weight: 500; margin-left: 7px; color: #708578; }
+.metrics { display: flex; gap: 35px; }
+.metrics>div { min-width: 100px; }
+.metrics span, .metrics small { display: block; font-size: 10px; color: #7a887f; }
+.metrics strong { display: block; font-size: 23px; letter-spacing: -.04em; margin: 3px 0; font-weight: 650; }
+.metrics em { font-size: 11px; font-style: normal; color: #96a298; font-weight: 400; margin-left: 5px; }
+.metrics small { color: #43836a; font-size: 9px; }
+.date { text-align: right; }
+.date b { display: block; font-size: 13px; }
+.date span { display: block; font-size: 10px; margin-top: 6px; color: #7a887f; }
+#map { position: absolute; top: 100px; left: 270px; right: 300px; bottom: 65px; }
+#map canvas, .labels { position: absolute; inset: 0; width: 100%; height: 100%; }
+#map canvas { display: block; touch-action: none; }
+.panel { background: #fffffff2; border: 1px solid #dbe4dd; border-radius: 15px; box-shadow: 0 6px 25px #344f3905; }
+.left-panel { position: absolute; left: 22px; top: 128px; bottom: 76px; width: 238px; padding: 19px 16px; overflow: auto; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+h2 { font-size: 14px; margin: 0; letter-spacing: -.04em; }
+.section-heading>span { font-size: 9px; color: #91a095; }
+.category-tabs { display: flex; padding: 4px; background: #f0f4ef; border-radius: 8px; gap: 3px; margin: 20px 0 14px; }
+.category-tabs button { flex: 1; border: 0; border-radius: 5px; padding: 8px 0; font-size: 11px; color: #819087; background: transparent; }
+.category-tabs button[aria-pressed=true] { background: #fff; color: #2f654d; box-shadow: 0 1px 4px #1b392014; font-weight: 650; }
+.facility-list { display: grid; gap: 6px; }
+.facility-list button { border: 1px solid transparent; background: transparent; text-align: left; border-radius: 8px; display: flex; align-items: center; gap: 10px; padding: 10px 9px; color: #62746a; }
+.facility-list button span { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid #dde5de; border-radius: 7px; font-size: 10px; }
+.facility-list button b { font-size: 11px; font-weight: 500; }
+.facility-list button[aria-pressed=true] { background: #edf4e9; border-color: #dbe7d6; color: #2c5942; }
+.facility-list button[aria-pressed=true] span { background: #fff; border-color: #d0dfc9; }
+.facility-detail { margin-top: 20px; border-top: 1px solid #e9ede7; padding-top: 20px; }
+.detail-type { font-size: 9px; color: #849683; }
+h3 { margin: 7px 0 9px; font-size: 17px; letter-spacing: -.05em; }
+.facility-detail p { font-size: 11px; line-height: 1.8; color: #7a8b7e; margin: 0; }
+.detail-metric { display: flex; justify-content: space-between; padding: 13px 0; margin: 12px 0 0; border-top: 1px dashed #e1e7dd; font-size: 10px; }
+.detail-metric b { color: #538158; }
+.facility-detail>small { font-size: 10px; line-height: 1.7; color: #8b978c; display: block; }
+.semester-note { margin-top: 26px; padding: 15px; background: #f6f5ec; border-radius: 9px; }
+.semester-note>span { font-size: 9px; color: #9b9475; }
+.semester-note p { font-size: 12px; line-height: 1.7; margin: 8px 0 13px; color: #777653; }
+.progress { height: 3px; background: #e5e4d1; border-radius: 3px; }
+.progress i { display: block; height: 3px; width: 36%; background: #a4ad79; border-radius: 3px; }
+.semester-note small { display: block; font-size: 8px; color: #a09e87; margin-top: 8px; }
+.right-panel { position: absolute; right: 22px; top: 128px; width: 266px; bottom: 76px; overflow: auto; }
+.reactions, .finance { padding: 19px 17px; }
+.count { padding: 3px 7px; border-radius: 5px; background: #edf3e9; color: #6b8963 !important; }
+.section-sub { font-size: 10px; color: #95a192; margin: 8px 0 18px; }
+article { border-top: 1px solid #e9eee6; padding: 18px 0; }
+article:last-child { padding-bottom: 0; }
+.student { display: flex; gap: 9px; align-items: center; }
+.avatar { width: 29px; height: 31px; display: grid; place-items: center; border-radius: 9px; background: #e9ecdb; color: #8a8e66; font-size: 11px; }
+.avatar.sage { background: #e3ede6; color: #739782; }
+.student b { display: block; font-size: 10px; font-weight: 600; }
+.student small { display: block; margin-top: 4px; font-size: 9px; color: #9aa497; }
+.priority { margin-left: auto; font-size: 8px; color: #b19061; }
+article>p { font-size: 12px; line-height: 1.9; color: #667a6c; margin: 13px 0; word-break: keep-all; }
+.tag { display: inline-block; font-size: 8px; padding: 5px 7px; color: #89937b; border-radius: 4px; background: #f1f3ea; }
+.finance { margin-top: 14px; }
+.finance-row { display: flex; justify-content: space-between; font-size: 11px; margin-top: 18px; color: #8c998b; }
+.finance-row b { font-size: 12px; font-weight: 500; color: #597a61; }
+.balance { margin-top: 18px; padding-top: 16px; border-top: 1px solid #e5eade; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #82917e; }
+.balance strong { font-size: 14px; color: #3d795a; }
+.campus-caption { position: absolute; top: 125px; left: 292px; font-size: 11px; color: #526d5b; }
+.campus-caption>span:last-child { margin-left: 8px; font-size: 9px; color: #99a697; }
+.live-dot { display: inline-block; width: 6px; height: 6px; background: #668e65; border-radius: 50%; margin-right: 6px; }
+.map-controls { position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%); font-size: 9px; white-space: nowrap; color: #7b907f; background: #ffffffce; padding: 10px 17px; border-radius: 20px; }
+.map-controls span { margin: 0 14px; }
+footer { position: absolute; bottom: 17px; left: 26px; right: 26px; display: flex; justify-content: space-between; gap: 12px; font-size: 9px; color: #8b9b8a; }
+a { color: inherit; }
+.labels { pointer-events: none; overflow: hidden; }
+.building-label { position: absolute; top: 0; left: 0; font-size: 10px; font-weight: 500; white-space: nowrap; color: #3c5946; background: #ffffffe6; border: 1px solid #cfdccd; border-radius: 4px; padding: 3px 6px; }
+.building-label { pointer-events: auto; font-family: inherit; line-height: normal; }
+.building-label:hover { background: #edf5e5; border-color: #6f967b; }
+.left-panel.show-building-info .facility-detail { display: block; }
+@media(max-width: 800px) { .left-panel.show-building-info { height: 310px; max-height: calc(100dvh - 230px); } }
+#status { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: white; padding: 18px 24px; border-radius: 10px; font-size: 13px; }
+@media(max-width: 1100px) { .metrics { gap: 17px; } .brand-mark { display: none; } h1 { font-size: 16px; } h1 span { display: block; margin: 4px 0 0; font-size: 10px; } .left-panel { width: 205px; left: 14px; padding: 16px 12px; } .right-panel { width: 224px; right: 14px; } #map { left: 227px; right: 246px; } .campus-caption { left: 244px; } .student { gap: 6px; } .priority { display: none; } }
+@media(max-width: 800px) { .topbar { height: 125px; padding: 14px 18px; align-items: flex-start; } .metrics { position: absolute; top: 70px; left: 18px; right: 18px; justify-content: space-between; } .metrics>div { min-width: auto; display: flex; gap: 9px; align-items: baseline; } .metrics strong { font-size: 17px; } .metrics small { display: none; } .metrics span { font-size: 9px; } .metrics em { font-size: 9px; } .date { margin-top: 6px; } .right-panel { display: none; } .left-panel { top: auto; bottom: 65px; width: 210px; height: 220px; } .semester-note, .facility-detail { display: none; } .category-tabs { margin-top: 13px; } .facility-list button { padding: 5px 8px; } #map { top: 125px; left: 0; right: 0; bottom: 50px; } .campus-caption { left: 20px; top: 143px; } footer { font-size: 8px; left: 15px; right: 15px; } footer>span:last-child { max-width: 130px; text-align: right; } .map-controls { bottom: 39px; font-size: 8px; padding: 8px 10px; } .map-controls span { margin: 0 7px; } }
