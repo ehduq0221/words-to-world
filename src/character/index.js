@@ -38,8 +38,17 @@ export async function initCharacter() {
     button.addEventListener('click', () => selectAvatar(index));
     document.querySelector('#avatars').append(button);
   });
-  selectAvatar(0);
-  const majorSelection = await initDepartmentPicker();
+  selectAvatar(Number.isInteger(existing?.avatar) && variants[existing.avatar] ? existing.avatar : 0);
+  const majorSelection = await initDepartmentPicker(existing);
+  if (existing) {
+    for (const key of ['name', 'nationality', 'city']) {
+      document.getElementById(key).value = existing[key];
+    }
+    for (const input of document.querySelectorAll('input[name="gender"]')) {
+      input.checked = input.value === existing.gender;
+    }
+    document.querySelector('#subtitle').textContent = '내 캐릭터 정보를 수정해요';
+  }
 
   function showStep(value) {
     step = value;
@@ -48,12 +57,12 @@ export async function initCharacter() {
       element.classList.toggle('active', index <= step);
     });
     const titles = [
-      '내 캐릭터의 모습을<br>골라 주세요',
-      '어떤 나로<br>시작할까요?',
+      existing ? '내 캐릭터의 모습을<br>수정해 주세요' : '내 캐릭터의 모습을<br>골라 주세요',
+      existing ? '내 캐릭터 정보를<br>수정해 주세요' : '어떤 나로<br>시작할까요?',
       '나의 캐릭터를<br>확인해 주세요',
     ];
     document.querySelector('#title').innerHTML = titles[step];
-    next.textContent = ['이 캐릭터로 할게요', '다음', '이 캐릭터로 시작하기'][step];
+    next.textContent = ['이 캐릭터로 할게요', '다음', existing ? '수정 내용 저장하기' : '이 캐릭터로 시작하기'][step];
     error.hidden = true;
     document.querySelector('#back').hidden = step === 0 && !existing;
     window.scrollTo(0, 0);

@@ -31,6 +31,16 @@ function createPicker(host, { id, name, label, placeholder, onChange }, closeOth
   menu.hidden = true;
   host.append(labelElement, input, toggle, menu);
   let options = [];
+  let items = [];
+
+  function setValue(name) {
+    if (!items.some(item => item.name === name)) return false;
+    input.value = name;
+    valueLabel.textContent = name;
+    options.forEach((option, index) => option.setAttribute('aria-selected', String(items[index].name === name)));
+    onChange?.(name);
+    return true;
+  }
 
   function close(returnFocus = false) {
     menu.hidden = true;
@@ -47,7 +57,8 @@ function createPicker(host, { id, name, label, placeholder, onChange }, closeOth
     selected?.scrollIntoView({ block: 'nearest' });
   }
 
-  function setItems(items) {
+  function setItems(nextItems) {
+    items = nextItems;
     close();
     input.value = '';
     valueLabel.textContent = placeholder;
@@ -69,11 +80,8 @@ function createPicker(host, { id, name, label, placeholder, onChange }, closeOth
         option.append(alias);
       }
       option.addEventListener('click', () => {
-        input.value = item.name;
-        valueLabel.textContent = item.name;
-        options.forEach(other => other.setAttribute('aria-selected', String(other === option)));
+        setValue(item.name);
         close(true);
-        onChange?.(item.name);
       });
       menu.append(option);
       return option;
@@ -107,10 +115,10 @@ function createPicker(host, { id, name, label, placeholder, onChange }, closeOth
   document.addEventListener('pointerdown', event => {
     if (!host.contains(event.target)) close();
   });
-  return { input, toggle, close, setItems };
+  return { input, toggle, close, setItems, setValue };
 }
 
-export async function initDepartmentPicker() {
+export async function initDepartmentPicker(profile = null) {
   const response = await fetch(new URL('../../public/data/character.json', import.meta.url));
   if (!response.ok) throw new Error('학과 목록을 불러올 수 없습니다.');
   const { groups } = await response.json();
@@ -157,10 +165,21 @@ export async function initDepartmentPicker() {
   }
   for (const [type, inputName] of [['double', 'hasDouble'], ['minor', 'hasMinor']]) {
     const major = majors.find(item => item.type === type);
+    const checkbox = document.querySelector('input[name="' + inputName + '"]');
+    checkbox.checked = Boolean(profile?.[type + 'Department']);
     document.querySelector('input[name="' + inputName + '"]').addEventListener('change', () => {
       updateOptional(major, inputName);
     });
     updateOptional(major, inputName);
+  }
+  for (const major of majors.filter(item => item.enabled)) {
+    const department = profile?.[major.department.input.name];
+    const college = profile?.[major.college.input.name] || groups.find(group =>
+      group.departments.some(item => item.name === department))?.college;
+    if (major.college.setValue(college)) major.department.setValue(department);
+  }
+  if (majors.some(major => major.type !== 'main' && major.enabled)) {
+    document.querySelector('.additional-majors').open = true;
   }
   document.querySelector('#back').addEventListener('click', closeMenus);
   return {
