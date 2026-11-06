@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "notice": "가수는 가상 인물이며 비용과 반응은 게임용 설정입니다. 실제 섭외 가능 여부와 무관합니다.",
+  "slots": ["17:00", "19:00", "21:00"],
+  "artists": [
+    {"id":"sunset-letter","name":"노을편지","genre":"indie","label":"INDIE","cost":8000000,"mood":"해 질 녘, 함께 부르는 청춘","initial":"노","colors":["#f6ba83","#b7716c"]},
+    {"id":"summer-orbit","name":"여름궤도","genre":"indie","label":"INDIE","cost":12000000,"mood":"첫사랑 같은 기타 선율","initial":"여","colors":["#e5c897","#8b9c86"]},
+    {"id":"neon-us","name":"NEON:US","genre":"idol","label":"IDOL","cost":24000000,"mood":"분홍빛 응원봉, 함께 뛰는 피날레","initial":"N","colors":["#efa7cd","#8da5e2"]},
+    {"id":"blue-hour","name":"BLUE HOUR","genre":"idol","label":"IDOL","cost":20000000,"mood":"푸른 밤을 채우는 떼창","initial":"B","colors":["#9dbcf1","#baa3e0"]},
+    {"id":"wave-nine","name":"WAVE 9","genre":"hiphop","label":"HIP-HOP","cost":16000000,"mood":"비트가 떨어지면 모두 손 위로","initial":"W","colors":["#bb94dc","#dd798c"]},
+    {"id":"red-brick","name":"레드브릭","genre":"hiphop","label":"HIP-HOP","cost":14000000,"mood":"캠퍼스를 깨우는 뜨거운 에너지","initial":"R","colors":["#e49a89","#9a88bc"]}
+  ],
+  "venues": [
+    {"id":"way/367512816","name":"강당 및 공연장 (23)","baseCost":4000000},
+    {"id":"way/367512825","name":"학생회관 (17)","baseCost":3000000}
+  ],
+  "extras": [
+    {"id":"booths","name":"학생 체험 부스","cost":2000000,"description":"친구와 함께 만드는 작은 추억"},
+    {"id":"lights","name":"응원봉 나눔","cost":1000000,"description":"같은 빛으로 물드는 우리의 밤"},
+    {"id":"confetti","name":"색종이 피날레","cost":1500000,"description":"마지막 곡, 하늘 가득 반짝임"}
+  ]
+}

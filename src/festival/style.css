@@ -1,0 +1,683 @@
+/* 축제 전용 스타일. 기존 게임의 지도·운영 UI 스타일을 변경하지 않습니다. */
+.festival-page {
+  margin:0;
+  background:#edf2ed;
+  color:#243e34;
+  font:15px/1.65 system-ui,-apple-system,'Segoe UI',sans-serif
+}
+.festival-page * {
+  box-sizing:border-box
+}
+.festival-page button,.festival-page input,.festival-page select,.festival-player button {
+  font:inherit
+}
+.festival-page button,.festival-player button {
+  cursor:pointer;
+  border:1px solid #d3ded4;
+  border-radius:10px;
+  padding:10px 16px;
+  background:#fff;
+  color:#29483a
+}
+.festival-page button:hover,.festival-player button:hover {
+  filter:brightness(.96)
+}
+.festival-page button:disabled,.festival-player button:disabled {
+  opacity:.45;
+  cursor:default
+}
+.festival-page :focus-visible,.festival-player :focus-visible {
+  outline:3px solid #c38442;
+  outline-offset:4px
+}
+.festival-topbar {
+  background:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:22px 5%;
+  border-bottom:1px solid #dae3da;
+  gap:16px
+}
+.festival-topbar a {
+  font-size:12px;
+  letter-spacing:3px;
+  text-decoration:none;
+  font-weight:800;
+  color:#365c48
+}
+.festival-topbar a span {
+  display:block;
+  letter-spacing:0;
+  font-size:14px;
+  margin-top:5px
+}
+.festival-topbar>span {
+  font-size:12px;
+  color:#718477
+}
+#festival {
+  max-width:1250px;
+  margin:auto;
+  padding:50px 28px
+}
+.festival-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+  padding:12px 6px 32px
+}
+.f-eyebrow {
+  font-size:11px;
+  letter-spacing:2px;
+  font-weight:700;
+  color:#718573
+}
+.festival-heading h1 {
+  font-size:clamp(32px,5vw,60px);
+  line-height:1.22;
+  letter-spacing:-2px;
+  margin:20px 0
+}
+.festival-heading p {
+  color:#748477;
+  font-size:16px
+}
+.f-stamp {
+  background:#dce6d7;
+  border-radius:50% 50% 14px 14px;
+  transform:rotate(7deg);
+  height:230px;
+  width:190px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-size:12px;
+  letter-spacing:3px;
+  flex-shrink:0
+}
+.f-stamp b {
+  font-size:36px;
+  line-height:1.1;
+  margin:10px
+}
+.f-stamp span {
+  font-size:11px;
+  letter-spacing:1px
+}
+.f-toolbar {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap
+}
+.festival-page .primary {
+  background:#315c46;
+  color:white;
+  border-color:#315c46
+}
+.festival-page .preview-button {
+  background:#e6bca2;
+  color:#4d352c;
+  border-color:#ddb39a;
+  margin-left:auto;
+  font-weight:700
+}
+#f-message {
+  min-height:26px;
+  font-size:13px;
+  color:#6c715e
+}
+.f-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) minmax(330px,1fr);
+  gap:24px;
+  align-items:start
+}
+.f-card {
+  background:#fff;
+  border:1px solid #dce4dc;
+  border-radius:22px;
+  padding:28px
+}
+.f-card h2 {
+  font-size:22px;
+  margin:6px 0 16px;
+  letter-spacing:-.7px
+}
+.f-section-title {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px
+}
+.f-selected-count {
+  font-size:11px;
+  white-space:nowrap;
+  color:#6f826d;
+  background:#eef3e9;
+  border-radius:20px;
+  padding:6px 10px
+}
+.f-muted {
+  font-size:12px;
+  color:#829084
+}
+.f-filters {
+  display:flex;
+  gap:7px;
+  margin:22px 0
+}
+.festival-page .f-filters button {
+  border:0;
+  border-radius:20px;
+  font-size:13px;
+  padding:7px 14px;
+  background:#f2f5f0
+}
+.festival-page .f-filters [aria-pressed=true] {
+  background:#355d48;
+  color:#fff
+}
+.f-candidates {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px
+}
+.festival-page .f-artist {
+  display:block;
+  text-align:left;
+  padding:0;
+  border-radius:16px;
+  overflow:hidden;
+  border:2px solid transparent;
+  background:#f7f8f4
+}
+.festival-page .f-artist.selected {
+  border-color:#426c4d;
+  background:#edf4e9
+}
+.f-art {
+  height:160px;
+  display:flex;
+  position:relative;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,var(--a),var(--b));
+  overflow:hidden
+}
+.f-art:before,.f-art:after {
+  content:'';
+  position:absolute;
+  width:140px;
+  height:140px;
+  border:1px solid #ffffff55;
+  border-radius:50%;
+  transform:translate(50px,45px)
+}
+.f-art:after {
+  width:180px;
+  height:180px;
+  transform:translate(-70px,-60px)
+}
+.f-art>span {
+  font-size:64px;
+  font-weight:900;
+  color:#fff9;
+  line-height:1
+}
+.f-art small {
+  position:absolute;
+  bottom:12px;
+  left:14px;
+  font-size:10px;
+  letter-spacing:3px;
+  color:#fff
+}
+.f-art b {
+  position:absolute;
+  right:10px;
+  top:10px;
+  border-radius:50%;
+  background:#fff9;
+  width:26px;
+  text-align:center;
+  font-size:17px
+}
+.f-artist-info {
+  display:flex;
+  flex-direction:column;
+  padding:16px 14px;
+  gap:5px
+}
+.f-artist-info strong {
+  font-size:19px
+}
+.f-artist-info small {
+  font-size:11px;
+  color:#798477;
+  min-height:36px
+}
+.f-artist-info>span {
+  font-size:12px;
+  color:#61725f
+}
+.f-planning {
+  display:grid;
+  gap:20px
+}
+.f-card label {
+  display:block;
+  font-size:12px;
+  color:#73816f;
+  margin:14px 0
+}
+.f-card input:not([type=checkbox]),.f-card select {
+  display:block;
+  width:100%;
+  border:1px solid #dce3d8;
+  background:#fafbf8;
+  border-radius:9px;
+  padding:10px 12px;
+  color:#2f493b;
+  margin-top:5px
+}
+.f-card .f-extra {
+  display:flex;
+  align-items:start;
+  gap:8px;
+  color:#314b39
+}
+.f-extra input {
+  margin-top:6px;
+  accent-color:#315c46
+}
+.f-extra small {
+  display:block;
+  color:#8a9486;
+  font-size:10px
+}
+.f-cost {
+  border-top:1px dashed #d6dfd0;
+  margin-top:20px;
+  padding-top:14px;
+  display:grid;
+  gap:6px;
+  font-size:12px
+}
+.f-cost>span {
+  display:flex;
+  justify-content:space-between
+}
+.f-cost small {
+  color:#83917b
+}
+.f-cost .over {
+  color:#b44e47
+}
+.f-poster {
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,#d4dcb8,#efe0c6 60%,#e7b7a3);
+  border-radius:20px;
+  padding:30px;
+  color:#374733;
+  min-height:280px
+}
+.f-poster:before {
+  content:'✦';
+  position:absolute;
+  right:20px;
+  top:6px;
+  font-size:90px;
+  opacity:.15
+}
+.f-poster>small {
+  font-size:9px;
+  letter-spacing:2px
+}
+.f-poster h2 {
+  font-size:30px;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+  margin:22px 0 12px
+}
+.f-poster>p {
+  font-size:10px;
+  letter-spacing:2px
+}
+.f-lineup {
+  list-style:none;
+  padding:0;
+  margin:20px 0
+}
+.f-lineup li {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-top:1px solid #5b694b33;
+  padding:12px 0
+}
+.f-lineup time {
+  font-size:12px
+}
+.f-lineup li>div {
+  flex:1
+}
+.f-lineup strong {
+  display:block;
+  font-size:18px
+}
+.f-lineup small {
+  display:block;
+  font-size:9px;
+  letter-spacing:2px
+}
+.festival-page .f-lineup button {
+  padding:2px 9px;
+  background:#fff6;
+  border-color:transparent
+}
+.f-poster-bottom {
+  font-size:11px;
+  border-top:1px solid #5b694b33;
+  padding-top:14px
+}
+.f-empty {
+  font-size:13px;
+  color:#8a927f;
+  padding:20px 0
+}
+.f-reaction {
+  margin:0;
+  padding:12px 20px;
+  font-size:13px;
+  color:#71836e;
+  font-style:italic
+}
+.f-library {
+  margin-top:26px
+}
+.f-saved article {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:16px 0;
+  border-top:1px solid #e9eee6
+}
+.f-saved article>div {
+  flex:1;
+  min-width:0;
+  overflow-wrap:anywhere
+}
+.f-saved small {
+  display:block;
+  font-size:11px;
+  color:#85917c
+}
+.f-saved button {
+  font-size:12px;
+  padding:7px 12px
+}
+.f-saved label {
+  white-space:nowrap
+}
+.f-table-wrap {
+  overflow-x:auto;
+  margin-top:20px
+}
+.f-table-wrap table {
+  border-collapse:collapse;
+  min-width:650px;
+  width:100%;
+  font-size:12px
+}
+.f-table-wrap td,.f-table-wrap th {
+  border-bottom:1px solid #dce4d8;
+  padding:12px;
+  text-align:left
+}
+.f-table-wrap caption {
+  text-align:left;
+  color:#7c8973;
+  padding:10px
+}
+.f-disclaimer {
+  color:#85917e;
+  font-size:11px;
+  text-align:center;
+  margin-top:25px
+}
+.festival-footer {
+  padding:25px 5%;
+  border-top:1px solid #dbe3d7;
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  font-size:11px;
+  color:#7e8e79
+}
+.festival-footer a {
+  color:inherit
+}
+.festival-player {
+  position:fixed;
+  inset:0;
+  max-width:none;
+  max-height:none;
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  background:#171b2d;
+  color:#fff;
+  border:0;
+  font:15px/1.5 system-ui;
+  overflow:hidden
+}
+.festival-player::backdrop {
+  background:#111
+}
+.fp-scene {
+  position:absolute;
+  inset:0
+}
+.fp-scene canvas {
+  display:block;
+  width:100%;
+  height:100%
+}
+.fp-top {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  padding:28px 4%;
+  display:flex;
+  justify-content:space-between;
+  align-items:start;
+  gap:16px;
+  background:linear-gradient(#121426b8,transparent);
+  pointer-events:none
+}
+.fp-top>div {
+  pointer-events:auto
+}
+.fp-top small {
+  font-size:10px;
+  letter-spacing:4px;
+  color:#fff9
+}
+.fp-top h2 {
+  font-size:clamp(26px,4vw,48px);
+  margin:8px 0;
+  line-height:1.2;
+  max-width:80vw;
+  overflow-wrap:anywhere
+}
+.fp-top p {
+  font-size:12px;
+  color:#ffffffa8
+}
+.festival-player button {
+  background:#ffffff18;
+  border-color:#ffffff40;
+  color:#fff;
+  backdrop-filter:blur(10px);
+  pointer-events:auto
+}
+.fp-caption {
+  position:absolute;
+  left:15%;
+  right:15%;
+  bottom:175px;
+  text-align:center;
+  font-size:clamp(14px,2vw,21px);
+  text-shadow:0 2px 10px #000;
+  pointer-events:none
+}
+.fp-controls {
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  padding:25px 4%;
+  background:linear-gradient(transparent,#101425ed)
+}
+.fp-tracks {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap
+}
+.fp-tracks [aria-pressed=true] {
+  background:#ffffff3d
+}
+.fp-progress {
+  height:3px;
+  background:#ffffff30;
+  margin:18px 0
+}
+.fp-progress span {
+  height:100%;
+  display:block;
+  background:#f6d0b7;
+  transition:width .1s linear
+}
+.fp-buttons {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap
+}
+.fp-buttons span {
+  font-size:11px;
+  margin-left:auto;
+  color:#ffffff90
+}
+@media(max-width:850px) {
+  .f-layout {
+    grid-template-columns:1fr
+  }
+  .f-planning {
+    grid-template-columns:1fr 1fr
+  }
+  .f-planning .f-reaction {
+    grid-column:1/-1
+  }
+  .f-stamp {
+    width:140px;
+    height:180px
+  }
+  .f-stamp b {
+    font-size:28px
+  }
+}
+@media(max-width:550px) {
+  #festival {
+    padding:24px 15px
+  }
+  .festival-topbar {
+    padding:15px;
+    align-items:start
+  }
+  .festival-topbar>span {
+    max-width:100px;
+    text-align:right
+  }
+  .festival-heading {
+    align-items:start
+  }
+  .f-stamp {
+    display:none
+  }
+  .f-planning {
+    grid-template-columns:1fr
+  }
+  .f-card {
+    padding:20px;
+    border-radius:16px
+  }
+  .f-candidates {
+    gap:10px
+  }
+  .f-art {
+    height:130px
+  }
+  .f-artist-info {
+    padding:12px 10px
+  }
+  .f-artist-info strong {
+    font-size:16px
+  }
+  .f-toolbar button {
+    font-size:12px;
+    padding:10px
+  }
+  .festival-page .preview-button {
+    margin-left:0
+  }
+  .f-saved article {
+    flex-wrap:wrap
+  }
+  .f-saved article>div {
+    flex-basis:70%
+  }
+  .f-library .f-section-title {
+    align-items:start;
+    flex-direction:column
+  }
+  .festival-footer {
+    flex-direction:column
+  }
+  .fp-top {
+    padding:18px
+  }
+  .fp-caption {
+    bottom:220px;
+    left:8%;
+    right:8%
+  }
+  .fp-controls {
+    padding:16px
+  }
+  .fp-tracks button {
+    font-size:12px;
+    padding:7px 10px
+  }
+  .fp-buttons button {
+    font-size:12px;
+    padding:8px
+  }
+  .fp-buttons span {
+    width:100%;
+    margin:0;
+    text-align:center
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .fp-progress span {
+    transition:none
+  }
+}
