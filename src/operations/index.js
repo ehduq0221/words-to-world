@@ -5,12 +5,20 @@
 // 수입·지출은 하루씩 쌓았다가 학기 정산(onSettlement) 때 applyEffect로 반영합니다.
 
 import { registerArea, getState, updateArea, applyEffect, onTimeAdvance, onSettlement, subscribe } from './gameApi.js';
-import { createInitialArea, accrueDay, settle, facilityMode, normalizeData } from './model.js';
+import { createInitialArea, accrueDay, settle, facilityMode, normalizeData, summarize } from './model.js';
 import { renderOperationsMenu } from './menu.js';
 
 const AREA = 'operations';
 let data = null;
 let selectedBuildingId = null;
+
+// 운영 영역을 바꿀 때는 항상 이 함수를 써서 다른 기능이 읽는 summary를 함께 갱신합니다.
+function update(updater) {
+  updateArea(AREA, current => {
+    const next = updater(current);
+    return { ...next, summary: summarize(next, data) };
+  });
+}
 
 export async function loadOperationsData(url = new URL('../../public/data/operations.json', import.meta.url)) {
   const response = await fetch(url);
@@ -41,19 +49,19 @@ export function setFacilityMode(facilityId, mode) {
     reason: `${facility.name} ${mode === 'direct' ? '직접 운영' : '임대'} 전환 비용`,
     source: 'operations',
   });
-  updateArea(AREA, current => ({ ...current, switchCount: count, modes: { ...current.modes, [facilityId]: mode } }));
+  update(current => ({ ...current, switchCount: count, modes: { ...current.modes, [facilityId]: mode } }));
   return true;
 }
 
 export function setDormFeeLevel(level) {
   if (!data.dorm.feeLevels[level]) return false;
-  updateArea(AREA, current => ({ ...current, feeLevel: level }));
+  update(current => ({ ...current, feeLevel: level }));
   return true;
 }
 
 export function setDormOpenRate(dormId, rate) {
   if (!data.dorms.some(dorm => dorm.id === dormId) || !data.dorm.openRates.includes(rate)) return false;
-  updateArea(AREA, current => ({ ...current, openRates: { ...current.openRates, [dormId]: rate } }));
+  update(current => ({ ...current, openRates: { ...current.openRates, [dormId]: rate } }));
   return true;
 }
 
@@ -88,7 +96,7 @@ export function initOperations() {
     if (!data) return;
     const result = settle(getState()[AREA], data, semester);
     for (const effect of result.effects) applyEffect(effect);
-    updateArea(AREA, () => result.area);
+    update(() => result.area);
   });
   if (typeof window !== 'undefined') {
     window.addEventListener('campus:select', event => {
@@ -96,9 +104,14 @@ export function initOperations() {
       render({ force: true });
     });
   }
-  subscribe(() => render());
+  // 새 게임·불러오기 직후나 데이터가 늦게 준비된 경우 summary를 채웁니다.
+  subscribe(state => {
+    if (data && state?.[AREA] && !state[AREA].summary) update(current => current);
+    render();
+  });
   return loadOperationsData().then(loaded => {
     data = loaded;
+    if (getState()?.[AREA]) update(current => current);
     render();
     return data;
   });

@@ -191,6 +191,7 @@ README 시스템 1·2를 구현합니다.
 - **실제 자료** — 편의시설 32곳의 위치·운영 주체(2026-04-03 편의/복지 페이지), 기숙사 정원 2,676명과 호실 구성, 2026학년도 1학기 기숙사 사용료(16주), 학부 재학생 11,247명(2025년 4월 1일), 2026학년도 계열별 등록금을 반영했습니다. 생협·기숙사 직영 시설은 직접 운영, 입점 업체·BTL 시설은 임대로 시작합니다. 출처는 `public/data/operations.json`의 `sources`에 남깁니다.
 - **게임 설정값** — 시설별 매출·운영비·임대료와 편의성 점수(시설 유형별 기본값 × `scale`), 기숙사 입사 신청 인원과 유지비, 1인 등록금 대표값은 공개 자료가 없어 게임 균형을 위해 정했습니다. 송도캠퍼스 밖이거나 지도에 건물이 없는 시설은 `excluded`에 이유와 함께 적습니다.
 - **상태** — 게임 상태의 `operations` 영역에 운영 방식·기숙사 설정과 학기별 누적 정산 기록을 저장합니다.
+- **다른 기능에 알리는 값** — 설정이 바뀔 때마다 `operations.summary`를 갱신합니다. 형태는 `{ convenience, housing, feeLevel, dorms: { <기숙사 ID>: { buildingId, name, capacity, openBeds, applicants, occupants, waiting, emptyBeds, fee } }, facilities: { <시설 ID>: { buildingId, name, type, mode, convenience } } }`이며, 학생 반응 등 다른 기능은 `getState().operations?.summary`로 읽기만 합니다.
 
 **완료 기준** — 한 학기를 진행하며 시설 운영 방식과 기숙사 입주 인원에 따라 예산·학생 지표가 달라집니다.
 

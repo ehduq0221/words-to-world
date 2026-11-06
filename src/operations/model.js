@@ -156,3 +156,30 @@ export function settle(area, data, semester) {
   const { [semester]: _settled, ...rest } = area.accrual;
   return { effects, area: { ...area, accrual: rest } };
 }
+
+// 다른 기능(학생 반응 등)이 getState().operations.summary로 읽는 요약 값입니다.
+// 형태를 바꾸면 IMPLEMENTATION_PLAN.md 4단계 「정한 내용」을 먼저 고칩니다.
+export function summarize(area, data) {
+  const score = scores(area, data);
+  const dorms = {};
+  for (const dorm of data.dorms) {
+    const result = dormResult(area, data, dorm);
+    dorms[dorm.id] = {
+      buildingId: dorm.buildingId,
+      name: dorm.name,
+      capacity: dorm.capacity,
+      openBeds: result.openBeds,
+      applicants: result.applicants,
+      occupants: result.occupants,
+      waiting: result.waiting,
+      emptyBeds: result.emptyBeds,
+      fee: result.fee,
+    };
+  }
+  const facilities = {};
+  for (const facility of data.facilities) {
+    const result = facilityResult(area, facility);
+    facilities[facility.id] = { buildingId: facility.buildingId, name: facility.name, type: facility.type, mode: result.mode, convenience: result.convenience };
+  }
+  return { convenience: score.convenience, housing: score.housing, feeLevel: feeLevelKey(area, data), dorms, facilities };
+}
