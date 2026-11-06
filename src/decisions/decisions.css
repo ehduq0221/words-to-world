@@ -1,0 +1,28 @@
+/* 화면 지표의 숫자와 단위를 같은 줄에 표시합니다. */
+.metrics strong #hud-satisfaction, .metrics strong #hud-reputation { display: inline; font-size: inherit; color: inherit; }
+.decision-markers { position: absolute; inset: 0; pointer-events: none; z-index: 4; overflow: hidden; }
+.decision-bubble { position: absolute; transform: translate(-50%, -50%); width: 32px; height: 35px; border-radius: 50% 50% 50% 5px; border: 2px solid #fff; box-shadow: 0 3px 10px #77512a38; background: #d68a32; color: #fff; font-size: 22px; font-weight: 800; line-height: 1; pointer-events: auto; cursor: pointer; }
+.decision-bubble:hover, .decision-bubble:focus-visible { background: #a86018; outline: 3px solid #efc997; outline-offset: 2px; }
+.decision-bubble.is-opened { background: #477b5d; }
+.decision-bubble[hidden] { display: none; }
+#decision-feed { position: relative; max-height: 430px; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+#decision-notice:empty { display: none; }
+#decision-notice, .decision-error { font-size: 11px; line-height: 1.7; color: #9b5137; }
+.decision-empty { margin: 0; padding: 14px 0; font-size: 12px; line-height: 1.9; color: #82927e; }
+.reactions .decision-card { padding: 16px 0; border-top: 1px solid #e7ede2; }
+.decision-heading { display: flex; align-items: center; gap: 7px; }
+.decision-avatar { display: grid; place-items: center; width: 27px; height: 29px; flex-shrink: 0; background: #e7eddf; border-radius: 8px; font-size: 11px; color: #6b8463; }
+.decision-heading b { font-size: 10px; line-height: 1.6; }
+.decision-status { margin-left: auto; font-size: 9px; color: #9a773f; white-space: nowrap; }
+.decision-card h3 { margin: 13px 0 7px; font-size: 14px; line-height: 1.6; color: #314e3a; }
+.reactions .decision-story { font-size: 11px; line-height: 1.8; margin: 0 0 9px; }
+.decision-location { border: 0; padding: 0; background: transparent; color: #81917c; text-decoration: underline; text-underline-offset: 3px; font-size: 9px; line-height: 1.7; text-align: left; }
+.decision-choices { display: grid; gap: 7px; margin-top: 13px; }
+.decision-choices button { width: 100%; border: 1px solid #d4e1ce; border-radius: 8px; padding: 10px; color: #3e6548; background: #f1f6ed; font-size: 11px; text-align: left; }
+.decision-choices button:hover, .decision-choices button:focus-visible { background: #e3efdc; border-color: #789c70; }
+.decision-result { margin-top: 13px; padding: 11px; border: 1px solid #dce8d5; border-radius: 9px; background: #f0f6eb; }
+.decision-result strong { font-size: 11px; color: #3e6849; }
+.decision-result p { font-size: 11px; line-height: 1.8; color: #6a8067; margin: 7px 0 0; }
+.decision-result .decision-effects { color: #8d6529; font-weight: 650; }
+.decision-card.is-resolved .decision-status { color: #71896a; }
+.decision-card:focus { outline: 2px solid #92ac80; outline-offset: -2px; border-radius: 8px; }

@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 import { initCharacterMap } from './character/card.js?v=4';
 import { loadCampus } from './data/loadCampus.js';
-import { createCampus } from './scene/createCampus.js?v=building-selection-2';
+import { createCampus } from './scene/createCampus.js?v=group-selection-3';
 import { createCamera } from './interaction/createCamera.js';
-import { createLabels } from './interaction/createLabels.js?v=building-selection-2';
-import { showBuildingInformation } from './interaction/gamePreview.js?v=building-selection-2';
+import { createLabels } from './interaction/createLabels.js?v=group-selection-3';
+import { initFacilityExplorer } from './interaction/gamePreview.js';
+import { publishBuildingSelection } from './interaction/buildingSelection.js';
+import { createSelectionHighlight } from './interaction/selectionHighlight.js';
+import { initDecisions } from './decisions/index.js';
 
 async function start() {
   if (!await initCharacterMap()) return;
@@ -28,20 +31,41 @@ async function start() {
     ground.position.y = -0.2;
     scene.add(ground);
     const { camera, controls, resize, fit } = createCamera(renderer, campus.bounds);
-    const selectedMaterial = new THREE.MeshLambertMaterial({ color: 0x7da98b });
+    const selectedMaterial = new THREE.MeshLambertMaterial({ color: 0xe9b56b, emissive: 0x30200d, side: THREE.DoubleSide });
+    const selectionHighlight = createSelectionHighlight(container, scene);
     let selectedMesh = null;
-    let previousMaterial = null;
-    function selectBuilding(building) {
-      if (selectedMesh) selectedMesh.material = previousMaterial;
+    let selectedMeshes = [];
+    const previousMaterials = new Map();
+    function selectBuilding(building, { placeId = null, focusMap = false } = {}) {
+      building = buildings.find(item => item.id === building.selectionGroupId) || building;
+      for (const mesh of selectedMeshes) mesh.material = previousMaterials.get(mesh);
+      previousMaterials.clear();
+      selectedMeshes = campus.meshes.filter(mesh => mesh.userData.building.id === building.id);
       selectedMesh = campus.meshes.find(mesh => mesh.userData.building.id === building.id);
-      if (selectedMesh) {
-        previousMaterial = selectedMesh.material;
-        selectedMesh.material = selectedMaterial;
+      for (const mesh of selectedMeshes) {
+        previousMaterials.set(mesh, mesh.material);
+        mesh.material = selectedMaterial;
       }
-      showBuildingInformation(building);
+      selectionHighlight.setSelection(selectedMeshes);
+      updateLabels.setSelected(building.id);
+      explorer.showBuildingInformation(building, placeId);
+      if (focusMap && selectedMesh) {
+        const bounds = new THREE.Box3();
+        selectedMeshes.forEach(mesh => bounds.expandByObject(mesh));
+        const center = bounds.getCenter(new THREE.Vector3());
+        center.y = 0;
+        camera.position.add(center.clone().sub(controls.target));
+        controls.target.copy(center);
+        controls.update();
+      }
+      publishBuildingSelection({ ...building, name: explorer.getBuildingName(building) });
       render();
     }
+    const explorer = await initFacilityExplorer(buildings, selectBuilding);
+    campus.anchors.forEach(anchor => { anchor.name = explorer.getMapLabel(anchor.building); });
     const updateLabels = createLabels(container, campus.anchors, selectBuilding);
+    let decisions = null;
+    decisions = await initDecisions({ container, anchors: campus.anchors, onSelect: selectBuilding, onChange: render });
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     let press = null;
@@ -73,6 +97,8 @@ async function start() {
     function render() {
       renderer.render(scene, camera);
       updateLabels(camera, container.clientWidth, container.clientHeight);
+      selectionHighlight.update(camera, container.clientWidth, container.clientHeight);
+      decisions?.update(camera, container.clientWidth, container.clientHeight);
     }
     function onResize() {
       const width = container.clientWidth;
@@ -86,6 +112,7 @@ async function start() {
     window.addEventListener('resize', onResize);
     status.hidden = true;
     onResize();
+    selectBuilding(buildings.find(building => building.id === 'way/367504016') || buildings[0]);
   } catch (error) {
     status.textContent = '맵을 열 수 없습니다. 로컬 서버 실행과 WebGL 지원 여부를 확인해 주세요.';
     console.error(error);

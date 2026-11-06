@@ -1,0 +1,33 @@
+.facility-search { display: grid; gap: 7px; margin: 16px 0 10px; font-size: 10px; color: #627c69; }
+.left-panel .category-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.left-panel .category-tabs button { font-size: 10px; line-height: 1.5; padding: 8px 2px; }
+.building-rooms { list-style: none; padding: 0; margin: 8px 0 12px; display: grid; gap: 7px; }
+.building-rooms li { padding: 9px; border-radius: 7px; background: #f1f5ed; }
+.building-rooms strong { display: block; font-size: 10px; color: #49664f; font-weight: 500; }
+.building-rooms span { display: block; margin-top: 4px; font-size: 10px; color: #7c8d77; }
+.facility-detail .verification-note { margin-top: 10px; font-size: 10px; color: #8b8063; }
+.source-date { display: block; margin-top: 4px; font-size: 9px; color: #8d9c86; }
+.selection-highlight { position: absolute; box-sizing: border-box; pointer-events: none; border: 2px solid #d98b27; border-radius: 12px; background: #f7b34b12; box-shadow: 0 0 0 3px #ffffffb8, 0 0 17px #dd922b52; z-index: 1; }
+.selection-highlight[hidden] { display: none; }
+#map .labels { z-index: 2; }
+#map .building-label.is-selected { color: #69451a; background: #fff3d8; border: 2px solid #cf872a; font-weight: 700; box-shadow: 0 2px 8px #794b222b; }
+.facility-search input, #food-filter { width: 100%; border: 1px solid #dbe4da; border-radius: 7px; padding: 9px; color: #365741; background: #f6f8f3; font: inherit; font-size: 11px; }
+#food-filter { margin-bottom: 9px; }
+#food-filter[hidden] { display: none; }
+#facility-result-count { display: block; margin-bottom: 7px; font-size: 10px; color: #82927e; }
+#facility-list { max-height: 240px; overflow-y: auto; overscroll-behavior: contain; }
+#facility-list button { width: 100%; }
+#facility-list button>span { flex-shrink: 0; }
+.facility-item-text { min-width: 0; }
+.facility-item-text small { display: block; margin-top: 5px; font-size: 9px; line-height: 1.6; color: #7f8f7b; }
+.inside-heading { font-size: 12px; margin: 20px 0 10px; color: #45654c; }
+.place-card { border: 1px solid #e1e8dc; border-radius: 9px; padding: 11px; margin: 8px 0; background: #f8faf5; }
+.place-card.is-selected { border-color: #649477; background: #eaf3e5; }
+.place-type { font-size: 9px; color: #789173; }
+.place-card h4 { font-size: 12px; margin: 5px 0; }
+.facility-detail .place-location { color: #3f654b; font-size: 11px; line-height: 1.7; }
+.locate-place { margin-top: 8px; padding: 6px 9px; border-radius: 6px; border: 1px solid #d6e3cf; color: #41694c; background: #edf4e8; font-size: 10px; }
+.facility-source { display: inline-block; font-size: 9px; line-height: 1.6; margin-top: 9px; color: #648366; }
+.location-precision, .facility-empty { font-size: 10px; line-height: 1.7; color: #899580; }
+#facility-actions:empty { display: none; }
+#facility-actions:not(:empty) { margin-top: 18px; padding-top: 16px; border-top: 1px solid #e1e8dc; }

@@ -1,0 +1,553 @@
+{
+  "version": 1,
+  "note": "학생과 상황, 비용 및 지표 변화는 게임용 가상 설정입니다. 실제 시설 상태에 대한 평가가 아닙니다.",
+  "activeLimit": 5,
+  "events": [
+    {
+      "id": "slow-computers",
+      "buildingId": "way/1244533005",
+      "who": "컴퓨터공학부 3학년",
+      "title": "실습실 컴퓨터가 너무 느려요!",
+      "text": "과제를 실행할 때마다 컴퓨터가 멈춰요. 실습 환경을 개선해 주세요.",
+      "choices": [
+        {
+          "id": "replace",
+          "label": "전면 교체",
+          "effect": {
+            "budget": -80000000,
+            "satisfaction": 6,
+            "reputation": 0
+          },
+          "response": "새 컴퓨터 덕분에 실습과 과제를 훨씬 수월하게 할 수 있어요!"
+        },
+        {
+          "id": "repair",
+          "label": "일부 수리",
+          "effect": {
+            "budget": -20000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "느렸던 컴퓨터부터 고쳐 주셔서 급한 과제를 마칠 수 있게 됐어요."
+        },
+        {
+          "id": "defer",
+          "label": "다음 학기로 미루기",
+          "effect": {
+            "budget": 0,
+            "satisfaction": 0,
+            "reputation": -3
+          },
+          "response": "이번 학기도 기다려야 한다니 아쉬워요."
+        }
+      ]
+    },
+    {
+      "id": "library-seats",
+      "buildingId": "way/367504016",
+      "who": "시험을 준비하는 2학년",
+      "title": "시험 기간에 공부할 자리가 없어요!",
+      "text": "열람실을 돌아다니다가 공부할 시간을 다 써 버렸어요.",
+      "choices": [
+        {
+          "id": "hours",
+          "label": "열람실 운영시간 연장",
+          "effect": {
+            "budget": -12000000,
+            "satisfaction": 3,
+            "reputation": 0
+          },
+          "response": "늦은 시간에도 자리를 찾을 수 있게 됐어요."
+        },
+        {
+          "id": "convert",
+          "label": "유휴 공간을 학습실로 전환",
+          "effect": {
+            "budget": -30000000,
+            "satisfaction": 5,
+            "reputation": 1
+          },
+          "response": "새 학습 공간 덕분에 시험 준비가 한결 편해졌어요."
+        },
+        {
+          "id": "keep",
+          "label": "현재 운영 유지",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -2,
+            "reputation": -1
+          },
+          "response": "다른 공부 장소를 찾아봐야겠어요."
+        }
+      ]
+    },
+    {
+      "id": "dorm-laundry",
+      "buildingId": "way/1394978436",
+      "who": "제1기숙사 거주 학생",
+      "title": "세탁기를 쓰려면 한참 기다려요!",
+      "text": "세탁기가 자주 고장 나고 저녁마다 줄이 길어요.",
+      "choices": [
+        {
+          "id": "add",
+          "label": "세탁기 추가 배치",
+          "effect": {
+            "budget": -25000000,
+            "satisfaction": 4,
+            "reputation": 0
+          },
+          "response": "빨래를 기다리는 시간이 줄었어요!"
+        },
+        {
+          "id": "service",
+          "label": "고장 장비 우선 수리",
+          "effect": {
+            "budget": -7000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "고장 난 세탁기를 다시 쓸 수 있어서 좋아요."
+        },
+        {
+          "id": "wait",
+          "label": "다음 점검까지 기다리기",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -2,
+            "reputation": -1
+          },
+          "response": "당분간 빨래 시간을 더 잘 맞춰야겠네요."
+        }
+      ]
+    },
+    {
+      "id": "dining-queue",
+      "buildingId": "way/367504010",
+      "who": "점심시간의 1학년",
+      "title": "식당 줄이 너무 길어요!",
+      "text": "수업 사이에 밥을 먹으려는데 대기 시간이 너무 길어요.",
+      "choices": [
+        {
+          "id": "staff",
+          "label": "점심시간 인력 보강",
+          "effect": {
+            "budget": -15000000,
+            "satisfaction": 4,
+            "reputation": 0
+          },
+          "response": "배식이 빨라져서 다음 수업에 늦지 않았어요."
+        },
+        {
+          "id": "booking",
+          "label": "분산 이용 안내 도입",
+          "effect": {
+            "budget": -3000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "혼잡한 시간을 피해 식사할 수 있게 됐어요."
+        },
+        {
+          "id": "keep",
+          "label": "현행 배식 유지",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -2,
+            "reputation": -1
+          },
+          "response": "점심시간마다 줄을 서는 건 여전히 힘들어요."
+        }
+      ]
+    },
+    {
+      "id": "field-lighting",
+      "buildingId": "outdoor:main-field",
+      "who": "러닝 동아리 학생",
+      "title": "저녁 운동장이 너무 어두워요!",
+      "text": "해가 지면 트랙을 달리기가 불편해요.",
+      "choices": [
+        {
+          "id": "lights",
+          "label": "조명 전면 정비",
+          "effect": {
+            "budget": -35000000,
+            "satisfaction": 4,
+            "reputation": 1
+          },
+          "response": "저녁에도 밝은 트랙에서 운동할 수 있어요!"
+        },
+        {
+          "id": "partial",
+          "label": "어두운 구간 우선 보수",
+          "effect": {
+            "budget": -10000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "어두웠던 구간이 밝아져서 한결 편해졌어요."
+        },
+        {
+          "id": "hours",
+          "label": "야간 이용시간 단축",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -2,
+            "reputation": 0
+          },
+          "response": "저녁에 운동할 시간이 줄어서 아쉬워요."
+        }
+      ]
+    },
+    {
+      "id": "lab-safety",
+      "buildingId": "way/367504005",
+      "who": "공학 실험 수강생",
+      "title": "실험실 안전 장비가 낡았어요!",
+      "text": "보호 장비와 환기 설비를 점검해 주세요.",
+      "choices": [
+        {
+          "id": "upgrade",
+          "label": "안전 장비 전면 정비",
+          "effect": {
+            "budget": -45000000,
+            "satisfaction": 4,
+            "reputation": 2
+          },
+          "response": "안전 장비가 새로 정비돼 실험에 집중할 수 있어요."
+        },
+        {
+          "id": "inspect",
+          "label": "정밀 점검과 긴급 보수",
+          "effect": {
+            "budget": -15000000,
+            "satisfaction": 2,
+            "reputation": 1
+          },
+          "response": "문제가 있는 장비부터 점검해 주셔서 안심했어요."
+        },
+        {
+          "id": "restrict",
+          "label": "점검 전 일부 실험 제한",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -1,
+            "reputation": 0
+          },
+          "response": "실습은 줄었지만 점검을 기다리기로 했어요."
+        }
+      ]
+    },
+    {
+      "id": "student-wifi",
+      "buildingId": "way/367512825",
+      "who": "학생회관 이용 학생",
+      "title": "동아리방 와이파이가 자꾸 끊겨요!",
+      "text": "온라인 회의 중에 연결이 끊겨서 활동이 어려워요.",
+      "choices": [
+        {
+          "id": "network",
+          "label": "무선망 장비 교체",
+          "effect": {
+            "budget": -22000000,
+            "satisfaction": 4,
+            "reputation": 0
+          },
+          "response": "동아리 회의가 끊김 없이 진행됐어요!"
+        },
+        {
+          "id": "hotspot",
+          "label": "공용 공유기 추가",
+          "effect": {
+            "budget": -6000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "공용 공간에서는 인터넷을 편하게 쓸 수 있어요."
+        },
+        {
+          "id": "later",
+          "label": "다음 정비 때 검토",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -1,
+            "reputation": -1
+          },
+          "response": "회의할 때 쓸 다른 공간을 찾아봐야겠어요."
+        }
+      ]
+    },
+    {
+      "id": "art-studio",
+      "buildingId": "way/367512820",
+      "who": "예술체육대학 실습생",
+      "title": "작업실 환기가 잘 안돼요!",
+      "text": "긴 실습 시간 동안 작업실 공기가 답답해요.",
+      "choices": [
+        {
+          "id": "ventilation",
+          "label": "환기 설비 개선",
+          "effect": {
+            "budget": -30000000,
+            "satisfaction": 4,
+            "reputation": 1
+          },
+          "response": "작업실이 쾌적해져서 실습하기 좋아졌어요."
+        },
+        {
+          "id": "portable",
+          "label": "보조 환기 장비 배치",
+          "effect": {
+            "budget": -8000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "보조 장비 덕분에 작업 환경이 조금 나아졌어요."
+        },
+        {
+          "id": "schedule",
+          "label": "사용 인원과 시간 조정",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -1,
+            "reputation": 0
+          },
+          "response": "예약 시간이 줄었지만 혼잡함은 덜해졌어요."
+        }
+      ]
+    },
+    {
+      "id": "drinking-water",
+      "buildingId": "way/367504004",
+      "who": "공과대학 학생",
+      "title": "강의실 근처 정수기가 고장 났어요!",
+      "text": "쉬는 시간마다 다른 층까지 물을 마시러 가야 해요.",
+      "choices": [
+        {
+          "id": "replace",
+          "label": "노후 정수기 교체",
+          "effect": {
+            "budget": -9000000,
+            "satisfaction": 3,
+            "reputation": 0
+          },
+          "response": "강의실 가까이에서 물을 마실 수 있어요!"
+        },
+        {
+          "id": "repair",
+          "label": "긴급 수리 요청",
+          "effect": {
+            "budget": -2000000,
+            "satisfaction": 1,
+            "reputation": 0
+          },
+          "response": "고장 난 정수기가 다시 작동해요."
+        },
+        {
+          "id": "guide",
+          "label": "다른 층 위치 안내",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -1,
+            "reputation": 0
+          },
+          "response": "위치는 알겠지만 층을 오가는 건 여전히 번거로워요."
+        }
+      ]
+    },
+    {
+      "id": "dorm-noise",
+      "buildingId": "way/895812320",
+      "who": "제2기숙사 거주 학생",
+      "title": "밤마다 소음 때문에 잠을 못 자요!",
+      "text": "공용 공간과 복도 소음 때문에 다음 날 수업이 힘들어요.",
+      "choices": [
+        {
+          "id": "soundproof",
+          "label": "공용 공간 방음 보완",
+          "effect": {
+            "budget": -28000000,
+            "satisfaction": 4,
+            "reputation": 0
+          },
+          "response": "밤에 들리는 소음이 줄어 편히 쉴 수 있어요."
+        },
+        {
+          "id": "quiet",
+          "label": "야간 정숙 운영 강화",
+          "effect": {
+            "budget": -4000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "정숙 안내와 순찰 덕분에 밤이 조용해졌어요."
+        },
+        {
+          "id": "self",
+          "label": "학생 자율 조정에 맡기기",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -2,
+            "reputation": -1
+          },
+          "response": "직접 이야기하는 게 쉽지는 않네요."
+        }
+      ]
+    },
+    {
+      "id": "research-tools",
+      "buildingId": "way/1394978460",
+      "who": "연구 프로젝트 참여 학생",
+      "title": "공동 장비 예약이 너무 밀려요!",
+      "text": "장비를 기다리느라 실험 일정이 계속 늦어지고 있어요.",
+      "choices": [
+        {
+          "id": "equipment",
+          "label": "공동 장비 추가 도입",
+          "effect": {
+            "budget": -60000000,
+            "satisfaction": 4,
+            "reputation": 2
+          },
+          "response": "실험 대기 시간이 줄어 프로젝트가 다시 진행돼요."
+        },
+        {
+          "id": "schedule",
+          "label": "예약 시간과 점검 일정 조정",
+          "effect": {
+            "budget": -8000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "예약 계획을 세우기 편해졌어요."
+        },
+        {
+          "id": "defer",
+          "label": "다음 예산 편성 때 검토",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -1,
+            "reputation": -2
+          },
+          "response": "이번 프로젝트 일정은 다시 조정해야겠어요."
+        }
+      ]
+    },
+    {
+      "id": "accessibility",
+      "buildingId": "way/367504015",
+      "who": "이동에 불편을 겪는 학생",
+      "title": "강의실로 가는 이동 안내가 부족해요!",
+      "text": "엘리베이터와 편한 이동 경로를 찾기 어려워요.",
+      "choices": [
+        {
+          "id": "routes",
+          "label": "안내 표지와 이동 동선 개선",
+          "effect": {
+            "budget": -18000000,
+            "satisfaction": 4,
+            "reputation": 2
+          },
+          "response": "필요한 이동 경로를 쉽게 찾을 수 있어요!"
+        },
+        {
+          "id": "guide",
+          "label": "접근 가능한 경로 안내 제작",
+          "effect": {
+            "budget": -4000000,
+            "satisfaction": 2,
+            "reputation": 1
+          },
+          "response": "강의실까지 가는 경로를 미리 확인할 수 있게 됐어요."
+        },
+        {
+          "id": "later",
+          "label": "다음 시설 점검 때 검토",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -2,
+            "reputation": -2
+          },
+          "response": "수업에 가는 길을 찾는 게 아직 어려워요."
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "buildingId": "way/367512816",
+      "who": "공연 동아리 학생",
+      "title": "공연장 음향 장비가 불안정해요!",
+      "text": "발표 공연을 준비하는데 마이크와 스피커를 쓰기 어려워요.",
+      "choices": [
+        {
+          "id": "system",
+          "label": "음향 시스템 교체",
+          "effect": {
+            "budget": -40000000,
+            "satisfaction": 4,
+            "reputation": 1
+          },
+          "response": "새 장비로 공연을 무사히 마쳤어요!"
+        },
+        {
+          "id": "rental",
+          "label": "행사용 장비 임차",
+          "effect": {
+            "budget": -10000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "빌린 장비 덕분에 이번 공연을 진행할 수 있어요."
+        },
+        {
+          "id": "acoustic",
+          "label": "공연 방식 조정",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -1,
+            "reputation": 0
+          },
+          "response": "준비한 무대를 바꿔야 해서 아쉽지만 공연은 이어가기로 했어요."
+        }
+      ]
+    },
+    {
+      "id": "seminar-room",
+      "buildingId": "way/367504003",
+      "who": "팀 프로젝트를 하는 학생",
+      "title": "팀 회의를 할 공간이 부족해요!",
+      "text": "발표 과제를 준비하려는데 빈 세미나실을 찾기 어려워요.",
+      "choices": [
+        {
+          "id": "rooms",
+          "label": "유휴 공간을 회의실로 전환",
+          "effect": {
+            "budget": -20000000,
+            "satisfaction": 4,
+            "reputation": 0
+          },
+          "response": "팀이 함께 모여 과제를 준비할 수 있게 됐어요."
+        },
+        {
+          "id": "booking",
+          "label": "공간 예약 운영 개선",
+          "effect": {
+            "budget": -5000000,
+            "satisfaction": 2,
+            "reputation": 0
+          },
+          "response": "비어 있는 시간을 확인하고 예약하기 쉬워졌어요."
+        },
+        {
+          "id": "keep",
+          "label": "기존 공간만 이용",
+          "effect": {
+            "budget": 0,
+            "satisfaction": -1,
+            "reputation": -1
+          },
+          "response": "회의할 장소를 더 찾아봐야겠어요."
+        }
+      ]
+    }
+  ]
+}
