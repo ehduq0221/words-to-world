@@ -1,0 +1,118 @@
+{
+  "note": "시설 위치·운영 주체, 기숙사 정원·사용료, 재학생 수, 등록금은 인천대학교 공식 자료(아래 sources)를 반영했습니다. 시설별 매출·운영비·임대료, 편의성 점수, 기숙사 입사 신청 인원과 유지비, 등록금 대표값은 공개 자료가 없어 게임 균형을 위해 정한 값입니다.",
+  "sources": [
+    { "item": "편의시설 위치와 운영 주체", "url": "https://www.inu.ac.kr/inu/642/subview.do", "checked": "2026-11-06", "basis": "편의/복지 페이지, 콘텐츠 수정일 2026-04-03" },
+    { "item": "기숙사 정원과 호실 구성", "url": "https://www.inu.ac.kr/inu/644/subview.do", "checked": "2026-11-06", "basis": "기숙사 페이지, 2026학년도 1학기 기숙사생 선발 안내의 선발인원 표와 일치(총 2,676명)" },
+    { "item": "기숙사 사용료", "url": "https://www.inu.ac.kr/bbs/inu/2611/372709/download", "checked": "2026-11-06", "basis": "2026학년도 1학기 기숙사생 선발 안내, 16주(2026.02.27~06.22) 사용료" },
+    { "item": "학부 재학생 수", "url": "https://www.inu.ac.kr/inu/949/subview.do", "checked": "2026-11-06", "basis": "대학 주요현황, 2025년 4월 1일 기준 학부 재학생" },
+    { "item": "등록금", "url": "https://www.inu.ac.kr/inu/844/subview.do", "checked": "2026-11-06", "basis": "2026학년도 등록금 책정액(내국인 계열별 2,046,000~2,797,000원)" }
+  ],
+  "excluded": [
+    "사범대식당_생협(미추홀 별관 A동): 송도캠퍼스 밖이므로 제외",
+    "제2학생복지관(팝업스토어 몰)의 팔뚝김밥·봉구스밥버거·카페제이에스·팔공티·유니상점: 지도 데이터에 해당 건물이 없어 제외"
+  ],
+  "daysPerSemester": 182,
+  "tuition": {
+    "students": 11247,
+    "perStudent": 2350000,
+    "note": "students는 2025년 4월 1일 기준 학부 재학생 수(남 6,282명, 여 4,965명)입니다. perStudent는 계열별 2026학년도 등록금(2,046,000~2,797,000원)의 게임용 대표값이며 장학금 감면은 반영하지 않습니다."
+  },
+  "satisfaction": { "baseline": 60, "divisor": 4, "maxChange": 5 },
+  "switchCost": 10000000,
+  "facilityTypes": {
+    "cafeteria": {
+      "label": "학생식당",
+      "direct": { "revenue": 600000000, "cost": 630000000, "convenience": 85 },
+      "lease": { "rent": 80000000, "convenience": 60 }
+    },
+    "store": {
+      "label": "편의점·매점",
+      "direct": { "revenue": 200000000, "cost": 170000000, "convenience": 70 },
+      "lease": { "rent": 40000000, "convenience": 68 }
+    },
+    "cafe": {
+      "label": "카페",
+      "direct": { "revenue": 150000000, "cost": 140000000, "convenience": 72 },
+      "lease": { "rent": 30000000, "convenience": 70 }
+    },
+    "restaurant": {
+      "label": "음식점",
+      "direct": { "revenue": 150000000, "cost": 145000000, "convenience": 70 },
+      "lease": { "rent": 25000000, "convenience": 72 }
+    }
+  },
+  "facilities": [
+    { "id": "welfare-cafeteria", "buildingId": "way/367504010", "name": "학생식당", "location": "11호관 복지회관 1층", "operator": "생협", "type": "cafeteria", "initialMode": "direct" },
+    { "id": "welfare-coopsket", "buildingId": "way/367504010", "name": "쿱스켓 복지회관점", "location": "11호관 복지회관 1층", "operator": "생협", "type": "store", "initialMode": "direct" },
+    { "id": "welfare-megacoffee", "buildingId": "way/367504010", "name": "메가커피", "location": "11호관 복지회관 113호", "operator": "생협", "type": "cafe", "initialMode": "direct" },
+    { "id": "dorm1-cafeteria", "buildingId": "way/1394978436", "name": "제1기숙사식당", "location": "제1기숙사 1층", "operator": "생협", "type": "cafeteria", "initialMode": "direct", "scale": 0.5 },
+    { "id": "dorm1-coopsket", "buildingId": "way/1394978436", "name": "쿱스켓 제1기숙사점", "location": "제1기숙사 1층", "operator": "생협", "type": "store", "initialMode": "direct" },
+    { "id": "dorm2-cafeteria", "buildingId": "way/895812320", "name": "제2기숙사식당", "location": "제2기숙사 1층", "operator": "입점 업체", "type": "cafeteria", "initialMode": "lease", "scale": 0.7 },
+    { "id": "dorm2-cu", "buildingId": "way/895812320", "name": "CU 제2기숙사점", "location": "제2기숙사 1층", "operator": "BTL", "type": "store", "initialMode": "lease" },
+    { "id": "dorm3-emart24", "buildingId": "way/1394978434", "name": "이마트24 제3기숙사점", "location": "제3기숙사 1층", "operator": "BTL", "type": "store", "initialMode": "lease" },
+    { "id": "dorm3-momstouch", "buildingId": "way/1394978434", "name": "맘스터치", "location": "제3기숙사 1층", "operator": "BTL", "type": "restaurant", "initialMode": "lease" },
+    { "id": "dorm3-heyum", "buildingId": "way/1394978434", "name": "헤윰카페", "location": "제3기숙사 1층", "operator": "BTL", "type": "cafe", "initialMode": "lease" },
+    { "id": "faculty-cafeteria", "buildingId": "way/367504006", "name": "교직원식당", "location": "2호관 교수회관 2층", "operator": "생협", "type": "cafeteria", "initialMode": "direct", "scale": 0.4 },
+    { "id": "faculty-shangcai", "buildingId": "way/367504006", "name": "샹차이", "location": "2호관 교수회관 301~303호", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "bldg27-cafeteria", "buildingId": "way/1394978460", "name": "27호관식당", "location": "27호관 4층", "operator": "생협", "type": "cafeteria", "initialMode": "direct", "scale": 0.5 },
+    { "id": "library-emart24", "buildingId": "way/367504016", "name": "이마트24 도서관점", "location": "6호관 도서관 B124호(지하)", "operator": "입점 업체", "type": "store", "initialMode": "lease" },
+    { "id": "library-cafeing", "buildingId": "way/367504016", "name": "카페ING 도서관점", "location": "6호관 도서관 104호", "operator": "입점 업체", "type": "cafe", "initialMode": "lease" },
+    { "id": "sports-rosebud", "buildingId": "way/367512818", "name": "로즈버드 매점", "location": "20호관 스포츠센터 103호", "operator": "입점 업체", "type": "store", "initialMode": "lease", "scale": 0.6 },
+    { "id": "science-coopsket", "buildingId": "way/367504012", "name": "쿱스켓 자연대점", "location": "5호관 자연과학대학 C동 1층", "operator": "생협", "type": "store", "initialMode": "direct" },
+    { "id": "science-babiwatta", "buildingId": "way/367504012", "name": "바비와따", "location": "5호관 자연과학대학 130호", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "it-choigodang", "buildingId": "way/1244533005", "name": "최고당돈가스", "location": "7호관 정보기술대학 117호", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "engineering-coopsket", "buildingId": "way/367504004", "name": "쿱스켓 공대점", "location": "8호관 공과대학 B동 지하1층", "operator": "생협", "type": "store", "initialMode": "direct" },
+    { "id": "engineering-deopbap", "buildingId": "way/367504004", "name": "덮밥슈퍼", "location": "8호관 공과대학 130호", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "guesthouse-salady", "buildingId": "way/1394978443", "name": "샐러디", "location": "10호관 게스트하우스 1층", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "social-coopsket", "buildingId": "way/367504011", "name": "쿱스켓 사회대점", "location": "13호관 사회과학대학 1층", "operator": "생협", "type": "store", "initialMode": "direct" },
+    { "id": "humanities-coopsket", "buildingId": "way/367512821", "name": "쿱스켓 인문대점", "location": "15호관 인문대학 1층", "operator": "생협", "type": "store", "initialMode": "direct" },
+    { "id": "snackbar", "buildingId": "way/471463926", "name": "스넥바", "location": "14~15호관 중간", "operator": "입점 업체", "type": "cafe", "initialMode": "lease", "scale": 0.6 },
+    { "id": "student-hall-grazie", "buildingId": "way/367512825", "name": "그라찌에(제과점)", "location": "17호관 학생회관 101호", "operator": "입점 업체", "type": "cafe", "initialMode": "lease" },
+    { "id": "student-hall-gogi", "buildingId": "way/367512825", "name": "고기굽는집", "location": "17호관 학생회관 102호", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "student-hall-tomato", "buildingId": "way/367512825", "name": "토마토도시락", "location": "17호관 학생회관 112호", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "student-hall-cafeing", "buildingId": "way/367512825", "name": "카페ING 학생회관점", "location": "17호관 학생회관 113호", "operator": "입점 업체", "type": "cafe", "initialMode": "lease" },
+    { "id": "student-hall-gongssi", "buildingId": "way/367512825", "name": "공씨네주먹밥", "location": "17호관 학생회관 114호", "operator": "입점 업체", "type": "restaurant", "initialMode": "lease" },
+    { "id": "life-coopsket", "buildingId": "way/1394978457", "name": "쿱스켓 생명대점", "location": "29호관 생명과학기술대학 1층", "operator": "생협", "type": "store", "initialMode": "direct" },
+    { "id": "life-miyu", "buildingId": "way/1394978457", "name": "미유카페", "location": "29호관 생명과학기술대학 지하1층", "operator": "생협", "type": "cafe", "initialMode": "direct" }
+  ],
+  "dorm": {
+    "initialFeeLevel": "normal",
+    "feeLevels": {
+      "low": { "label": "인하", "multiplier": 0.85, "demand": 1.2, "housing": 10 },
+      "normal": { "label": "현재 요금", "multiplier": 1, "demand": 1, "housing": 0 },
+      "high": { "label": "인상", "multiplier": 1.15, "demand": 0.8, "housing": -15 }
+    },
+    "maintenancePerBed": 400000,
+    "openRates": [0.5, 0.75, 1]
+  },
+  "dorms": [
+    {
+      "id": "dorm-1",
+      "buildingId": "way/1394978436",
+      "name": "제1기숙사",
+      "opened": "2009년 3월 개관, 2024년 리모델링",
+      "rooms": [
+        { "type": "1인실", "beds": 76, "fee": 1280000 },
+        { "type": "2인실", "beds": 272, "fee": 1040000 },
+        { "type": "3인실", "beds": 198, "fee": 720000 }
+      ],
+      "demand": 700
+    },
+    {
+      "id": "dorm-2",
+      "buildingId": "way/895812320",
+      "name": "제2기숙사",
+      "opened": "2018년 3월 개관, BTL",
+      "rooms": [{ "type": "2인실", "beds": 1130, "fee": 928000 }],
+      "demand": 1400
+    },
+    {
+      "id": "dorm-3",
+      "buildingId": "way/1394978434",
+      "name": "제3기숙사",
+      "opened": "2020년 8월 개관, BTL",
+      "rooms": [{ "type": "2인실", "beds": 1000, "fee": 928000 }],
+      "demand": 1250
+    }
+  ]
+}
