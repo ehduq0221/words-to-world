@@ -8,13 +8,14 @@
   <link rel="stylesheet" href="./src/character/card.css">
   <link rel="stylesheet" href="./src/interaction/facilityExplorer.css">
   <link rel="stylesheet" href="./src/decisions/decisions.css">
+  <link rel="stylesheet" href="./src/ui/confirm.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
   <header class="topbar">
     <div class="brand"><span class="brand-mark">W</span><div><span class="eyebrow">WORDS TO WORLD</span><h1>인천대학교 <span>송도캠퍼스</span></h1></div></div>
     <div class="metrics" aria-label="학교 운영 지표"><div><span>운영 예산</span><strong id="hud-budget">₩ 12.8억</strong><small id="hud-budget-note">선택 반영 0</small></div><div><span>학생 만족도</span><strong><span id="hud-satisfaction">76</span><em>/ 100</em></strong><small id="hud-satisfaction-note">선택 누적 0</small></div><div><span>학교 평판</span><strong><span id="hud-reputation">68</span><em>/ 100</em></strong><small id="hud-reputation-note">선택 누적 0</small></div></div>
-    <div class="date"><b>2026년 3월</b><span>1학기 · 화면 예시</span></div>
+    <div class="date"><b id="preview-date">2026년 3월 2일</b><span>1학기 · <button type="button" id="preview-next-day" class="preview-next-day" title="3단계 시간 진행이 합쳐지기 전까지 쓰는 임시 버튼입니다.">다음 날 ▶</button></span></div>
   </header>
   <main id="map" aria-label="인천대학교 송도캠퍼스 3D 지도"></main>
   <section class="campus-caption"><span class="live-dot"></span> 송도캠퍼스 <span>기본 캠퍼스</span></section>
@@ -32,7 +33,7 @@
   <aside class="right-panel">
     <section class="panel reactions" aria-label="학생들의 목소리">
       <div class="section-heading"><h2>학생들의 목소리</h2><span class="count" id="decision-count">0</span></div>
-      <p class="section-sub">건물 위 !에서 시작하는 캠퍼스 이야기</p>
+      <p class="section-sub">건물 위 !는 조치가 필요한 안건이에요. 조치 효과와 반응은 다음 날 나타나요.</p>
       <p id="decision-notice" role="status"></p>
       <div id="decision-feed" aria-live="polite"></div>
     </section>
@@ -40,9 +41,9 @@
     <section class="panel character-card" id="character-card" aria-label="내 캐릭터" hidden></section>
   </aside>
   <div class="map-controls">왼쪽 드래그 · 회전 <span>오른쪽 드래그 · 이동</span> 휠 · 확대·축소</div>
-  <footer><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors · ODbL</a> · <a href="./public/data/SOURCE.md">지도 출처</a></span><span>초기 운영 수치와 학생 이벤트는 게임용 가상 설정입니다.</span></footer>
+  <footer><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors · ODbL</a> · <a href="./public/data/SOURCE.md">지도 출처</a></span><span>초기 운영 수치와 즉시 조치 안건은 게임용 가상 설정입니다.</span></footer>
   <p id="status" role="status">캠퍼스를 불러오고 있습니다.</p>
   <script type="module" src="./src/interaction/gameViewport.js"></script>
-  <script type="module" src="./src/main.js?v=student-decisions-1"></script>
+  <script type="module" src="./src/main.js?v=decision-types-1"></script>
 </body>
 </html>
