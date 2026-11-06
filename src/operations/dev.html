@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>운영 기능 확인 · Words to World</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="./operations.css">
+  <style>
+    body { overflow: auto; padding: 24px; }
+    .dev { display: grid; grid-template-columns: 260px 1fr; gap: 20px; max-width: 980px; margin: 0 auto; }
+    .dev .panel { padding: 16px; }
+    .dev h1 { font-size: 18px; margin: 0 0 6px; }
+    .dev p { font-size: 11px; color: #708578; line-height: 1.7; margin: 0 0 12px; }
+    .dev-buildings, .dev-time { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .dev button { border: 1px solid #d4e0d6; background: #fff; border-radius: 6px; padding: 5px 9px; font-size: 11px; color: #2f654d; }
+    .dev-status { font-size: 12px; display: grid; gap: 4px; margin-bottom: 12px; }
+    .dev-ledger { font-size: 11px; color: #61766a; padding-left: 18px; max-height: 360px; overflow: auto; }
+    @media (max-width: 720px) { .dev { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="dev">
+    <aside class="panel">
+      <h1>운영 기능 확인</h1>
+      <p>3단계 게임 상태가 합쳐지기 전, 임시 구현으로 4단계를 확인하는 개발용 화면입니다. 건물을 고르면 지도에서 건물을 선택했을 때와 같은 이벤트를 보냅니다.</p>
+      <div class="dev-buildings" id="dev-buildings"></div>
+      <div id="facility-actions"></div>
+    </aside>
+    <section class="panel">
+      <div class="dev-time">
+        <button data-days="1">+1일</button>
+        <button data-days="30">+30일</button>
+        <button data-days="semester">학기 정산까지</button>
+      </div>
+      <div class="dev-status" id="dev-status"></div>
+      <ol class="dev-ledger" id="dev-ledger" reversed></ol>
+    </section>
+  </main>
+  <script type="module" src="./dev.js"></script>
+</body>
+</html>
