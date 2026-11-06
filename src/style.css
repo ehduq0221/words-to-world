@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 :root { color: #243d37; font-family: system-ui, -apple-system, sans-serif; font-synthesis: none; }
-body { margin: 0; overflow: hidden; background: #e7ede8; }
+body { margin: 0; overflow-x: hidden; overflow-y: auto; background: #e7ede8; }
 button { font: inherit; cursor: pointer; }
 button:focus-visible { outline: 2px solid #35836a; outline-offset: 3px; }
 .topbar { position: absolute; z-index: 3; top: 0; left: 0; right: 0; height: 100px; padding: 20px 28px; background: #fffffff5; border-bottom: 1px solid #dce5df; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
@@ -79,7 +79,9 @@ a { color: inherit; }
 .building-label { pointer-events: auto; font-family: inherit; line-height: normal; }
 .building-label:hover { background: #edf5e5; border-color: #6f967b; }
 .left-panel.show-building-info .facility-detail { display: block; }
-@media(max-width: 800px) { .left-panel.show-building-info { height: 310px; max-height: calc(100dvh - 230px); } }
 #status { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: white; padding: 18px 24px; border-radius: 10px; font-size: 13px; }
-@media(max-width: 1100px) { .metrics { gap: 17px; } .brand-mark { display: none; } h1 { font-size: 16px; } h1 span { display: block; margin: 4px 0 0; font-size: 10px; } .left-panel { width: 205px; left: 14px; padding: 16px 12px; } .right-panel { width: 224px; right: 14px; } #map { left: 227px; right: 246px; } .campus-caption { left: 244px; } .student { gap: 6px; } .priority { display: none; } }
-@media(max-width: 800px) { .topbar { height: 125px; padding: 14px 18px; align-items: flex-start; } .metrics { position: absolute; top: 70px; left: 18px; right: 18px; justify-content: space-between; } .metrics>div { min-width: auto; display: flex; gap: 9px; align-items: baseline; } .metrics strong { font-size: 17px; } .metrics small { display: none; } .metrics span { font-size: 9px; } .metrics em { font-size: 9px; } .date { margin-top: 6px; } .right-panel { display: none; } .left-panel { top: auto; bottom: 65px; width: 210px; height: 220px; } .semester-note, .facility-detail { display: none; } .category-tabs { margin-top: 13px; } .facility-list button { padding: 5px 8px; } #map { top: 125px; left: 0; right: 0; bottom: 50px; } .campus-caption { left: 20px; top: 143px; } footer { font-size: 8px; left: 15px; right: 15px; } footer>span:last-child { max-width: 130px; text-align: right; } .map-controls { bottom: 39px; font-size: 8px; padding: 8px 10px; } .map-controls span { margin: 0 7px; } }
+
+.game-screen { position: relative; transform-origin: top left; overflow: hidden; }
+.right-panel { display: flex; flex-direction: column; gap: 14px; }
+.right-panel > section { flex-shrink: 0; }
+.finance { margin-top: 0; }
