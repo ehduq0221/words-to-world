@@ -24,3 +24,28 @@ test('손상 데이터·중복 ID·버전 불일치를 자동 덮어쓰지 않�
     storage.setItem(PLAN_KEY, raw); assert.throws(() => readPlans(data, storage)); assert.equal(storage.getItem(PLAN_KEY), raw);
   }
 });
+
+test('폭죽은 선택된 공연 구간에만 저장되며 비용을 합산한다', () => {
+  const p = createPlan(data); p.artistIds = ['hanroro', 'ive']; p.fireworks = ['opening', 'between-1-2', 'finale'];
+  assert.ok(validatePlan(p, data));
+  const plain = { ...p, fireworks: [] };
+  assert.equal(totalCost(p, data) - totalCost(plain, data), 3 * data.fireworkCost);
+  assert.ok(!validatePlan({ ...p, fireworks: ['between-2-3'] }, data));
+  assert.ok(!validatePlan({ ...p, fireworks: ['opening', 'opening'] }, data));
+  const storage = memory(); writePlans([p], data, storage); assert.deepEqual(readPlans(data, storage)[0].fireworks, p.fireworks);
+});
+test('제공 차트 기반 예시와 초록 위치 데이터가 유효하다', () => {
+  for (const preset of data.presets) assert.ok(validatePlan({ ...createPlan(data), ...preset, extras: ['booths', 'lights', 'confetti'] }, data));
+  const campus = JSON.parse(readFileSync(new URL('../../public/data/campus.json', import.meta.url)));
+  for (const venue of data.venues.filter(v => !v.archived)) assert.ok(campus.buildings.some(b => b.id === venue.anchorBuildingId));
+});
+test('공연 사이와 마지막 공연 종료가 폭죽 타이밍으로 분리된다', async () => {
+  const { buildTimeline } = await import('./timeline.js');
+  const timeline = buildTimeline(3);
+  assert.equal(timeline.length, 63);
+  assert.equal(timeline.fireworkTimes.opening, 4);
+  assert.equal(timeline.fireworkTimes['between-1-2'], 20.2);
+  assert.equal(timeline.fireworkTimes['between-2-3'], 39.2);
+  assert.equal(timeline.fireworkTimes.finale, 58.2);
+  assert.equal(buildTimeline(1).fireworkTimes['between-1-2'], undefined);
+});

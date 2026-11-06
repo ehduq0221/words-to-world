@@ -1,8 +1,15 @@
 // 기획안은 게임 저장·선호도 제출과 구분합니다. 네트워크 전송 없음.
+export const FIREWORK_MOMENTS = [
+  { id: 'opening', label: '축제 시작', teams: 1 },
+  { id: 'between-1-2', label: '1팀과 2팀 사이', teams: 2 },
+  { id: 'between-2-3', label: '2팀과 3팀 사이', teams: 3 },
+  { id: 'finale', label: '마지막 공연 종료', teams: 1 },
+];
+export function availableFireworks(plan) { return FIREWORK_MOMENTS.filter(m => m.teams <= plan.artistIds.length); }
 export const PLAN_KEY = 'words-to-world:festival-plans:v1';
 export function createPlan(data) {
   return { id: crypto.randomUUID(), name: '우리의 첫 번째 축제', venueId: data.venues[0].id,
-    budget: 50000000, artistIds: [], extras: ['booths', 'lights', 'confetti'], updatedAt: null };
+    budget: 50000000, artistIds: [], extras: ['booths', 'lights', 'confetti'], fireworks: [], updatedAt: null };
 }
 export function validatePlan(plan, data) {
   return plan && typeof plan.id === 'string' && plan.id.length <= 100 &&
@@ -12,10 +19,12 @@ export function validatePlan(plan, data) {
     Array.isArray(plan.artistIds) && plan.artistIds.length <= 3 && new Set(plan.artistIds).size === plan.artistIds.length &&
     plan.artistIds.every(id => data.artists.some(a => a.id === id)) &&
     Array.isArray(plan.extras) && new Set(plan.extras).size === plan.extras.length &&
-    plan.extras.every(id => data.extras.some(e => e.id === id));
+    plan.extras.every(id => data.extras.some(e => e.id === id)) &&
+    (plan.fireworks === undefined || (Array.isArray(plan.fireworks) && new Set(plan.fireworks).size === plan.fireworks.length &&
+      plan.fireworks.every(id => availableFireworks(plan).some(m => m.id === id))));
 }
 export function totalCost(plan, data) {
-  return data.venues.find(v => v.id === plan.venueId).baseCost +
+  return (plan.fireworks?.length || 0) * (data.fireworkCost || 0) + data.venues.find(v => v.id === plan.venueId).baseCost +
     data.artists.filter(a => plan.artistIds.includes(a.id)).reduce((sum, a) => sum + a.cost, 0) +
     data.extras.filter(e => plan.extras.includes(e.id)).reduce((sum, e) => sum + e.cost, 0);
 }

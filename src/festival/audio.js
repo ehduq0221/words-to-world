@@ -27,6 +27,14 @@ export function createFestivalAudio() {
       await context.resume();
       if (!timer) timer = setInterval(tick, 230);
     },
+    firework() {
+      if (!enabled || !context || context.state !== 'running') return;
+      const buffer = context.createBuffer(1, context.sampleRate * .6, context.sampleRate);
+      const samples = buffer.getChannelData(0);
+      for (let i = 0; i < samples.length; i++) samples[i] = (Math.random() * 2 - 1) * Math.exp(-i / (samples.length * .12));
+      const source = context.createBufferSource(), gain = context.createGain();
+      source.buffer = buffer; gain.gain.value = .1; source.connect(gain).connect(context.destination); source.start();
+    },
     setGenre(value) { genre = value; step = 0; },
     pause() { if (context) context.suspend(); },
     resume() { if (enabled && context) context.resume(); },

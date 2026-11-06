@@ -681,3 +681,18 @@
     transition:none
   }
 }
+.f-presets { margin: 0 0 26px; padding: 20px; background: #e2ebdd; border-radius: 16px; }
+.f-preset-list { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.f-preset-list button { flex: 1; min-width: 200px; text-align: left; }
+.f-preset-list strong, .f-preset-list small { display: block; }
+.f-preset-list small { font-size: 10px; color: #778671; margin-top: 4px; }
+.f-chart-source, .f-venue-note { font-size: 11px; color: #798970; }
+.f-artist-info .f-chart-song { font-size: 10px; color: #5c7563; min-height: 34px; }
+.f-location-map { background: #f4f8f0; border: 1px solid #e3eadc; border-radius: 12px; padding: 12px; text-align: center; }
+.f-location-map svg { display: block; width: 100%; max-height: 250px; }
+.f-location-map small { font-size: 10px; color: #7d8e73; }
+.f-location-map [data-venue] { cursor: pointer; }
+.f-location-map [aria-pressed=true] rect { stroke: #102d18; stroke-width: 5; }
+.f-fireworks { margin: 18px 0; padding: 12px 14px; border: 1px solid #dce6d6; border-radius: 12px; }
+.f-fireworks legend { font-size: 12px; color: #48663e; font-weight: 700; }
+.f-fireworks input:disabled + span { opacity: .45; }

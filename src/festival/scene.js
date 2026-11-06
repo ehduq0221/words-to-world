@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { createFireworks } from './fireworks.js';
 import { loadCampus } from '../data/loadCampus.js';
 import { createCampus } from '../scene/createCampus.js';
 import { createCamera } from '../interaction/createCamera.js';
@@ -9,7 +10,7 @@ const themes = {
   hiphop: { sky: 0x22132e, ground: 0x3b2944, main: 0xff3e59, accent: 0xb455ff },
 };
 
-export async function createFestivalScene(container, venueId) {
+export async function createFestivalScene(container, location) {
   const buildings = await loadCampus();
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
@@ -18,18 +19,36 @@ export async function createFestivalScene(container, venueId) {
   const scene = new THREE.Scene();
   const campus = createCampus(buildings);
   scene.add(campus.group);
+  const outlineMaterial = campus.group.children.find(object => object.isLineSegments)?.material;
+  if (outlineMaterial) { outlineMaterial.transparent = true; outlineMaterial.opacity = .25; }
   const ambient = new THREE.HemisphereLight(0xffe7d3, 0x252343, 2);
   scene.add(ambient);
   const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x84736b });
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(5000, 5000), groundMaterial);
   ground.rotation.x = -Math.PI / 2; ground.position.y = -1; scene.add(ground);
-  const venue = campus.meshes.find(m => m.userData.building.id === venueId);
+  const venue = campus.meshes.find(m => m.userData.building.id === (location.anchorBuildingId || location.id));
   if (!venue) throw new Error('캠퍼스에서 축제 장소를 찾을 수 없습니다.');
   const bounds = new THREE.Box3().setFromObject(venue);
   const center = bounds.getCenter(new THREE.Vector3());
-  // 선택 건물 앞의 게임용 임시 행사 배치입니다. 실제 시설 배치와 다릅니다.
-  const origin = new THREE.Vector3(center.x, 0, bounds.max.z + 40);
-  const group = new THREE.Group(); group.position.copy(origin); scene.add(group);
+  // 사용자 이미지의 오른쪽·아래쪽을 캠퍼스 월드 좌표로 변환합니다.
+  const axisLength = Math.hypot(.782, .623);
+  const right = new THREE.Vector3(-.782 / axisLength, 0, -.623 / axisLength);
+  const down = new THREE.Vector3(.623 / axisLength, 0, -.782 / axisLength);
+  const compact = Boolean(location.anchorBuildingId);
+  const baseScale = location.scale || 1;
+  const origin = compact ? new THREE.Vector3(center.x, 0, center.z).addScaledVector(right, location.rightOffset).addScaledVector(down, location.downOffset) : new THREE.Vector3(center.x, 0, bounds.max.z + 40);
+  const group = new THREE.Group(); group.position.copy(origin);
+  if (compact) group.rotation.y = Math.atan2(down.x, down.z);
+  group.scale.setScalar(baseScale); scene.add(group);
+  const marker = new THREE.Mesh(new THREE.RingGeometry(24, 27, 40), new THREE.MeshBasicMaterial({ color: 0x80f599, side: THREE.DoubleSide, transparent: true, opacity: .85 }));
+  marker.rotation.x = -Math.PI / 2; marker.position.copy(origin); marker.position.y = .2; marker.visible = false; scene.add(marker);
+  // 좁은 야외 위치를 건물 지붕이 가리지 않도록 근처 건물은 무대 보기에서 반투명 처리합니다.
+  const ghost = campus.meshes[0].material.clone(); ghost.transparent = true; ghost.opacity = .13; ghost.depthWrite = false;
+  const nearby = campus.meshes.filter(mesh => {
+    const c = new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3());
+    return Math.hypot(c.x - origin.x, c.z - origin.z) < 170;
+  }).map(mesh => ({ mesh, original: mesh.material }));
+  nearby.forEach(({ mesh }) => { mesh.material = ghost; });
   const mats = [];
   function material(color, emissive = false) {
     const mat = new THREE.MeshLambertMaterial({ color, ...(emissive ? { emissive: color, emissiveIntensity: 1 } : {}) });
@@ -74,14 +93,23 @@ export async function createFestivalScene(container, venueId) {
   for (let i = 0; i < 240; i++) { positions[i * 3] = Math.sin(i * 17.3) * 65; positions[i * 3 + 1] = (i % 60) + 20; positions[i * 3 + 2] = 15 + (i % 70); }
   particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   const confetti = new THREE.Points(particles, new THREE.PointsMaterial({ color: 0xffd7ed, size: 1.2 })); group.add(confetti);
-  const { camera, controls, resize } = createCamera(renderer, campus.bounds);
-  camera.position.set(origin.x + 100, 100, origin.z + 165);
-  controls.target.set(origin.x, 13, origin.z + 25); controls.minDistance = 60; controls.maxDistance = 1800; controls.update();
+  const { camera, controls, resize, fit } = createCamera(renderer, campus.bounds);
+  function focusStage() {
+    const factor = baseScale / Math.min(container.clientWidth / container.clientHeight, 1);
+    if (compact) {
+      camera.position.copy(origin).addScaledVector(right, 100 * factor).addScaledVector(down, 165 * factor); camera.position.y = 100 * factor;
+      controls.target.copy(origin).addScaledVector(down, 25 * baseScale); controls.target.y = 13 * baseScale;
+    } else { camera.position.set(origin.x + 100 * factor, 100 * factor, origin.z + 165 * factor); controls.target.set(origin.x, 13, origin.z + 25); }
+    controls.update();
+  }
+  controls.minDistance = compact ? 20 : 60; controls.maxDistance = 3000; focusStage();
+  let overview = false;
   let genre = 'indie', elapsed = 0, playing = true, frame, previous = performance.now(), finale = false, disposed = false;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fireworks = createFireworks(group, reducedMotion);
   function theme(value) {
     genre = value;
-    const t = themes[genre]; scene.background = new THREE.Color(t.sky); scene.fog = new THREE.Fog(t.sky, 450, 1800);
+    const t = themes[genre]; scene.background = new THREE.Color(t.sky); scene.fog = overview ? null : new THREE.Fog(t.sky, 450, 1800);
     groundMaterial.color.setHex(t.ground); glow.color.setHex(t.main); glow.emissive.setHex(t.main);
     accent.color.setHex(t.accent); accent.emissive.setHex(t.accent); point.color.setHex(t.main);
     beams.forEach((b, i) => b.material.color.setHex(i % 2 ? t.accent : t.main));
@@ -110,20 +138,30 @@ export async function createFestivalScene(container, venueId) {
       for (let i = 0; i < 240; i++) { positions[i * 3 + 1] -= dt * 10; if (positions[i * 3 + 1] < 2) positions[i * 3 + 1] = 80; }
       particles.attributes.position.needsUpdate = true;
     }
+    fireworks.update(playing ? dt : 0);
     controls.update(); renderer.render(scene, camera); frame = requestAnimationFrame(animate);
   }
   resize(container.clientWidth, container.clientHeight); frame = requestAnimationFrame(animate);
   return {
     theme,
+    burstFireworks() { fireworks.burst(); },
+    resetFireworks() { fireworks.reset(); },
     configure(extras) { booths.visible = extras.includes('booths'); crowd.forEach(p => { p.children[2].visible = extras.includes('lights') || genre === 'indie'; }); },
     setFinale(value) { finale = value; },
-    setPreparation(progress) { group.scale.setScalar(reducedMotion ? 1 : Math.max(.01, Math.min(1, progress))); },
+    setPreparation(progress) { group.scale.setScalar(baseScale * (reducedMotion ? 1 : Math.max(.01, Math.min(1, progress)))); },
+    setOverview(value) {
+      overview = value; marker.visible = value;
+      nearby.forEach(({ mesh, original }) => { mesh.material = value ? original : ghost; });
+      scene.fog = value ? null : new THREE.Fog(themes[genre].sky, 450, 1800);
+      if (outlineMaterial) outlineMaterial.opacity = value ? 1 : .25;
+      if (value) { controls.target.copy(campus.bounds.getCenter(new THREE.Vector3())); controls.target.y = 0; fit(container.clientWidth, container.clientHeight); } else focusStage();
+    },
     setPlaying(value) { playing = value; },
     dispose() {
       disposed = true; cancelAnimationFrame(frame); observer.disconnect(); controls.dispose();
       const geometries = new Set(), materials = new Set();
       scene.traverse(object => { if (object.geometry) geometries.add(object.geometry); if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach(m => materials.add(m)); });
-      geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); renderer.dispose(); renderer.domElement.remove();
+      geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); ghost.dispose(); renderer.dispose(); renderer.domElement.remove();
     },
   };
 }
