@@ -11,11 +11,12 @@ function element(tag, className, text) {
 }
 
 function article(reaction) {
-  const card = element('article', reaction.kind === 'resolved' ? 'reaction-resolved' : '');
+  const card = element('article', `reaction-${reaction.kind}`);
   const student = element('div', 'student');
   const info = element('div');
   info.append(element('b', '', reaction.who), element('small', '', `${reaction.year}학년${reaction.cause ? ` · ${reaction.cause}` : ''}`));
-  student.append(element('span', reaction.kind === 'resolved' ? 'avatar sage' : 'avatar', reaction.avatar), info);
+  const calm = ['resolved', 'praise', 'eased'].includes(reaction.kind);
+  student.append(element('span', calm ? 'avatar sage' : 'avatar', reaction.avatar), info);
   if (reaction.priority) student.append(element('span', 'priority', reaction.priority));
   card.append(student, element('p', '', `“${reaction.text ?? '…'}”`));
   if (reaction.date) card.append(element('span', 'tag', `${reaction.date.month}월 ${reaction.date.day}일`));

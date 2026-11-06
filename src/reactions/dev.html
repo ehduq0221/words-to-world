@@ -8,28 +8,41 @@
   <link rel="stylesheet" href="./reactions.css">
   <style>
     body { overflow: auto; padding: 24px; }
-    .dev { display: grid; grid-template-columns: 1fr 300px; gap: 20px; max-width: 980px; margin: 0 auto; align-items: start; }
-    .dev > .panel { padding: 16px; }
+    .dev { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; max-width: 1080px; margin: 0 auto; align-items: start; }
+    .dev > section { padding: 16px; }
     .dev h1 { font-size: 18px; margin: 0 0 6px; }
-    .dev p.dev-note { font-size: 11px; color: #708578; line-height: 1.7; margin: 0 0 12px; }
-    .dev-group { margin-bottom: 14px; }
-    .dev-group h2 { font-size: 12px; margin: 0 0 6px; }
-    .dev-group div { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dev h2 { font-size: 13px; margin: 18px 0 8px; }
+    .dev p.dev-note { font-size: 11px; color: #708578; line-height: 1.7; margin: 0 0 6px; }
+    .dev-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px 16px; }
+    .dev-group h3 { font-size: 11px; margin: 0 0 5px; color: #4d6656; }
+    .dev button:disabled { opacity: .45; cursor: not-allowed; }
+    .dev-group div { display: flex; flex-wrap: wrap; gap: 5px; }
     .dev button { border: 1px solid #d4e0d6; background: #fff; border-radius: 6px; padding: 5px 9px; font-size: 11px; color: #2f654d; }
-    .dev button[aria-pressed=true] { background: #edf4e9; border-color: #9fc2a8; font-weight: 650; }
-    .dev-status { font-size: 12px; margin: 10px 0; }
-    .dev-log { font-size: 11px; color: #61766a; padding-left: 18px; max-height: 320px; overflow: auto; line-height: 1.7; }
-    .dev .reactions { padding: 19px 17px; }
-    @media (max-width: 720px) { .dev { grid-template-columns: 1fr; } }
+    .dev button[aria-pressed=true] { background: #2f654d; border-color: #2f654d; color: #fff; }
+    .dev-result { margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; background: #f2f6ef; font-size: 12px; color: #2f4a3c; min-height: 18px; line-height: 1.6; }
+    .dev-status { font-size: 11px; color: #61766a; line-height: 1.7; }
+    .dev-issues { display: flex; flex-wrap: wrap; gap: 5px; }
+    .dev-issues span { font-size: 10px; padding: 4px 7px; border-radius: 5px; background: #f6efe3; color: #8a6a3c; }
+    .dev-issues span.praise { background: #e8f2ea; color: #3f7752; }
+    .dev-log { font-size: 11px; color: #4d6656; padding-left: 20px; max-height: 420px; overflow: auto; line-height: 1.7; margin: 0; }
+    .dev-log b { font-weight: 600; }
+    .dev .reactions { position: sticky; top: 16px; padding: 19px 17px; }
+    @media (max-width: 760px) { .dev { grid-template-columns: 1fr; } .dev .reactions { position: static; } }
   </style>
 </head>
 <body>
   <main class="dev">
     <section class="panel">
       <h1>학생 반응 확인</h1>
-      <p class="dev-note">3단계 게임 상태와 4단계 운영이 합쳐지기 전, 임시 구현으로 5단계를 확인하는 개발용 화면입니다. 아래 버튼은 4단계가 남기는 운영 요약 값(operations.summary)을 흉내 냅니다.</p>
-      <div id="dev-controls"></div>
+      <p class="dev-note">3단계 게임 상태와 4단계 운영이 합쳐지기 전, 임시 구현으로 5단계를 확인하는 개발용 화면입니다. 기숙사·학생식당·편의성 버튼은 4단계가 남기는 운영 요약 값(operations.summary)을 간단히 흉내 냅니다.</p>
+      <p class="dev-note">현재 선택은 진하게 표시됩니다. 버튼을 누르면 아래에 결과가 나오고, 반응이 없으면 그 이유를 알려 줍니다. 기숙사·학생식당 버튼은 플레이어 결정이라 확인 창이 뜨고, 같은 결정은 하루에 한 번만 할 수 있으며, 학생 반응은 다음 날(「+1일」)부터 나옵니다.</p>
+      <div class="dev-groups" id="dev-controls"></div>
+      <p class="dev-result" id="dev-result" role="status">버튼을 눌러 상황을 바꿔 보세요.</p>
+      <h2>현재 상태</h2>
       <div class="dev-status" id="dev-status"></div>
+      <h2>진행 중인 민원·칭찬</h2>
+      <div class="dev-issues" id="dev-issues"></div>
+      <h2>전체 반응 기록 (최근 순)</h2>
       <ol class="dev-log" id="dev-log" reversed></ol>
     </section>
     <section class="panel reactions"><div class="section-heading"><h2>학생들의 목소리</h2><span class="count" id="reaction-count">0</span></div><p class="section-sub">캠퍼스에서 들려오는 이야기</p>

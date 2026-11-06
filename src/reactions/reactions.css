@@ -1,4 +1,8 @@
 /* 5단계 학생 반응 패널. 기본 모양은 style.css의 .reactions article을 따릅니다. */
-.reactions article.reaction-resolved .priority { color: #5f8f6d; }
-.reactions article.reaction-resolved > p { color: #5d7f68; }
+.reactions article .priority { white-space: nowrap; }
+.reactions article.reaction-complaint .priority { color: #b19061; }
+.reactions article.reaction-resolved .priority, .reactions article.reaction-praise .priority { color: #4f8a62; }
+.reactions article.reaction-eased .priority { color: #7d9a6c; }
+.reactions article.reaction-event .priority { color: #8a96a6; }
+.reactions article.reaction-resolved > p, .reactions article.reaction-praise > p { color: #4f7a5d; }
 .reaction-empty { font-size: 11px; color: #a5b0a3; margin: 10px 0 0; }
