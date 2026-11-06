@@ -1,6 +1,7 @@
 // 즉시 조치 안건(IMPLEMENTATION_PLAN.md 공통 약속 「총장 결정」)
 // 건물 위 !로 결정 대기 안건을 보여 주고, 총장이 조치를 고르면 확인 창을 거쳐 「조치 예정」이 됩니다.
 // 효과와 학생의 후속 반응은 다음 날 나타납니다.
+import { careEffect, neglectedRequests } from './care.js';
 import * as api from './gameApi.js';
 import { activeEvents, waitingEvents, resolvedChoice, scheduledChoice, decide, applyDue, effectId, effectText, initializeSchedule, releaseDueEvent } from './model.js';
 import { confirmDecision } from '../ui/confirm.js';
@@ -162,6 +163,11 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     const initialized = initializeSchedule(data.events, state, data.activeLimit, data.schedule);
     if (initialized) { api.updateArea('decisions', () => initialized); return; }
     const active = activeEvents(data.events, state, data.activeLimit);
+    const waiting = neglectedRequests(data.events, state, data.activeLimit);
+    let careNote = section.querySelector('#care-note');
+    if (!careNote) { careNote = element('p', 'care-note'); careNote.id = 'care-note'; section.querySelector('.section-sub').after(careNote); }
+    const overdue = waiting.filter(item => item.age >= 7).length;
+    careNote.textContent = overdue ? `오래 기다린 안건 ${overdue}건 · 만족도와 평판에 영향을 주고 있어요.` : '7일 이상 방치한 안건은 만족도·평판이 낮아져요.';
     const opened = [...state.decisions.opened].reverse().map(id => data.events.find(event => event.id === id)).filter(event => event && (resolvedChoice(event, state) || active.includes(event)));
     const scroll = feed.scrollTop;
     feed.replaceChildren(...opened.map(event => eventCard(event, state)));
@@ -184,7 +190,7 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     if (view) projectMarkers(view.camera, view.width, view.height);
     onChange();
   }
-  api.registerArea('decisions', () => ({ opened: [], released: null, nextEventDay: null, scheduled: [], rounds: {}, lastDone: {}, failed: {} }));
+  api.registerArea('decisions', () => ({ opened: [], released: null, nextEventDay: null, scheduled: [], rounds: {}, lastDone: {}, failed: {}, releasedOn: {} }));
   api.registerDialogues(responseDialogues(data.events));
   api.onTimeAdvance(() => {
     // 어제까지 결정한 조치를 반영하고, 학생의 후속 반응을 남깁니다.
@@ -193,6 +199,8 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     }
     const next = releaseDueEvent(data.events, api.getState(), data.activeLimit, data.schedule);
     if (next) api.updateArea('decisions', () => next);
+    const effect = careEffect(data.events, api.getState(), data.activeLimit);
+    if (effect) api.applyEffect(effect);
   });
   api.subscribe(render);
   return { update: projectMarkers };

@@ -15,7 +15,6 @@ function traceRing(path, points) {
 
 export function createCampus(buildings) {
   const group = new THREE.Group();
-  const material = new THREE.MeshLambertMaterial({ color: 0xc7d8d0 });
   const lineMaterial = new THREE.LineBasicMaterial({ color: 0x849f92 });
   const anchors = [];
   const meshes = [];
@@ -60,11 +59,10 @@ export function createCampus(buildings) {
     geometry.rotateX(-Math.PI / 2);
     const offset = getPassageOffset(building.outline);
     geometry.translate(offset.x, 0, offset.z);
-    const college = /대학|정보대/.test(building.name);
-    const mesh = new THREE.Mesh(geometry, college ? [
+    const mesh = new THREE.Mesh(geometry, [
       new THREE.MeshLambertMaterial({ color: 0xacaaa1 }),
       new THREE.MeshLambertMaterial({ color: 0xe58a3b }),
-    ] : material);
+    ]);
     mesh.userData.building = selectionBuilding;
     meshes.push(mesh);
     group.add(mesh);

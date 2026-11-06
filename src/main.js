@@ -9,6 +9,8 @@ import { publishBuildingSelection } from './interaction/buildingSelection.js';
 import { createSelectionHighlight } from './interaction/selectionHighlight.js';
 import { initDecisions } from './decisions/index.js';
 import { initGame, initCalendar, startGame, getState } from './game/index.js';
+import { initMetricHistory } from './game/history.js';
+import { initFestivalMapEvent } from './festival/mapEvent.js';
 import { initGameUI } from './game/ui.js';
 import { initOperations } from './operations/index.js';
 import { initReactions } from './reactions/index.js';
@@ -22,6 +24,7 @@ async function start() {
   try {
     await initGame();
     initGameUI();
+    initMetricHistory();
     await initCalendar();
     const buildings = await loadCampus();
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -83,8 +86,10 @@ async function start() {
     const updateLabels = createLabels(container, campus.anchors, selectBuilding);
     let decisions = null;
     let experience = null;
+    let festivalEvent = null;
     await Promise.all([initOperations(), initReactions()]);
     decisions = await initDecisions({ container, anchors: campus.anchors, onSelect: selectBuilding, onChange: render });
+    festivalEvent = await initFestivalMapEvent({ container, anchors: campus.anchors });
     experience = await initExperience({ container, anchors: campus.anchors });
     try { startGame(); } catch (error) {
       document.querySelector('#game-notice').textContent = error.message + ' 메뉴에서 새 게임으로 다시 시작할 수 있습니다.';
@@ -123,6 +128,7 @@ async function start() {
       selectionHighlight.update(camera, container.clientWidth, container.clientHeight);
       decisions?.update(camera, container.clientWidth, container.clientHeight);
       experience?.update(camera, container.clientWidth, container.clientHeight);
+      festivalEvent?.update(camera, container.clientWidth, container.clientHeight);
     }
     function onResize() {
       const width = container.clientWidth;

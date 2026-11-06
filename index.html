@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="./src/reactions/reactions.css">
   <link rel="stylesheet" href="./src/experience/experience.css">
   <link rel="stylesheet" href="./src/game/calendar.css">
+  <link rel="stylesheet" href="./src/game/history.css">
+  <link rel="stylesheet" href="./src/festival/mapEvent.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
@@ -51,11 +53,13 @@
     </section>
     <section class="panel finance"><div class="section-heading"><h2>이번 달 예산</h2><button id="ledger-open">정산 내역</button></div><div class="finance-row"><span>수입</span><b id="finance-income">0</b></div><div class="finance-row"><span>지출</span><b id="finance-expense">0</b></div><div class="balance"><span>월간 증감</span><strong id="finance-balance">0 원</strong></div></section>
 
+    <section class="panel character-card" id="character-card" aria-label="내 캐릭터" hidden></section>
   </aside>
   <div class="map-controls">왼쪽 드래그 · 회전 <span>오른쪽 드래그 · 이동</span> 휠 · 확대·축소</div>
   <footer><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors · ODbL</a> · <a href="./public/data/SOURCE.md">지도 출처</a></span><span>초기 운영 수치와 즉시 조치 안건은 게임용 가상 설정입니다.</span></footer>
-  <dialog id="game-menu"><div class="dialog-heading"><h2>총장 메뉴</h2><button data-close-dialog aria-label="메뉴 닫기">✕</button></div>
-    <section class="panel character-card" id="character-card" aria-label="내 캐릭터" hidden></section>
+  <dialog id="game-menu"><div class="dialog-heading"><h2>총장 운영 보고서</h2><button data-close-dialog aria-label="메뉴 닫기">✕</button></div>
+
+    <section id="metrics-history" aria-label="학교 운영 지표 추이"></section>
     <div class="menu-actions"><button id="save-game">저장하기</button><button id="load-game">불러오기</button><button id="new-game">새 게임</button><button id="sound-toggle" aria-pressed="false">소리 꺼짐</button></div>
     <label class="lighting-setting">캠퍼스 조명 <select id="lighting-mode"><option value="day">낮</option><option value="night">밤</option><option value="auto">낮·밤 순환</option></select></label>
     <p class="menu-help">운영은 자동 저장됩니다. 브라우저를 닫으면 시간이 멈춥니다.</p>
@@ -64,6 +68,6 @@
   <dialog id="new-game-confirm"><h2>새 임기를 시작할까요?</h2><p>운영 기록과 날짜를 초기화합니다. 캐릭터는 유지합니다.</p><button data-close-dialog>취소</button><button id="confirm-new-game">새 게임 시작</button></dialog>
   <p id="status" role="status">캠퍼스를 불러오고 있습니다.</p>
   <script type="module" src="./src/interaction/gameViewport.js"></script>
-  <script type="module" src="./src/main.js?v=game-experience-1"></script>
+  <script type="module" src="./src/main.js?v=dashboard-festival-1"></script>
 </body>
 </html>

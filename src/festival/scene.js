@@ -46,7 +46,8 @@ export async function createFestivalScene(container, location) {
   const marker = new THREE.Mesh(new THREE.RingGeometry(24, 27, 40), new THREE.MeshBasicMaterial({ color: 0x80f599, side: THREE.DoubleSide, transparent: true, opacity: .85 }));
   marker.rotation.x = -Math.PI / 2; marker.position.copy(origin); marker.position.y = .2; marker.visible = false; scene.add(marker);
   // 좁은 야외 위치를 건물 지붕이 가리지 않도록 근처 건물은 무대 보기에서 반투명 처리합니다.
-  const ghost = campus.meshes[0].material.clone(); ghost.transparent = true; ghost.opacity = .13; ghost.depthWrite = false;
+  const firstMaterial = campus.meshes[0].material;
+  const ghost = (Array.isArray(firstMaterial) ? firstMaterial[1] || firstMaterial[0] : firstMaterial).clone(); ghost.transparent = true; ghost.opacity = .13; ghost.depthWrite = false;
   const originalMaterials = new Map(campus.meshes.map(mesh => [mesh, mesh.material]));
   const nearby = campus.meshes.filter(mesh => {
     const c = new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3());
