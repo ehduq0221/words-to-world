@@ -1,5 +1,20 @@
+// 즉시 조치 안건(IMPLEMENTATION_PLAN.md 공통 약속 「총장 결정」)
+// 건물 위 !로 결정 대기 안건을 보여 주고, 총장이 조치를 고르면 확인 창을 거쳐 「조치 예정」이 됩니다.
+// 효과와 학생의 후속 반응은 다음 날 나타납니다.
 import * as api from './gameApi.js';
-import { activeEvents, resolvedChoice, decide, effectId, effectText, formatWon } from './model.js';
+import { activeEvents, waitingEvents, resolvedChoice, scheduledChoice, decide, applyDue, effectId, effectText, initializeSchedule, releaseDueEvent } from './model.js';
+import { confirmDecision } from '../ui/confirm.js';
+
+const formatDate = ({ month, day }) => `${month}월 ${day}일`;
+const nextDate = ({ year, month, day }) => {
+  const next = new Date(Date.UTC(year, month - 1, day + 1));
+  return { year: next.getUTCFullYear(), month: next.getUTCMonth() + 1, day: next.getUTCDate() };
+};
+
+// 학생의 후속 반응을 5단계 대사로 등록합니다(유형: decisions.<안건>.<조치>).
+export function responseDialogues(events) {
+  return events.flatMap(event => event.choices.map(choice => ({ type: `decisions.${event.id}.${choice.id}`, text: choice.response })));
+}
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -9,15 +24,16 @@ function element(tag, className, text) {
 }
 
 export async function initDecisions({ container, anchors, onSelect, onChange }) {
-  const response = await fetch(new URL('../../public/data/decisions.json', import.meta.url));
-  if (!response.ok) throw new Error('학생 이벤트 자료를 불러올 수 없습니다.');
+  const response = await fetch(new URL('../../public/data/decisions.json', import.meta.url), { cache: 'no-store' });
+  if (!response.ok) throw new Error('즉시 조치 안건 자료를 불러올 수 없습니다.');
   const data = await response.json();
+  if (!Number.isInteger(data.activeLimit) || data.activeLimit < 1 || data.activeLimit > 3 || !Number.isInteger(data.schedule?.minDays) || !Number.isInteger(data.schedule?.maxDays) || data.schedule.minDays < 1 || data.schedule.maxDays < data.schedule.minDays || !Number.isInteger(data.schedule.initialCount) || data.schedule.initialCount < 0 || data.schedule.initialCount > data.activeLimit || !(Number.isInteger(data.schedule.cooldownDays) && data.schedule.cooldownDays >= 0)) throw new Error('즉시 조치 안건의 발생 주기 설정을 확인해 주세요.');
   const byBuilding = new Map(anchors.map(anchor => [anchor.building.id, anchor]));
   const ids = new Set();
   for (const event of data.events) {
     if (ids.has(event.id) || !byBuilding.has(event.buildingId) || event.choices.length !== 3 || new Set(event.choices.map(choice => choice.id)).size !== 3 ||
         !event.choices.every(choice => ['budget', 'satisfaction', 'reputation'].every(key => Number.isFinite(choice.effect[key])))) {
-      throw new Error('학생 이벤트의 건물 또는 선택지 설정을 확인해 주세요.');
+      throw new Error('즉시 조치 안건의 건물 또는 조치 설정을 확인해 주세요.');
     }
     ids.add(event.id);
   }
@@ -36,13 +52,33 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     card.append(error);
   }
 
+  async function chooseAction(event, choice, card) {
+    const tomorrow = nextDate(api.getState().time.date);
+    const ok = await confirmDecision({
+      title: `「${event.title}」 안건에 「${choice.label}」 조치를 할까요?`,
+      notes: [
+        '결정하면 이 안건의 조치는 바꿀 수 없어요.',
+        `조치의 효과와 학생들의 반응은 내일(${formatDate(tomorrow)}) 나타나요.`,
+      ],
+      confirmLabel: '조치 결정',
+    });
+    if (!ok) return;
+    try {
+      decide(event, choice.id, api, data.events);
+    } catch (error) {
+      showError(card, error.message.includes('예산') || error.message.includes('즉시 조치') ? error.message : '결정을 저장하지 못했습니다. 브라우저 저장소를 확인한 뒤 다시 시도해 주세요.');
+    }
+  }
+
   function eventCard(event, state) {
     const selected = resolvedChoice(event, state);
-    const card = element('article', 'decision-card' + (selected ? ' is-resolved' : ''));
+    const planned = selected ? null : scheduledChoice(event, state);
+    const status = selected ? '조치 완료' : planned ? '조치 예정' : '결정 대기';
+    const card = element('article', 'decision-card' + (selected ? ' is-resolved' : planned ? ' is-scheduled' : ''));
     card.dataset.eventId = event.id;
     card.tabIndex = -1;
     const heading = element('div', 'decision-heading');
-    heading.append(element('span', 'decision-avatar', event.who[0]), element('b', '', event.who), element('span', 'decision-status', selected ? '처리 완료' : '선택 대기'));
+    heading.append(element('span', 'decision-avatar', event.who[0]), element('b', '', `${event.who}의 요청`), element('span', 'decision-status', status));
     card.append(heading, element('h3', '', event.title), element('p', 'decision-story', event.text));
     const anchor = byBuilding.get(event.buildingId);
     const location = element('button', 'decision-location', anchor.name + ' · 지도에서 보기');
@@ -50,40 +86,49 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     location.addEventListener('click', () => onSelect(anchor.building, { focusMap: true }));
     card.append(location);
     if (selected) {
-      const entry = state.ledger.find(item => item.id === effectId(event, selected));
+      const entry = state.ledger.find(item => item.id === effectId(event, selected, state.decisions.rounds?.[event.id] ?? 0));
       const result = element('div', 'decision-result');
       result.setAttribute('role', 'status');
-      result.append(element('strong', '', selected.label), element('p', 'decision-effects', effectText(entry)), element('p', '', '“' + selected.response + '”'));
+      result.append(
+        element('strong', '', `${selected.label} · ${formatDate(entry.date)} 반영`),
+        element('p', 'decision-effects', effectText(entry)),
+        element('p', '', `${event.who}: “${selected.response}”`),
+      );
+      card.append(result);
+    } else if (planned) {
+      const result = element('div', 'decision-result is-pending');
+      result.setAttribute('role', 'status');
+      result.append(
+        element('strong', '', `${planned.choice.label} · ${formatDate(planned.decidedOn)} 결정`),
+        element('p', '', `${formatDate(nextDate(planned.decidedOn))}에 조치가 반영되고 학생들의 반응이 들려와요.`),
+      );
       card.append(result);
     } else {
       const choices = element('div', 'decision-choices');
       choices.setAttribute('role', 'group');
-      choices.setAttribute('aria-label', event.title + ' 대응 선택');
+      choices.setAttribute('aria-label', event.title + ' 조치 결정');
       for (const choice of event.choices) {
         const button = element('button', '', choice.label);
         button.type = 'button';
-        button.addEventListener('click', () => {
-          try {
-            decide(event, choice.id, api);
-          } catch (error) {
-            showError(card, error.message.includes('예산') ? error.message : '결과를 저장하지 못했습니다. 브라우저 저장소를 확인한 뒤 다시 시도해 주세요.');
-          }
-        });
+        button.addEventListener('click', () => chooseAction(event, choice, card));
         choices.append(button);
       }
       card.append(choices);
+      const failed = state.decisions.failed?.[event.id];
+      if (failed) showError(card, failed);
     }
     return card;
   }
 
   function openEvent(event) {
+    window.dispatchEvent(new CustomEvent("campus:event-open", { detail: { title: event.title } }));
     const anchor = byBuilding.get(event.buildingId);
     onSelect(anchor.building, { focusMap: true });
     if (!api.getState().decisions.opened.includes(event.id)) {
       try {
         api.updateArea('decisions', area => ({ ...area, opened: [...area.opened, event.id] }));
       } catch {
-        document.querySelector('#decision-notice').textContent = '이벤트를 저장하지 못했습니다. 브라우저 저장소를 확인해 주세요.';
+        document.querySelector('#decision-notice').textContent = '안건을 저장하지 못했습니다. 브라우저 저장소를 확인해 주세요.';
         return;
       }
     }
@@ -113,38 +158,25 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     }
   }
 
-  function showMetrics(state) {
-    const { budget, satisfaction, reputation } = state.metrics;
-    document.querySelector('#hud-budget').textContent = '₩ ' + formatWon(budget);
-    document.querySelector('#hud-satisfaction').textContent = satisfaction;
-    document.querySelector('#hud-reputation').textContent = reputation;
-    const spent = state.ledger.reduce((sum, entry) => sum + Math.max(0, -entry.budget), 0);
-    const earned = state.ledger.reduce((sum, entry) => sum + Math.max(0, entry.budget), 0);
-    document.querySelector('#hud-budget-note').textContent = '선택 반영 ' + formatWon(earned - spent, true);
-    document.querySelector('#hud-satisfaction-note').textContent = '선택 누적 ' + (satisfaction - 76 > 0 ? '+' : '') + (satisfaction - 76);
-    document.querySelector('#hud-reputation-note').textContent = '선택 누적 ' + (reputation - 68 > 0 ? '+' : '') + (reputation - 68);
-    document.querySelector('#finance-income').textContent = formatWon(86000000 + earned, true);
-    document.querySelector('#finance-expense').textContent = formatWon(-62000000 - spent);
-    document.querySelector('#finance-balance').textContent = formatWon(24000000 + earned - spent, true) + ' 원';
-  }
-
   function render(state) {
-    showMetrics(state);
-    const opened = [...state.decisions.opened].reverse().map(id => data.events.find(event => event.id === id)).filter(Boolean);
+    const initialized = initializeSchedule(data.events, state, data.activeLimit, data.schedule);
+    if (initialized) { api.updateArea('decisions', () => initialized); return; }
+    const active = activeEvents(data.events, state, data.activeLimit);
+    const opened = [...state.decisions.opened].reverse().map(id => data.events.find(event => event.id === id)).filter(event => event && (resolvedChoice(event, state) || active.includes(event)));
     const scroll = feed.scrollTop;
     feed.replaceChildren(...opened.map(event => eventCard(event, state)));
-    if (!opened.length) feed.append(element('p', 'decision-empty', '건물 위의 !을 눌러 학생의 이야기를 들어 보세요.'));
+    if (!opened.length) feed.append(element('p', 'decision-empty', '건물 위의 !을 눌러 조치가 필요한 안건을 확인하세요.'));
     feed.scrollTop = scroll;
-    count.textContent = opened.filter(event => !resolvedChoice(event, state)).length;
-    count.title = '선택을 기다리는 학생의 목소리';
+    count.textContent = opened.filter(event => !resolvedChoice(event, state) && !scheduledChoice(event, state)).length;
+    count.title = '결정을 기다리는 안건';
     layer.replaceChildren();
-    markers = activeEvents(data.events, state, data.activeLimit).map(event => {
+    markers = waitingEvents(data.events, state, data.activeLimit).map(event => {
       const anchor = byBuilding.get(event.buildingId);
       const button = element('button', 'decision-bubble', '!');
       button.type = 'button';
       button.dataset.eventId = event.id;
       button.classList.toggle('is-opened', state.decisions.opened.includes(event.id));
-      button.setAttribute('aria-label', anchor.name + ' 학생 이벤트 열기');
+      button.setAttribute('aria-label', anchor.name + ' 조치가 필요한 안건 열기');
       button.addEventListener('click', () => openEvent(event));
       layer.append(button);
       return { anchor, button };
@@ -152,8 +184,16 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     if (view) projectMarkers(view.camera, view.width, view.height);
     onChange();
   }
-  api.registerArea('decisions', () => ({ opened: [] }));
+  api.registerArea('decisions', () => ({ opened: [], released: null, nextEventDay: null, scheduled: [], rounds: {}, lastDone: {}, failed: {} }));
+  api.registerDialogues(responseDialogues(data.events));
+  api.onTimeAdvance(() => {
+    // 어제까지 결정한 조치를 반영하고, 학생의 후속 반응을 남깁니다.
+    for (const { event, choice } of applyDue(data.events, api)) {
+      api.addReaction({ type: `decisions.${event.id}.${choice.id}`, buildingId: event.buildingId, cause: event.title });
+    }
+    const next = releaseDueEvent(data.events, api.getState(), data.activeLimit, data.schedule);
+    if (next) api.updateArea('decisions', () => next);
+  });
   api.subscribe(render);
-  api.startGame();
   return { update: projectMarkers };
 }

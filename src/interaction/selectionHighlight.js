@@ -18,7 +18,9 @@ export function createSelectionHighlight(container, scene) {
     }
     bounds = new THREE.Box3();
     for (const mesh of meshes) {
+      mesh.updateWorldMatrix(true, false);
       bounds.expandByObject(mesh);
+      if (mesh.isInstancedMesh) continue;
       const edges = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 25), material);
       edges.matrixAutoUpdate = false;
       edges.matrix.copy(mesh.matrixWorld);
