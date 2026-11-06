@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { getState, subscribe, applyEffect } from '../game/index.js';
-import { formatWon } from '../decisions/model.js';
+import { formatWon, eventIdOf } from '../decisions/model.js';
 import { requestGoal, feedbackText } from './model.js';
 import { readCharacter } from '../character/storage.js';
 import { renderAvatar, resolveAvatarIndex } from '../character/avatars.js?v=4';
@@ -42,13 +42,13 @@ export async function initExperience({container,anchors}) {
     animation.frame=requestAnimationFrame(step);
   }
   function showEffect(entry) {
-    const event=events.find(event=>entry.id.startsWith('decisions:'+event.id+':'));
+    const event=events.find(event=>event.id===eventIdOf(entry.id));
     const anchor=anchorById.get(event?.buildingId||selected);
     const element=document.createElement('div');element.className='floating-effect';
     const title=document.createElement('b');title.textContent=entry.source==='experience'?'목표 달성!':entry.satisfaction>0?'개선 완료!':'결정 반영';
     const detail=document.createElement('span');detail.textContent=feedbackText(entry)||'결정을 기록했습니다.';element.append(title,detail);layer.append(element);
     popups.push({anchor,element,began:performance.now()});tone();
-    document.querySelector('#narrator-line').textContent=title.textContent+' '+(feedbackText(entry)||'지표 변화 없음')+'. 학생 반응은 다음 날 확인해 주세요.';
+    document.querySelector('#narrator-line').textContent=title.textContent+' '+(feedbackText(entry)||'지표 변화 없음')+(entry.source==='decisions'?'. 어제 결정한 조치가 오늘 반영됐어요.':'.');
   }
   subscribe(state=>{
     const {budget,satisfaction,reputation}=state.metrics;

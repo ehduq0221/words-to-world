@@ -35,14 +35,31 @@ test('정산 또는 저장 실패 시 날짜·예산·장부가 함께 복원된
  storage.setItem=()=>{throw new Error('quota');};assert.throws(()=>game.applyEffect({id:'save-failure',budget:1}),/quota/);assert.equal(game.getState(),before);
 });
 
-test('실제 운영·민원 모듈이 한 상태에서 연결되고 다음 날 반응한다',async()=>{
+test('실제 운영·민원 모듈이 한 상태에서 연결되고, 학기 계획은 학기 첫날 적용되며 반응은 그다음 날 나온다',async()=>{
  globalThis.localStorage=memory();
  globalThis.fetch=async url=>({ok:true,json:async()=>JSON.parse(fs.readFileSync(url))});
  const api=await import('../src/game/index.js');const operations=await import('../src/operations/index.js');const reactions=await import('../src/reactions/index.js');
  await api.initGame();await Promise.all([operations.initOperations(),reactions.initReactions()]);api.startGame();
- const before=api.getState().reactions.seq;
- assert(operations.setDormFeeLevel('high'));assert(!operations.setDormFeeLevel('low'));assert.equal(api.getState().reactions.seq,before);
- api.advanceDays(1);assert(api.getState().reactions.seq>before);assert(operations.setDormFeeLevel('low'));
- api.advanceDays(181);const s=api.getState();assert(s.settled.includes('2026-1'));assert(s.ledger.some(e=>e.source==='operations'));
+ assert(!operations.setFeeLevelPlan('high'),'결정 기간 전에는 계획 불가');
+ while(!operations.planning().open)api.advanceDays(1);
+ assert.deepEqual(api.getState().time.date,{year:2026,month:8,day:2});
+ const summary=api.getState().operations.summary;
+ assert(operations.setFeeLevelPlan('high'));assert(!operations.setFeeLevelPlan('low'),'같은 날 다시 고칠 수 없음');
+ assert.equal(api.getState().operations.feeLevel,null,'이번 학기 운영은 그대로');assert.equal(api.getState().operations.summary,summary);
+ api.advanceDays(1);assert(operations.setFeeLevelPlan('low'),'다음 날 다시 고칠 수 있음');
+ while(api.getState().time.semester==='2026-1')api.advanceDays(1);
+ assert.deepEqual(api.getState().time.date,{year:2026,month:9,day:1});
+ assert.equal(api.getState().operations.feeLevel,'low');assert.equal(api.getState().operations.summary.feeLevel,'low');
+ const applied=api.getState().reactions.seq;
+ api.advanceDays(1);const added=api.getState().reactions.feed.filter(r=>r.seq>applied);assert(added.some(r=>r.type.startsWith('dorm.')),'적용 다음 날 기숙사 반응');
+ const s=api.getState();assert(s.settled.includes('2026-1'));assert(s.ledger.some(e=>e.source==='operations'));
  assert.equal(s.metrics.budget,s.initialBudget+s.ledger.reduce((n,e)=>n+e.budget,0));
+});
+
+test('속도는 1배·2배만 지원하고 예전 저장의 다른 속도는 1배로 불러온다',()=>{
+ const storage=memory(),game=createGameStore({config,storage});game.startGame();
+ game.setSpeed(2);assert.equal(game.getState().time.speed,2);
+ assert.throws(()=>game.setSpeed(4),/속도/);assert.throws(()=>game.setSpeed(12),/속도/);
+ const saved=JSON.parse(storage.getItem('words-to-world:save'));saved.state.time.speed=12;storage.setItem('words-to-world:save',JSON.stringify(saved));
+ const restored=createGameStore({config,storage});restored.startGame();assert.equal(restored.getState().time.speed,1);
 });

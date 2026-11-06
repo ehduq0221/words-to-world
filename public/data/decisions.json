@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "note": "학생과 상황, 비용 및 지표 변화는 게임용 가상 설정입니다. 실제 시설 상태에 대한 평가가 아닙니다.",
+  "note": "즉시 조치 안건입니다. 안건을 알린 학생과 상황, 조치 비용과 지표 변화, 발생 간격은 게임용 가상 설정이며 실제 시설 상태에 대한 평가가 아닙니다. 조치를 마친 안건은 cooldownDays일 뒤 다시 생길 수 있습니다.",
   "activeLimit": 3,
-  "schedule": { "initialCount": 1, "minDays": 10, "maxDays": 20 },
+  "schedule": { "initialCount": 1, "minDays": 10, "maxDays": 20, "cooldownDays": 60 },
   "events": [
     {
       "id": "slow-computers",

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./src/interaction/facilityExplorer.css">
   <link rel="stylesheet" href="./src/decisions/decisions.css">
   <link rel="stylesheet" href="./src/operations/operations.css">
+  <link rel="stylesheet" href="./src/ui/confirm.css">
   <link rel="stylesheet" href="./src/reactions/reactions.css">
   <link rel="stylesheet" href="./src/experience/experience.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
@@ -21,10 +22,10 @@
   </header>
   <main id="map" aria-label="인천대학교 송도캠퍼스 3D 지도"></main>
   <section class="time-toolbar" aria-label="시간 조작">
-    <span id="calendar-label">캠퍼스 운영</span><button id="time-toggle" aria-pressed="false">▶ 진행</button><button id="advance-day">하루</button><button id="advance-week">일주일</button>
-    <select id="game-speed" aria-label="시간 배속"><option value="1">1배속</option><option value="4">4배속</option><option value="12">12배속</option></select>
+    <span id="calendar-label">캠퍼스 운영</span><button id="time-toggle" aria-pressed="false">▶ 진행</button>
+    <select id="game-speed" aria-label="시간 배속"><option value="1">1배속</option><option value="2">2배속</option></select>
   </section>
-  <section class="campus-guide"><div id="narrator-portrait"></div><div><b id="narrator-name">캠퍼스 안내</b><p id="narrator-line">건물 위 !를 눌러 학생의 이야기를 들어 보세요.</p></div></section>
+  <section class="campus-guide"><div id="narrator-portrait"></div><div><b id="narrator-name">캠퍼스 안내</b><p id="narrator-line">건물 위 !를 눌러 조치가 필요한 안건을 확인해 주세요.</p></div></section>
   <section class="goal-panel"><span id="goal-period"></span><b id="goal-title"></b><progress id="goal-progress" max="3" value="0"></progress><small id="goal-detail"></small><span id="term-evaluation"></span></section>
   <p id="game-notice" role="status" aria-live="polite"></p>
   <aside class="left-panel panel">
@@ -41,7 +42,7 @@
   <aside class="right-panel">
     <section class="panel reactions" aria-label="학생들의 목소리">
       <div class="section-heading"><h2>학생들의 목소리</h2><span class="count" id="decision-count">0</span></div>
-      <p class="section-sub">건물 위 !에서 시작하는 캠퍼스 이야기</p>
+      <p class="section-sub">건물 위 !는 조치가 필요한 안건이에요. 조치 효과와 반응은 다음 날 나타나요.</p>
       <p id="decision-notice" role="status"></p>
       <div id="decision-feed" aria-live="polite"></div>
       <details class="ambient-reactions"><summary>캠퍼스의 반응 <span id="reaction-count">0</span></summary><div id="reaction-list"></div></details>
@@ -50,7 +51,7 @@
 
   </aside>
   <div class="map-controls">왼쪽 드래그 · 회전 <span>오른쪽 드래그 · 이동</span> 휠 · 확대·축소</div>
-  <footer><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors · ODbL</a> · <a href="./public/data/SOURCE.md">지도 출처</a></span><span>초기 운영 수치와 학생 이벤트는 게임용 가상 설정입니다.</span></footer>
+  <footer><span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors · ODbL</a> · <a href="./public/data/SOURCE.md">지도 출처</a></span><span>초기 운영 수치와 즉시 조치 안건은 게임용 가상 설정입니다.</span></footer>
   <dialog id="game-menu"><div class="dialog-heading"><h2>총장 메뉴</h2><button data-close-dialog aria-label="메뉴 닫기">✕</button></div>
     <section class="panel character-card" id="character-card" aria-label="내 캐릭터" hidden></section>
     <div class="menu-actions"><button id="save-game">저장하기</button><button id="load-game">불러오기</button><button id="new-game">새 게임</button><button id="sound-toggle" aria-pressed="false">소리 꺼짐</button></div>

@@ -10,8 +10,6 @@ export function initGameUI() {
   document.querySelector('#game-menu-open').addEventListener('click',()=>menu.showModal());
   document.querySelectorAll('[data-close-dialog]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog').close()));
   document.querySelector('#time-toggle').addEventListener('click',guard(()=>setPaused(!getState().time.paused)));
-  document.querySelector('#advance-day').addEventListener('click',guard(()=>advanceDays(1)));
-  document.querySelector('#advance-week').addEventListener('click',guard(()=>advanceDays(7)));
   document.querySelector('#game-speed').addEventListener('change',event=>guard(()=>setSpeed(Number(event.target.value)))());
   document.querySelector('#save-game').addEventListener('click',guard(()=>{saveGame();tell('게임을 저장했습니다.');}));
   document.querySelector('#load-game').addEventListener('click',guard(()=>{loadGame();tell('저장한 날짜와 운영 상태를 불러왔습니다.');menu.close();}));
