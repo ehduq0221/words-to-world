@@ -89,6 +89,13 @@ export function initReactions() {
       }
       return next;
     });
+    // 오늘 날짜가 넘어가면서 값이 바뀌었다면(예: 학기 첫날 계획 적용) 오늘은 확인하지 않고 다음 날 확인합니다.
+    const values = watchedValues(getState());
+    if (changed(values)) {
+      watched = values;
+      updateArea(AREA, area => ({ ...area, pendingSince: area.dayCount }));
+      return;
+    }
     // 결정 등으로 값이 바뀐 날의 다음 날, 그리고 7일마다 확인합니다.
     const { dayCount, pendingSince } = getState()[AREA];
     const pendingDue = pendingSince !== null && pendingSince !== undefined && dayCount > pendingSince;

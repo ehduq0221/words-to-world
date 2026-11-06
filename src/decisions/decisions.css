@@ -26,3 +26,5 @@
 .decision-result .decision-effects { color: #8d6529; font-weight: 650; }
 .decision-card.is-resolved .decision-status { color: #71896a; }
 .decision-card:focus, .decision-card:focus-within { outline: none; border-color: #789c68; background: #fbfdf8; }
+.decision-result.is-pending { background: #f7f3e8; border-color: #ebe0c4; }
+.decision-card.is-scheduled .decision-status { color: #8d6529; }

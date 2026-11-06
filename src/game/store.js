@@ -1,4 +1,6 @@
 const KEY = 'words-to-world:save';
+// 게임은 매일 흘러가므로 날짜를 건너뛰는 버튼 없이 1배·2배 속도만 둡니다. 예전 저장의 다른 속도는 1배로 불러옵니다.
+export const SPEEDS = [1, 2];
 const clone = value => JSON.parse(JSON.stringify(value));
 const freeze = object => {
   if (object && typeof object === 'object' && !Object.isFrozen(object)) {
@@ -51,7 +53,7 @@ export function createGameStore({ config, storage }) {
       !s.ledger.every(e=>typeof e.id==='string'&&['budget','satisfaction','reputation'].every(k=>Number.isFinite(e[k]))&&validDate(e.date)) ||
       new Set(s.ledger.map(e=>e.id)).size!==s.ledger.length || !Number.isSafeInteger(s.initialBudget) || s.initialBudget+s.ledger.reduce((n,e)=>n+e.budget,0)!==s.metrics.budget) throw new Error('저장 데이터 형식을 확인할 수 없습니다. 기존 저장은 유지했습니다.');
     const restored=clone(s);
-    restored.time={...restored.time,semester:semesterOf(restored.time.date),paused:true,speed:[1,4,12].includes(restored.time.speed)?restored.time.speed:1};
+    restored.time={...restored.time,semester:semesterOf(restored.time.date),paused:true,speed:SPEEDS.includes(restored.time.speed)?restored.time.speed:1};
     for(const [name,factory] of factories) restored[name]={...factory(),...(restored[name]||{})};
     return restored;
   }
@@ -101,7 +103,7 @@ export function createGameStore({ config, storage }) {
     loadGame() {const raw=storage.getItem(KEY);if(!raw)throw new Error('저장된 게임이 없습니다.');const restored=normalize(JSON.parse(raw));commit(restored);return state;},
     newGame() {commit(initial());return state;},
     setPaused(paused) {commit({...state,time:{...state.time,paused:Boolean(paused)}});},
-    setSpeed(speed) {if(![1,4,12].includes(speed))throw new Error('지원하지 않는 속도입니다.');commit({...state,time:{...state.time,speed}});},
+    setSpeed(speed) {if(!SPEEDS.includes(speed))throw new Error('지원하지 않는 속도입니다.');commit({...state,time:{...state.time,speed}});},
     advanceDays(count=1) {
       if(!state||advancing||!Number.isInteger(count)||count<1||count>3660)throw new Error('진행할 날짜를 확인해 주세요.');
       advancing=true;
