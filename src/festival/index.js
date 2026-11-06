@@ -36,7 +36,27 @@ export async function initFestival() {
   root.querySelector('.f-firework-options').innerHTML = FIREWORK_MOMENTS.map(m => `<label class="f-extra"><input type="checkbox" value="${m.id}"><span>${m.label}<small>게임용 연출비 ${won(data.fireworkCost)} / 1회</small></span></label>`).join('');
   root.querySelector('.f-fireworks').addEventListener('change', () => { plan.fireworks = [...root.querySelectorAll('.f-fireworks input:checked')].map(input => input.value); edit(); });
   function message(text) { root.querySelector('#f-message').textContent = text; }
-  function acceptDiscard() { return !dirty || window.confirm('저장하지 않은 변경이 있습니다. 변경을 버리고 이동할까요?'); }
+  function confirmAction(text, label) {
+    return new Promise(resolve => {
+      const dialog = document.createElement('dialog'); dialog.className = 'f-confirm';
+      dialog.setAttribute('aria-label', '기획안 변경 확인');
+      dialog.innerHTML = '<h2>잠깐, 편집 중인 내용이 있어요.</h2><p></p><div><button data-confirm="cancel" autofocus>취소</button><button data-confirm="accept">계속</button></div>';
+      dialog.querySelector('p').textContent = text;
+      dialog.querySelector('[data-confirm="accept"]').textContent = label;
+      const finish = accepted => { dialog.close(); dialog.remove(); resolve(accepted); };
+      dialog.querySelector('[data-confirm="cancel"]').onclick = () => finish(false);
+      dialog.querySelector('[data-confirm="accept"]').onclick = () => finish(true);
+      dialog.addEventListener('cancel', event => { event.preventDefault(); finish(false); });
+      document.body.append(dialog); dialog.showModal();
+    });
+  }
+  async function acceptDiscard(label = '변경을 버리고 계속') {
+    return !dirty || await confirmAction('현재 수정한 내용은 아직 저장되지 않았습니다. 저장한 기획안은 유지됩니다.', label);
+  }
+  function revealPlan() {
+    root.querySelector('.f-layout').scrollIntoView({ block: 'start', behavior: 'auto' });
+    root.querySelector('#f-name').focus({ preventScroll: true });
+  }
   function edit() { plan.fireworks = (plan.fireworks || []).filter(id => availableFireworks(plan).some(m => m.id === id)); dirty = true; message('편집 중 · 저장 버튼을 눌러 기획안을 보관하세요.'); render(); }
   function syncForm() {
     root.querySelector('#f-name').value = plan.name;
@@ -57,10 +77,10 @@ export async function initFestival() {
     const button = event.target.closest('button'); if (!button) return;
     if (button.dataset.filter) { filter = button.dataset.filter; render(); return; }
     if (button.dataset.preset !== undefined) {
-      if (!acceptDiscard()) return;
+      if (!await acceptDiscard('예시 불러오기')) return;
       const preset = data.presets[Number(button.dataset.preset)];
       plan = { ...createPlan(data), name: preset.name, artistIds: [...preset.artistIds], venueId: preset.venueId, budget: preset.budget };
-      syncForm(); edit(); message('차트 참고 예시를 불러왔습니다. 자유롭게 바꾸고 저장해 보세요.'); return;
+      filter = 'all'; syncForm(); edit(); message('차트 참고 예시를 불러왔습니다. 자유롭게 바꾸고 저장해 보세요.'); revealPlan(); return;
     }
     const id = button.dataset.artist;
     if (id) {
@@ -76,7 +96,7 @@ export async function initFestival() {
     }
     if (button.dataset.remove) { plan.artistIds = plan.artistIds.filter(id => id !== button.dataset.remove); edit(); return; }
     const action = button.dataset.action;
-    if (action === 'new' && acceptDiscard()) { plan = createPlan(data); dirty = false; syncForm(); render(); message('새로운 축제를 만들어 보세요.'); }
+    if (action === 'new' && await acceptDiscard('새 기획안 만들기')) { plan = createPlan(data); dirty = false; syncForm(); render(); message('새로운 축제를 만들어 보세요.'); }
     if (action === 'save') {
       if (!root.querySelector('#f-budget').reportValidity() || !root.querySelector('#f-budget').value) return;
       plan.name = plan.name.trim();
@@ -87,9 +107,12 @@ export async function initFestival() {
       try { writePlans(next, data); saved = next; plan = structuredClone(updated); dirty = false; syncForm(); render(); message('기획안을 이 브라우저에 저장했습니다.'); }
       catch { message('저장하지 못했습니다. 브라우저 저장 공간 또는 저장 개수(최대 50개)를 확인해 주세요.'); }
     }
-    if (action === 'load' && acceptDiscard()) {
-      const found = saved.find(p => p.id === button.dataset.id); if (!found) return;
-      plan = structuredClone(found); dirty = false; syncForm(); render(); message('저장한 기획안을 불러왔습니다.');
+    if (action === 'load') {
+      const found = saved.find(p => p.id === button.dataset.id);
+      if (!found) { message('기획안을 찾지 못했습니다. 저장 목록을 다시 확인해 주세요.'); return; }
+      if (!await acceptDiscard('저장한 기획안 불러오기')) return;
+      plan = structuredClone(found); dirty = false; filter = 'all'; syncForm(); render();
+      message(`“${plan.name}” 기획안을 불러왔습니다.`); revealPlan();
     }
     if (action === 'delete') {
       if (!window.confirm('이 기획안을 삭제할까요?')) return;
