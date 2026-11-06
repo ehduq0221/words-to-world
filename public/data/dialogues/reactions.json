@@ -1,0 +1,31 @@
+[
+  { "type": "dorm.shortage", "text": "학교에 공부할 곳은 많은데 기숙사 자리가 너무 부족해요." },
+  { "type": "dorm.shortage", "text": "{building} 입사 대기만 {value}명이래요. 왕복 세 시간 통학은 너무 힘들어요." },
+  { "type": "dorm.shortage", "text": "{building}에 떨어져서 송도 원룸을 알아보는데 월세가 너무 비싸요." },
+  { "type": "dorm.shortage", "when": { "value": { "min": 300 } }, "text": "{building} 대기 인원이 {value}명이 넘었대요. 기숙사를 늘려 주세요!" },
+  { "type": "dorm.shortage", "when": { "value": { "min": 300 } }, "text": "대기 {value}명이면 사실상 떨어진 거죠. {building} 자리 좀 늘려 주세요." },
+  { "type": "dorm.shortage.resolved", "text": "{building}에 자리가 나서 드디어 입사했어요! 통학 시간이 확 줄었어요." },
+  { "type": "dorm.shortage.resolved", "text": "{building} 대기 없이 바로 들어갔어요. 이번 학기는 공부에만 집중할 수 있겠어요." },
+
+  { "type": "dorm.fee", "text": "기숙사비가 또 올랐어요. 학기마다 부담이 너무 커요." },
+  { "type": "dorm.fee", "text": "이 정도 기숙사비면 근처 원룸이랑 별 차이가 없어요." },
+  { "type": "dorm.fee.resolved", "text": "기숙사비가 다시 내려가서 한숨 돌렸어요." },
+
+  { "type": "food.price", "text": "{building} 밥값이 올라서 편의점 도시락으로 버티고 있어요." },
+  { "type": "food.price", "text": "{building}은 외부 업체가 운영해서 한 끼 가격이 부담돼요." },
+  { "type": "food.price.resolved", "text": "{building}을 학교에서 직접 운영하니까 가격이 착해졌어요!" },
+
+  { "type": "convenience.low", "text": "쉬는 시간에 커피 한 잔 사려면 줄이 너무 길어요." },
+  { "type": "convenience.low", "text": "캠퍼스 안에서 끼니를 해결할 곳이 마땅치 않아요." },
+  { "type": "convenience.low.resolved", "text": "요즘은 학교 안에서 먹고 쉬기가 훨씬 편해졌어요." },
+
+  { "type": "housing.low", "text": "기숙사 생활이 너무 불편해요. 대기도 길고 비용도 부담돼요." },
+  { "type": "housing.low.resolved", "text": "기숙사 생활이 많이 나아졌어요. 이제 지낼 만해요." },
+
+  { "type": "satisfaction.low", "text": "요즘 학교 분위기가 많이 가라앉았어요. 학생들 이야기를 들어 주세요." },
+  { "type": "satisfaction.low", "text": "친구들이 다들 학교 불만만 이야기해요. 뭔가 바뀌었으면 좋겠어요." },
+  { "type": "satisfaction.low.resolved", "text": "학교가 달라지고 있다는 게 느껴져요." },
+
+  { "type": "default", "text": "총장님, 학생들 이야기에 귀 기울여 주세요." },
+  { "type": "default.resolved", "text": "말씀드린 문제가 해결됐어요. 감사합니다!" }
+]
