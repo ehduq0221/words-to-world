@@ -47,3 +47,33 @@ test('결과는 한 번만 반영되며 복원 후 다른 선택으로 중복 �
   assert.equal(restored.getState().metrics.satisfaction, 100);
   assert.equal(restored.getState().ledger.at(-1).satisfaction, 18);
 });
+
+test('랜덤 이벤트는 10~20일 간격이고 처리 직후 보충하지 않는다', () => {
+  const state={time:{dayCount:0},ledger:[],decisions:{opened:[],released:null,nextEventDay:null}};
+  state.decisions=model.initializeSchedule(data.events,state,3,data.schedule,()=>0);
+  assert.equal(model.activeEvents(data.events,state,3).length,1);
+  assert.equal(state.decisions.nextEventDay,10);
+  state.time.dayCount=9;assert.equal(model.releaseDueEvent(data.events,state,3,data.schedule,()=>0),null);
+  const first=model.activeEvents(data.events,state,3)[0];state.ledger.push({id:model.effectId(first,first.choices[0])});
+  assert.equal(model.activeEvents(data.events,state,3).length,0);
+  state.time.dayCount=10;state.decisions=model.releaseDueEvent(data.events,state,3,data.schedule,()=>.99999);
+  assert.equal(model.activeEvents(data.events,state,3).length,1);assert.equal(state.decisions.nextEventDay,30);
+  assert(!model.activeEvents(data.events,state,3).includes(first));
+  const restored=JSON.parse(JSON.stringify(state));assert.equal(model.initializeSchedule(data.events,restored,3,data.schedule,()=>0),null);
+  assert.equal(restored.decisions.nextEventDay,30);
+});
+
+test('이벤트 상한이면 일정을 미루며 기존 저장도 최대 3개로 이어진다', () => {
+  const state={time:{dayCount:50},ledger:[],decisions:{opened:data.events.slice(0,5).map(e=>e.id),released:null}};
+  state.decisions=model.initializeSchedule(data.events,state,3,data.schedule,()=>0);
+  assert.equal(model.activeEvents(data.events,state,3).length,3);
+  const before=[...state.decisions.released];state.time.dayCount=60;
+  state.decisions=model.releaseDueEvent(data.events,state,3,data.schedule,()=>0);
+  assert.deepEqual(state.decisions.released,before);assert.equal(state.decisions.nextEventDay,70);
+  state.ledger.push({id:model.effectId(data.events[0],data.events[0].choices[0])});
+  assert.equal(model.activeEvents(data.events,state,3).length,2);
+  assert.equal(model.releaseDueEvent(data.events,state,3,data.schedule,()=>0),null);
+  state.time.dayCount=70;state.decisions=model.releaseDueEvent(data.events,state,3,data.schedule,()=>0);
+  assert.equal(model.activeEvents(data.events,state,3).length,3);
+  assert.equal(new Set(state.decisions.released).size,state.decisions.released.length);
+});

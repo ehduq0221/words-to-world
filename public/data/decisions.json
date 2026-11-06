@@ -1,7 +1,8 @@
 {
   "version": 1,
   "note": "학생과 상황, 비용 및 지표 변화는 게임용 가상 설정입니다. 실제 시설 상태에 대한 평가가 아닙니다.",
-  "activeLimit": 5,
+  "activeLimit": 3,
+  "schedule": { "initialCount": 1, "minDays": 10, "maxDays": 20 },
   "events": [
     {
       "id": "slow-computers",

@@ -13,12 +13,10 @@ export function createScenery(buildings,scene) {
  const minV=Math.min(...coords.map(p=>p.v))-60,maxV=Math.max(...coords.map(p=>p.v))+60;
  const group=new THREE.Group();group.name='living-campus';scene.add(group);
  function free(h,v,pad=7){const p=world(h,v);return !outlines.some(poly=>[[0,0],[pad,0],[-pad,0],[0,pad],[0,-pad]].some(([x,z])=>inside(p.x+x,p.z+z,poly)));}
- const shape=new THREE.Shape(),rad=40;
- shape.moveTo(minH+rad,minV);shape.lineTo(maxH-rad,minV);shape.quadraticCurveTo(maxH,minV,maxH,minV+rad);shape.lineTo(maxH,maxV-rad);shape.quadraticCurveTo(maxH,maxV,maxH-rad,maxV);shape.lineTo(minH+rad,maxV);shape.quadraticCurveTo(minH,maxV,minH,maxV-rad);shape.lineTo(minH,minV+rad);shape.quadraticCurveTo(minH,minV,minH+rad,minV);
- const terrain=new THREE.ExtrudeGeometry(shape,{depth:7,bevelEnabled:true,bevelSize:3,bevelThickness:2,bevelSegments:1,steps:1,curveSegments:5});
- const tp=terrain.attributes.position;for(let i=0;i<tp.count;i++){const p=world(tp.getX(i),tp.getY(i),tp.getZ(i)-9.4);tp.setXYZ(i,p.x,p.y,p.z);}terrain.computeVertexNormals();
+ // 캠퍼스 장식 범위와 별개로 바닥을 넓게 유지해 섬처럼 보이는 가장자리를 없앱니다.
  const grassMaterial=new THREE.MeshLambertMaterial({color:0x80b85d,flatShading:true,side:THREE.DoubleSide});
- group.add(new THREE.Mesh(terrain,grassMaterial));
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000,20,20).rotateX(-Math.PI/2),grassMaterial);
+ ground.position.y=-.4;ground.name='continuous-ground';group.add(ground);
  const roadSegments=[],routes=[];
  function addRoad(points,along){let run=[];
    const flush=()=>{if(run.length>=3)routes.push(run);run=[];};
@@ -61,5 +59,5 @@ export function createScenery(buildings,scene) {
   return daylight;
  }
  update(0,null,'day');
- return {update,bounds:new THREE.Box3().setFromObject(group),studentCount:count,treeCount:trees.length};
+ return {update,bounds:new THREE.Box3().setFromPoints([world(minH,minV),world(maxH,maxV),world(minH,maxV),world(maxH,minV)]),studentCount:count,treeCount:trees.length};
 }

@@ -1,5 +1,5 @@
 import * as api from './gameApi.js';
-import { activeEvents, resolvedChoice, decide, effectId, effectText, formatWon } from './model.js';
+import { activeEvents, resolvedChoice, decide, effectId, effectText, formatWon, initializeSchedule, releaseDueEvent } from './model.js';
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -12,6 +12,7 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
   const response = await fetch(new URL('../../public/data/decisions.json', import.meta.url));
   if (!response.ok) throw new Error('학생 이벤트 자료를 불러올 수 없습니다.');
   const data = await response.json();
+  if (!Number.isInteger(data.activeLimit) || data.activeLimit < 1 || data.activeLimit > 3 || !Number.isInteger(data.schedule?.minDays) || !Number.isInteger(data.schedule?.maxDays) || data.schedule.minDays < 1 || data.schedule.maxDays < data.schedule.minDays || !Number.isInteger(data.schedule.initialCount) || data.schedule.initialCount < 0 || data.schedule.initialCount > data.activeLimit) throw new Error('학생 이벤트 주기 설정을 확인해 주세요.');
   const byBuilding = new Map(anchors.map(anchor => [anchor.building.id, anchor]));
   const ids = new Set();
   for (const event of data.events) {
@@ -116,7 +117,10 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
   }
 
   function render(state) {
-    const opened = [...state.decisions.opened].reverse().map(id => data.events.find(event => event.id === id)).filter(Boolean);
+    const initialized = initializeSchedule(data.events, state, data.activeLimit, data.schedule);
+    if (initialized) { api.updateArea('decisions', () => initialized); return; }
+    const active = activeEvents(data.events, state, data.activeLimit);
+    const opened = [...state.decisions.opened].reverse().map(id => data.events.find(event => event.id === id)).filter(event => event && (resolvedChoice(event, state) || active.includes(event)));
     const scroll = feed.scrollTop;
     feed.replaceChildren(...opened.map(event => eventCard(event, state)));
     if (!opened.length) feed.append(element('p', 'decision-empty', '건물 위의 !을 눌러 학생의 이야기를 들어 보세요.'));
@@ -138,7 +142,11 @@ export async function initDecisions({ container, anchors, onSelect, onChange }) 
     if (view) projectMarkers(view.camera, view.width, view.height);
     onChange();
   }
-  api.registerArea('decisions', () => ({ opened: [] }));
+  api.registerArea('decisions', () => ({ opened: [], released: null, nextEventDay: null }));
+  api.onTimeAdvance(() => {
+    const next = releaseDueEvent(data.events, api.getState(), data.activeLimit, data.schedule);
+    if (next) api.updateArea('decisions', () => next);
+  });
   api.subscribe(render);
   return { update: projectMarkers };
 }
