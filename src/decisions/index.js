@@ -24,7 +24,7 @@ function element(tag, className, text) {
 }
 
 export async function initDecisions({ container, anchors, onSelect, onChange }) {
-  const response = await fetch(new URL('../../public/data/decisions.json', import.meta.url));
+  const response = await fetch(new URL('../../public/data/decisions.json', import.meta.url), { cache: 'no-store' });
   if (!response.ok) throw new Error('즉시 조치 안건 자료를 불러올 수 없습니다.');
   const data = await response.json();
   if (!Number.isInteger(data.activeLimit) || data.activeLimit < 1 || data.activeLimit > 3 || !Number.isInteger(data.schedule?.minDays) || !Number.isInteger(data.schedule?.maxDays) || data.schedule.minDays < 1 || data.schedule.maxDays < data.schedule.minDays || !Number.isInteger(data.schedule.initialCount) || data.schedule.initialCount < 0 || data.schedule.initialCount > data.activeLimit || !(Number.isInteger(data.schedule.cooldownDays) && data.schedule.cooldownDays >= 0)) throw new Error('즉시 조치 안건의 발생 주기 설정을 확인해 주세요.');

@@ -4,7 +4,7 @@ export { dateKey, semesterOf } from './store.js';
 export { addReaction, registerDialogues } from '../reactions/index.js';
 let store=null,config=null;
 export async function initGame() {
-  const response=await fetch(new URL('../../public/data/game.json',import.meta.url));
+  const response=await fetch(new URL('../../public/data/game.json',import.meta.url), { cache: 'no-store' });
   if(!response.ok)throw new Error('게임 설정을 불러올 수 없습니다.');
   config=await response.json();
   store=createGameStore({config,storage:localStorage});
@@ -16,3 +16,19 @@ export const subscribe=call('subscribe'),onTimeAdvance=call('onTimeAdvance'),onS
 export const startGame=call('startGame'),saveGame=call('saveGame'),loadGame=call('loadGame'),newGame=call('newGame');
 export const advanceDays=call('advanceDays'),setPaused=call('setPaused'),setSpeed=call('setSpeed');
 export const getConfig=()=>config;
+
+
+// 달력과 시간 진행은 같은 상태를 읽습니다. 별도의 날짜/저장 인스턴스를 만들지 않습니다.
+export async function initCalendar() {
+  const { createCalendarView } = await import('./calendarView.js');
+  const trigger = document.querySelector('#game-date'), panel = document.querySelector('#game-calendar');
+  if (!trigger || !panel) return null;
+  const data = getConfig();
+  const view = createCalendarView({ trigger, panel, label: trigger.querySelector('#game-date-label'), sub: trigger.querySelector('#game-date-sub'), events: data.calendar.events, source: data.calendar.source, today: data.initialDate });
+  let previous = '';
+  subscribe(state => {
+    const date = state.time.date, key = `${date.year}-${date.month}-${date.day}`;
+    if (key !== previous) { previous = key; view.setDate(date); }
+  });
+  return view;
+}

@@ -18,8 +18,7 @@ export function initGameUI() {
   document.querySelector('#ledger-open').addEventListener('click',()=>report.showModal());
   subscribe(state=>{
     const {date,paused,speed,semester}=state.time;
-    document.querySelector('#game-date').textContent=`${date.year}년 ${date.month}월 ${date.day}일`;
-    document.querySelector('#game-semester').textContent=`${semester.endsWith('-1')?'1학기':'2학기'} · ${paused?'일시정지':'운영 중'}`;
+    document.querySelector('#game-semester').textContent=paused?'일시정지':'운영 중';
     document.querySelector('#time-toggle').textContent=paused?'▶ 진행':'Ⅱ 일시정지';
     document.querySelector('#time-toggle').setAttribute('aria-pressed',String(!paused));
     document.querySelector('#game-speed').value=String(speed);
@@ -40,10 +39,10 @@ export function initGameUI() {
     if(!entries.children.length){const empty=document.createElement('li');empty.textContent='아직 정산 내역이 없습니다.';entries.append(empty);}
     const evaluation=state.evaluations.at(-1);
     document.querySelector('#term-evaluation').textContent=evaluation?`${evaluation.semester} 임기 평가 ${evaluation.grade} · ${evaluation.score}점`:'첫 학기 평가를 준비하고 있어요';
-    const mmdd=dateKey(date).slice(5);
-    const calendar=date.year===2026 && getConfig().calendar.find(event=>mmdd>=event.start&&mmdd<=event.end);
-    document.querySelector('#calendar-label').textContent=calendar?.label || ([7,8,1,2].includes(date.month)?'방학 · 다음 학기 준비':date.month===4?'봄 캠퍼스 · 벚꽃':'캠퍼스 운영');
-    document.querySelector('#calendar-label').dataset.kind=calendar?.kind||'normal';
+    const today=dateKey(date);
+    const calendar=getConfig().calendar.events.filter(event=>today>=event.start&&today<=event.end);
+    document.querySelector('#calendar-label').textContent=calendar.map(event=>event.title).join(' · ') || ([7,8,1,2].includes(date.month)?'방학 · 다음 학기 준비':date.month===4?'봄 캠퍼스 · 벚꽃':'캠퍼스 운영');
+    document.querySelector('#calendar-label').dataset.kind=calendar.some(event=>/시험/.test(event.title))?'exam':'normal';
   });
   // 브라우저를 떠난 동안 날짜를 진행시키지 않습니다.
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&getState()&&!getState().time.paused)guard(()=>setPaused(true))();});

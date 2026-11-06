@@ -8,7 +8,7 @@ import { initFacilityExplorer } from './interaction/gamePreview.js';
 import { publishBuildingSelection } from './interaction/buildingSelection.js';
 import { createSelectionHighlight } from './interaction/selectionHighlight.js';
 import { initDecisions } from './decisions/index.js';
-import { initGame, startGame, getState } from './game/index.js';
+import { initGame, initCalendar, startGame, getState } from './game/index.js';
 import { initGameUI } from './game/ui.js';
 import { initOperations } from './operations/index.js';
 import { initReactions } from './reactions/index.js';
@@ -22,6 +22,7 @@ async function start() {
   try {
     await initGame();
     initGameUI();
+    await initCalendar();
     const buildings = await loadCampus();
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));

@@ -12,14 +12,16 @@
   <link rel="stylesheet" href="./src/ui/confirm.css">
   <link rel="stylesheet" href="./src/reactions/reactions.css">
   <link rel="stylesheet" href="./src/experience/experience.css">
+  <link rel="stylesheet" href="./src/game/calendar.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
   <header class="topbar">
     <div class="brand"><span class="brand-mark">W</span><div><span class="eyebrow">WORDS TO WORLD</span><h1>인천대학교 <span>송도캠퍼스</span></h1></div></div>
     <div class="metrics" aria-label="학교 운영 지표"><div><span>◈ 운영 예산</span><strong id="hud-budget">₩ 12.8억</strong><small id="hud-budget-note">선택 반영 0</small></div><div><span>♥ 학생 만족도</span><strong><span id="hud-satisfaction">76</span><em>/ 100</em></strong><small id="hud-satisfaction-note">선택 누적 0</small><i class="metric-gauge"><i id="sat-gauge"></i></i></div><div><span>★ 학교 평판</span><strong><span id="hud-reputation">68</span><em>/ 100</em></strong><small id="hud-reputation-note">선택 누적 0</small><i class="metric-gauge"><i id="rep-gauge"></i></i></div></div>
-    <div class="date"><b id="game-date">2026년 3월 3일</b><span id="game-semester">1학기 · 일시정지</span><button id="game-menu-open">☰ 메뉴</button></div>
+    <div class="header-actions"><button type="button" class="date" id="game-date" aria-haspopup="dialog" aria-expanded="false" aria-controls="game-calendar"><span class="date-icon" aria-hidden="true">▦<small>학사 일정</small></span><span class="date-text"><b id="game-date-label">2026년 3월 3일</b><span id="game-date-sub">1학기 · 학사 일정 보기</span><small id="game-semester">일시정지</small></span></button><button id="game-menu-open">☰ 메뉴</button></div>
   </header>
+  <section class="game-calendar" id="game-calendar" role="dialog" aria-labelledby="game-calendar-title" hidden></section>
   <main id="map" aria-label="인천대학교 송도캠퍼스 3D 지도"></main>
   <section class="time-toolbar" aria-label="시간 조작">
     <span id="calendar-label">캠퍼스 운영</span><button id="time-toggle" aria-pressed="false">▶ 진행</button>

@@ -34,7 +34,7 @@ function update(updater) {
 }
 
 export async function loadOperationsData(url = new URL('../../public/data/operations.json', import.meta.url)) {
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) throw new Error('운영 데이터(operations.json)를 불러올 수 없습니다.');
   const raw = await response.json();
   const shapeValid = Array.isArray(raw.facilities) && Array.isArray(raw.dorms) && raw.facilityTypes &&
