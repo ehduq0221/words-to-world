@@ -2,7 +2,21 @@
 // area는 게임 상태의 operations 영역, data는 public/data/operations.json입니다.
 
 export function createInitialArea() {
-  return { modes: {}, feeLevel: null, openRates: {}, switchCount: 0, accrual: {} };
+  return { modes: {}, feeLevel: null, openRates: {}, switchCount: 0, accrual: {}, decidedOn: {} };
+}
+
+// 플레이어 결정은 같은 결정마다 게임 날짜로 하루에 한 번만 내릴 수 있습니다.
+// 결정 키: 시설 운영 방식 mode:<시설 ID>, 기숙사비 feeLevel, 운영하는 방 openRate:<기숙사 ID>
+export function dateKey({ year, month, day }) {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+export function isDecisionLocked(area, key, date) {
+  return (area.decidedOn ?? {})[key] === dateKey(date);
+}
+
+export function markDecided(area, key, date) {
+  return { ...area, decidedOn: { ...(area.decidedOn ?? {}), [key]: dateKey(date) } };
 }
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));

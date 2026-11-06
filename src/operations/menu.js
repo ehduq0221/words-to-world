@@ -25,11 +25,14 @@ function row(label, value, negative = false) {
   return line;
 }
 
-function facilityCard(facility, area, data, actions) {
+const LOCK_NOTE = '오늘 결정했어요. 내일부터 다시 바꿀 수 있어요.';
+
+function facilityCard(facility, area, data, actions, isLocked) {
   const card = element('div', 'ops-card');
   card.append(element('span', 'ops-type', data.facilityTypes[facility.type]?.label ?? facility.type), element('h4', '', facility.name));
   card.append(element('small', 'ops-place', `${facility.location} · ${facility.operator}`));
   const current = facilityResult(area, facility);
+  const locked = isLocked(`mode:${facility.id}`);
   const choices = element('div', 'ops-choice');
   choices.setAttribute('role', 'group');
   choices.setAttribute('aria-label', `${facility.name} 운영 방식`);
@@ -37,6 +40,7 @@ function facilityCard(facility, area, data, actions) {
     const preview = facilityResult({ ...area, modes: { ...area.modes, [facility.id]: mode } }, facility);
     const button = element('button', '', label);
     button.setAttribute('aria-pressed', String(current.mode === mode));
+    button.disabled = locked;
     button.title = `학기 ${formatWon(preview.net, { sign: true })} · 편의성 ${preview.convenience}`;
     button.addEventListener('click', () => actions.setFacilityMode(facility.id, mode));
     choices.append(button);
@@ -48,34 +52,40 @@ function facilityCard(facility, area, data, actions) {
     card.append(row('학기 임대료', formatWon(current.income)));
   }
   card.append(row('학기 수익', formatWon(current.net, { sign: true }), current.net < 0), row('학생 편의성', `${current.convenience} / 100`));
-  card.append(element('small', 'ops-note', `방식을 바꾸면 계약 변경 비용 ${formatWon(data.switchCost)}이 듭니다.`));
+  card.append(element('small', locked ? 'ops-note ops-locked' : 'ops-note', locked ? LOCK_NOTE : `방식을 바꾸면 계약 변경 비용 ${formatWon(data.switchCost)}이 듭니다.`));
   return card;
 }
 
-function select(label, options, value, onChange) {
+function select(label, options, value, onChange, locked = false) {
   const wrapper = element('label', 'ops-select');
-  wrapper.append(element('span', '', label));
+  wrapper.append(element('span', '', locked ? `${label} · 오늘 결정함` : label));
   const input = element('select');
+  input.disabled = locked;
   for (const [optionValue, optionLabel] of options) {
     const option = element('option', '', optionLabel);
     option.value = String(optionValue);
     option.selected = optionValue === value;
     input.append(option);
   }
-  input.addEventListener('change', () => onChange(input.value));
+  // 확인 창에서 결정하기 전까지는 원래 값을 보여 줍니다. 결정하면 메뉴가 새 값으로 다시 그려집니다.
+  input.addEventListener('change', () => {
+    const chosen = input.value;
+    input.value = String(value);
+    onChange(chosen);
+  });
   wrapper.append(input);
   return wrapper;
 }
 
-function dormCard(dorm, area, data, actions) {
+function dormCard(dorm, area, data, actions, isLocked) {
   const card = element('div', 'ops-card');
   card.append(element('span', 'ops-type', '기숙사'), element('h4', '', dorm.name));
   card.append(element('small', 'ops-place', `${dorm.opened} · ${dorm.rooms.map(room => `${room.type} ${room.beds.toLocaleString('ko-KR')}명 ${formatWon(room.fee)}원`).join(' · ')} (2026-1 공시 사용료)`));
   const result = dormResult(area, data, dorm);
   const levels = Object.entries(data.dorm.feeLevels).map(([key, level]) => [key, `${level.label} · 평균 ${formatWon(Math.round(dorm.fee * level.multiplier))}원`]);
-  card.append(select('기숙사비 (모든 기숙사)', levels, feeLevelKey(area, data), value => actions.setDormFeeLevel(value)));
+  card.append(select('기숙사비 (모든 기숙사)', levels, feeLevelKey(area, data), value => actions.setDormFeeLevel(value), isLocked('feeLevel')));
   const rates = data.dorm.openRates.map(rate => [rate, `${Math.round(rate * 100)}% · ${Math.round(dorm.capacity * rate).toLocaleString('ko-KR')}명`]);
-  card.append(select('운영하는 방', rates, openRate(area, dorm), value => actions.setDormOpenRate(dorm.id, Number(value))));
+  card.append(select('운영하는 방', rates, openRate(area, dorm), value => actions.setDormOpenRate(dorm.id, Number(value)), isLocked(`openRate:${dorm.id}`)));
   card.append(
     row('정원', `${dorm.capacity.toLocaleString('ko-KR')}명`),
     row('입사 신청', `${result.applicants.toLocaleString('ko-KR')}명`),
@@ -90,15 +100,15 @@ function dormCard(dorm, area, data, actions) {
   return card;
 }
 
-export function renderOperationsMenu({ buildingId, area, data, actions }) {
+export function renderOperationsMenu({ buildingId, area, data, actions, isLocked = () => false }) {
   const facilities = data.facilities.filter(facility => facility.buildingId === buildingId);
   const dorms = data.dorms.filter(dorm => dorm.buildingId === buildingId);
   if (!facilities.length && !dorms.length) return null;
   const menu = element('section', 'operations-menu');
   menu.setAttribute('aria-label', '시설 운영');
   menu.append(element('h3', 'ops-title', '시설 운영'));
-  for (const facility of facilities) menu.append(facilityCard(facility, area, data, actions));
-  for (const dorm of dorms) menu.append(dormCard(dorm, area, data, actions));
+  for (const facility of facilities) menu.append(facilityCard(facility, area, data, actions, isLocked));
+  for (const dorm of dorms) menu.append(dormCard(dorm, area, data, actions, isLocked));
   const score = scores(area, data);
   const forecast = semesterForecast(area, data);
   const summary = element('div', 'ops-summary');
