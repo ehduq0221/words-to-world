@@ -11,6 +11,6 @@ export function buildTimeline(teamCount) {
     }
   }
   fireworkTimes.finale = time + .2;
-  segments.push({ kind: 'finale', start: time, end: time + 5, index: teamCount - 1 });
-  return { segments, fireworkTimes, length: time + 5 };
+  segments.push({ kind: 'finale', start: time, end: time + 8, index: teamCount - 1 });
+  return { segments, fireworkTimes, length: time + 8 };
 }

@@ -1,45 +1,47 @@
 import * as THREE from 'three';
 
-// 무대 배율과 무관한 캠퍼스 하늘 규모의 연속 폭죽입니다.
+// 캠퍼스 규모의 상승 궤적·구형 폭발·잔광. 무대 축소 배율을 적용하지 않습니다.
 export function createFireworks(parent, reducedMotion) {
-  const shells = 5, sparks = 96, trails = 3, count = shells * sparks * trails;
+  const shells = 7, sparks = 120, trails = 4, count = shells * sparks * trails;
   const positions = new Float32Array(count * 3), colors = new Float32Array(count * 3);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   const canvas = document.createElement('canvas'); canvas.width = canvas.height = 32;
-  const context = canvas.getContext('2d');
-  const gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16);
-  gradient.addColorStop(0, 'white'); gradient.addColorStop(.2, '#ffffffed'); gradient.addColorStop(1, '#ffffff00');
+  const context = canvas.getContext('2d'), gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16);
+  gradient.addColorStop(0, 'white'); gradient.addColorStop(.15, '#ffffffee'); gradient.addColorStop(1, '#ffffff00');
   context.fillStyle = gradient; context.fillRect(0, 0, 32, 32);
   const texture = new THREE.CanvasTexture(canvas);
-  const material = new THREE.PointsMaterial({ size: 5, map: texture, vertexColors: true, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending });
+  const material = new THREE.PointsMaterial({ size: 6.5, map: texture, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
   const particles = new THREE.Points(geometry, material); particles.visible = false; particles.frustumCulled = false; parent.add(particles);
-  let age = 10;
-  const palette = ['#ffd390', '#ffa2d7', '#95d8ff', '#c8ff9d', '#ffb38d'].map(color => new THREE.Color(color));
+  const palette = ['#ffe3a3', '#ffa8df', '#98dfff', '#b8ffb3', '#ffbb8c', '#c8aeff', '#fff6d5'].map(c => new THREE.Color(c));
+  let age = 20;
   return {
     burst() { age = 0; particles.visible = true; },
-    reset() { age = 10; particles.visible = false; },
+    reset() { age = 20; particles.visible = false; },
     dispose() { texture.dispose(); },
     update(dt) {
       age += dt;
-      if (age > 5.2) { particles.visible = false; return; }
-      for (let shell = 0; shell < shells; shell++) {
-        for (let spark = 0; spark < sparks; spark++) {
-          const theta = spark * 2.399963, vertical = spark / (sparks - 1) * 2 - 1;
-          const radius = Math.sqrt(Math.max(0, 1 - vertical * vertical));
-          for (let trail = 0; trail < trails; trail++) {
-            const i = ((shell * sparks + spark) * trails + trail) * 3;
-            const time = reducedMotion ? .8 : age - shell * .48 - trail * .045;
-            const active = time >= 0 && time < 3.2;
-            const spread = Math.max(0, 90 * time / (1 + time * .65));
-            positions[i] = (shell - 2) * 36 + Math.cos(theta) * radius * spread;
-            positions[i + 1] = active ? 120 + (shell % 2) * 30 + vertical * spread - (reducedMotion ? 0 : time * time * 7) : -2000;
-            positions[i + 2] = -25 - (shell % 2) * 25 + Math.sin(theta) * radius * spread;
-            const glow = active ? Math.max(0, 1 - time / 3.2) * (1 - trail * .24) : 0;
-            colors[i] = palette[shell].r * glow; colors[i + 1] = palette[shell].g * glow; colors[i + 2] = palette[shell].b * glow;
-          }
+      if (age > 7) { particles.visible = false; return; }
+      for (let shell = 0; shell < shells; shell++) for (let spark = 0; spark < sparks; spark++) for (let trail = 0; trail < trails; trail++) {
+        const i = ((shell * sparks + spark) * trails + trail) * 3;
+        const local = reducedMotion ? 1.5 : age - shell * .42 - trail * .035;
+        const burstAge = local - .75;
+        const active = local >= 0 && local < 4.1;
+        const theta = spark * 2.399963, vertical = spark / (sparks - 1) * 2 - 1, radial = Math.sqrt(Math.max(0, 1 - vertical * vertical));
+        const centerX = Math.sin(shell * 2.4) * 72, height = 125 + (shell % 3) * 27;
+        if (burstAge < 0) {
+          positions[i] = centerX; positions[i + 1] = active ? Math.max(0, local / .75) * height : -3000;
+          positions[i + 2] = -(shell % 2) * 15;
+        } else {
+          const spread = 115 * burstAge / (1 + burstAge * .7);
+          positions[i] = centerX + Math.cos(theta) * radial * spread;
+          positions[i + 1] = height + vertical * spread - burstAge * burstAge * 6;
+          positions[i + 2] = Math.sin(theta) * radial * spread - (shell % 2) * 15;
         }
+        if (!active) positions[i + 1] = -3000;
+        const intensity = active ? (burstAge < 0 ? .8 : Math.max(0, 1 - burstAge / 3.5)) * (1 - trail * .18) : 0;
+        colors[i] = palette[shell].r * intensity; colors[i + 1] = palette[shell].g * intensity; colors[i + 2] = palette[shell].b * intensity;
       }
       geometry.attributes.position.needsUpdate = true; geometry.attributes.color.needsUpdate = true;
     },

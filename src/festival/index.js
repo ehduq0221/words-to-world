@@ -1,3 +1,4 @@
+import { FIREWORK_SITES } from './profiles.js';
 import { createPlan, readPlans, writePlans, totalCost, expectedReaction, validatePlan, FIREWORK_MOMENTS, availableFireworks } from './plans.js';
 
 const won = value => `${value.toLocaleString('ko-KR')}원`;
@@ -14,7 +15,7 @@ export async function initFestival() {
   const comparison = new Set();
   try { saved = readPlans(data); } catch (error) { savingBlocked = true; setTimeout(() => message(`저장한 기획안을 읽지 못했습니다. ${error.message}`), 0); }
   root.innerHTML = `<div class="festival-heading"><div><span class="f-eyebrow">WORDS TO WORLD / CAMPUS FESTIVAL</span><h1>우리의 캠퍼스,<br>오늘은 페스티벌.</h1><p>좋아하는 목소리, 함께할 친구들.<br>당신이 꿈꾸던 하루를 이곳에서 먼저 만나 보세요.</p></div><div class="f-stamp">ONE DAY<br><b>OUR<br>YOUTH</b><span>송도캠퍼스</span></div></div>
-    <nav class="f-toolbar"><button data-action="new">＋ 새 기획안</button><button data-action="save" class="primary">기획안 저장</button><button data-action="preview" class="preview-button">▷ 축제 미리보기</button></nav>
+    <nav class="f-toolbar"><button data-action="new">＋ 새 기획안</button><button data-action="save" class="primary">기획안 저장</button><button data-action="quick-preview">⚡ 빠르게 보기</button><button data-action="preview" class="preview-button">▷ 축제 체험하기</button></nav>
     <p id="f-message" role="status" aria-live="polite"></p>
     <section class="f-presets" aria-label="예시 라인업"><span class="f-eyebrow">차트에서 골라 본 우리의 하루</span><div class="f-preset-list"></div><p class="f-chart-source"></p></section>
     <div class="f-layout"><section class="f-card f-artists"><div class="f-section-title"><div><span class="f-eyebrow">01 / YOUR ARTISTS</span><h2>누구와 함께할까요?</h2></div><span class="f-selected-count"></span></div>
@@ -23,7 +24,7 @@ export async function initFestival() {
       <label>기획안 이름<input id="f-name" maxlength="60"></label>
       <label>우리의 무대<select id="f-venue"></select></label><p class="f-venue-note"></p><div class="f-location-map" aria-label="초록 표시 기준 축제 위치 안내"></div>
       <label>총예산 (원)<input id="f-budget" type="number" min="0" max="1000000000000" step="1" required></label>
-      <div class="f-extras"></div><fieldset class="f-fireworks"><legend>하늘에 남길 순간 · 폭죽 설정</legend><p class="f-muted">원하는 시점을 여러 개 선택하세요. 가수가 부족한 구간은 선택할 수 없어요.</p><div class="f-firework-options"></div></fieldset><div class="f-cost" aria-live="polite"></div></section>
+      <div class="f-extras"></div><fieldset class="f-fireworks"><legend>하늘에 남길 순간 · 폭죽 설정</legend><p class="f-muted">원하는 시점을 여러 개 선택하세요. 가수가 부족한 구간은 선택할 수 없어요.</p><div class="f-firework-options"></div><label>폭죽을 터뜨릴 위치<select id="f-firework-position"></select></label><p class="f-muted">선택한 야외무대를 기준으로 하늘 위치를 정합니다. 캠퍼스 중앙은 전체 지도 중앙입니다.</p><button data-action="fireworks-preview">🎆 폭죽만 미리보기</button></fieldset><div class="f-cost" aria-live="polite"></div></section>
       <section class="f-poster" aria-label="선택한 공연 라인업 포스터"><small>INCHEON NATIONAL UNIVERSITY</small><h2 class="f-poster-name"></h2><p>ONE DAY · SONGDO CAMPUS</p><ol class="f-lineup"></ol><div class="f-poster-bottom">함께라서 더 빛나는 우리의 밤 ✦</div></section>
       <blockquote class="f-reaction"></blockquote></aside></div>
     <section class="f-card f-library"><div class="f-section-title"><div><span class="f-eyebrow">03 / YOUR COLLECTION</span><h2>다시 꺼내 보는 설렘</h2></div><button data-action="compare">선택 기획안 비교</button></div><p class="f-muted">이 브라우저에 저장됩니다. 학생 선호도 제출이나 외부 전송은 하지 않습니다.</p><div class="f-saved"></div><div class="f-comparison"></div></section>
@@ -35,6 +36,8 @@ export async function initFestival() {
   root.querySelector('.f-extras').innerHTML = data.extras.map(e => `<label class="f-extra"><input type="checkbox" value="${escape(e.id)}"><span>${escape(e.name)}<small>${escape(e.description)} · ${won(e.cost)}</small></span></label>`).join('');
   root.querySelector('.f-firework-options').innerHTML = FIREWORK_MOMENTS.map(m => `<label class="f-extra"><input type="checkbox" value="${m.id}"><span>${m.label}<small>게임용 연출비 ${won(data.fireworkCost)} / 1회</small></span></label>`).join('');
   root.querySelector('.f-fireworks').addEventListener('change', () => { plan.fireworks = [...root.querySelectorAll('.f-fireworks input:checked')].map(input => input.value); edit(); });
+  root.querySelector('#f-firework-position').innerHTML = FIREWORK_SITES.map(site => `<option value="${site.id}">${site.name}</option>`).join('');
+  root.querySelector('#f-firework-position').addEventListener('change', event => { plan.fireworkPosition = event.target.value; edit(); });
   function message(text) { root.querySelector('#f-message').textContent = text; }
   function confirmAction(text, label) {
     return new Promise(resolve => {
@@ -60,6 +63,7 @@ export async function initFestival() {
   function edit() { plan.fireworks = (plan.fireworks || []).filter(id => availableFireworks(plan).some(m => m.id === id)); dirty = true; message('편집 중 · 저장 버튼을 눌러 기획안을 보관하세요.'); render(); }
   function syncForm() {
     root.querySelector('#f-name').value = plan.name;
+    root.querySelector('#f-firework-position').value = plan.fireworkPosition || 'stage-back';
     root.querySelector('#f-budget').value = plan.budget;
     root.querySelector('#f-venue').innerHTML = data.venues.filter(v => !v.archived || v.id === plan.venueId).map(v => `<option value="${escape(v.id)}">${escape(v.name)}${v.archived ? ' (이전 기획안 위치)' : ''}</option>`).join('');
     root.querySelector('#f-venue').value = plan.venueId;
@@ -73,6 +77,21 @@ export async function initFestival() {
     plan.budget = value; edit();
   });
   root.querySelector('.f-extras').addEventListener('change', () => { plan.extras = [...root.querySelectorAll('.f-extras input:checked')].map(e => e.value); edit(); });
+  async function launchPreview(mode, inputPlan, button) {
+    if (previewing) return;
+    const previewPlan = structuredClone(inputPlan);
+    if (!previewPlan.artistIds.length) {
+      if (mode === 'quick') previewPlan.artistIds = [...data.presets[0].artistIds];
+      else if (mode === 'fireworks') previewPlan.artistIds = [data.artists.find(a => !a.archived).id];
+      else { message('가수를 먼저 고르거나 빠르게 보기로 예시 축제를 체험해 보세요.'); revealPlan(); return; }
+    }
+    previewing = true; button.disabled = true;
+    try {
+      const { openFestivalPreview } = await import('./player.js');
+      await openFestivalPreview(previewPlan, data, button.isConnected ? button : root.querySelector('[data-action="preview"]'), { mode });
+    } catch (error) { message(`미리보기를 열지 못했습니다. ${error.message}`); root.querySelector('#f-message').scrollIntoView({ block: 'center' }); }
+    finally { previewing = false; if (button.isConnected) button.disabled = false; }
+  }
   root.addEventListener('click', async event => {
     const button = event.target.closest('button'); if (!button) return;
     if (button.dataset.filter) { filter = button.dataset.filter; render(); return; }
@@ -107,12 +126,13 @@ export async function initFestival() {
       try { writePlans(next, data); saved = next; plan = structuredClone(updated); dirty = false; syncForm(); render(); message('기획안을 이 브라우저에 저장했습니다.'); }
       catch { message('저장하지 못했습니다. 브라우저 저장 공간 또는 저장 개수(최대 50개)를 확인해 주세요.'); }
     }
-    if (action === 'load') {
+    if (action === 'load' || action === 'load-preview') {
       const found = saved.find(p => p.id === button.dataset.id);
       if (!found) { message('기획안을 찾지 못했습니다. 저장 목록을 다시 확인해 주세요.'); return; }
       if (!await acceptDiscard('저장한 기획안 불러오기')) return;
       plan = structuredClone(found); dirty = false; filter = 'all'; syncForm(); render();
       message(`“${plan.name}” 기획안을 불러왔습니다.`); revealPlan();
+      if (action === 'load-preview') await launchPreview('show', plan, button);
     }
     if (action === 'delete') {
       if (!window.confirm('이 기획안을 삭제할까요?')) return;
@@ -120,20 +140,15 @@ export async function initFestival() {
       try { writePlans(next, data); saved = next; comparison.delete(button.dataset.id); if (plan.id === button.dataset.id) dirty = true; render(); message('저장한 기획안을 삭제했습니다.'); } catch { message('삭제 내용을 저장하지 못했습니다.'); }
     }
     if (action === 'compare') renderComparison();
-    if (action === 'preview') {
-      if (!plan.artistIds.length) { message('함께할 가수를 한 팀 이상 선택해 주세요.'); return; }
-      if (previewing) return;
-      previewing = true; button.disabled = true;
-      try { const { openFestivalPreview } = await import('./player.js'); await openFestivalPreview(structuredClone(plan), data, button); }
-      catch (error) { message(`미리보기를 열지 못했습니다. ${error.message}`); }
-      finally { previewing = false; button.disabled = false; }
+    if (action === 'preview' || action === 'quick-preview' || action === 'fireworks-preview') {
+      await launchPreview(action === 'quick-preview' ? 'quick' : action === 'fireworks-preview' ? 'fireworks' : 'show', plan, button);
     }
   });
   root.querySelector('.f-saved').addEventListener('change', e => { if (!e.target.matches('input')) return; e.target.checked ? comparison.add(e.target.value) : comparison.delete(e.target.value); });
   function renderComparison() {
     const chosen = saved.filter(p => comparison.has(p.id));
     if (chosen.length < 2) { message('비교할 기획안을 두 개 이상 선택해 주세요.'); return; }
-    root.querySelector('.f-comparison').innerHTML = `<div class="f-table-wrap"><table><caption>저장한 기획안 비교 · 비용과 반응은 게임용 예상</caption><thead><tr><th>기획안</th><th>공연 순서</th><th>장소</th><th>구성</th><th>총예산 / 예상 지출</th></tr></thead><tbody>${chosen.map(p => `<tr><th>${escape(p.name)}</th><td>${p.artistIds.map(id => escape(data.artists.find(a => a.id === id).name)).join(' → ') || '미정'}</td><td>${escape(data.venues.find(v => v.id === p.venueId).name)}</td><td>${p.extras.map(id => escape(data.extras.find(e => e.id === id).name)).concat((p.fireworks || []).map(id => `폭죽: ${FIREWORK_MOMENTS.find(m => m.id === id).label}`)).join(', ') || '기본 무대'}</td><td>${won(p.budget)} / ${won(totalCost(p, data))}</td></tr>`).join('')}</tbody></table></div>`;
+    root.querySelector('.f-comparison').innerHTML = `<div class="f-table-wrap"><table><caption>저장한 기획안 비교 · 비용과 반응은 게임용 예상</caption><thead><tr><th>기획안</th><th>공연 순서</th><th>장소</th><th>구성</th><th>총예산 / 예상 지출</th></tr></thead><tbody>${chosen.map(p => `<tr><th>${escape(p.name)}</th><td>${p.artistIds.map(id => escape(data.artists.find(a => a.id === id).name)).join(' → ') || '미정'}</td><td>${escape(data.venues.find(v => v.id === p.venueId).name)}</td><td>${p.extras.map(id => escape(data.extras.find(e => e.id === id).name)).concat((p.fireworks || []).map(id => `폭죽: ${FIREWORK_MOMENTS.find(m => m.id === id).label}`)).join(', ') || '기본 무대'} · 폭죽 위치: ${FIREWORK_SITES.find(site => site.id === (p.fireworkPosition || 'stage-back')).name}</td><td>${won(p.budget)} / ${won(totalCost(p, data))}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function render() {
     root.querySelectorAll('.f-fireworks input').forEach(input => { input.checked = (plan.fireworks || []).includes(input.value); input.disabled = !availableFireworks(plan).some(m => m.id === input.value); });
@@ -153,7 +168,7 @@ export async function initFestival() {
     const cost = totalCost(plan, data), remaining = plan.budget - cost;
     root.querySelector('.f-cost').innerHTML = `<span>예상 지출 <b>${won(cost)}</b></span><span class="${remaining < 0 ? 'over' : ''}">${remaining < 0 ? '예산 초과' : '남은 예산'} <b>${won(Math.abs(remaining))}</b></span><small>미리보기는 예산을 사용하지 않아요.</small>`;
     root.querySelector('.f-reaction').textContent = `“${expectedReaction(plan, data)}” — 게임용 예상 반응`;
-    root.querySelector('.f-saved').innerHTML = saved.length ? saved.map(p => `<article><label><input type="checkbox" value="${escape(p.id)}" ${comparison.has(p.id) ? 'checked' : ''}> 비교</label><div><strong>${escape(p.name)}</strong><small>${p.artistIds.length}팀 · ${won(totalCost(p, data))} · ${escape(data.venues.find(v => v.id === p.venueId).name)}</small></div><button data-action="load" data-id="${escape(p.id)}">불러오기</button><button data-action="delete" data-id="${escape(p.id)}">삭제</button></article>`).join('') : '<p class="f-empty">마음에 드는 라인업을 저장하면 여기에 모여요.</p>';
+    root.querySelector('.f-saved').innerHTML = saved.length ? saved.map(p => `<article><label><input type="checkbox" value="${escape(p.id)}" ${comparison.has(p.id) ? 'checked' : ''}> 비교</label><div><strong>${escape(p.name)}</strong><small>${p.artistIds.length}팀 · ${won(totalCost(p, data))} · ${escape(data.venues.find(v => v.id === p.venueId).name)}</small></div><button data-action="load" data-id="${escape(p.id)}">불러오기</button><button data-action="load-preview" data-id="${escape(p.id)}">불러오고 미리보기</button><button data-action="delete" data-id="${escape(p.id)}">삭제</button></article>`).join('') : '<p class="f-empty">마음에 드는 라인업을 저장하면 여기에 모여요.</p>';
     root.querySelector('.f-comparison').innerHTML = '';
   }
   syncForm(); render();

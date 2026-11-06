@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { createFireworks } from './fireworks.js';
+import { getArtistProfile, FIREWORK_SITES } from './profiles.js';
 import { loadCampus } from '../data/loadCampus.js';
 import { createCampus } from '../scene/createCampus.js';
 import { createCamera } from '../interaction/createCamera.js';
@@ -50,10 +51,9 @@ export async function createFestivalScene(container, location) {
     return Math.hypot(c.x - origin.x, c.z - origin.z) < 170;
   }).map(mesh => ({ mesh, original: mesh.material }));
 
-  const mats = [];
   function material(color, emissive = false) {
     const mat = new THREE.MeshLambertMaterial({ color, ...(emissive ? { emissive: color, emissiveIntensity: 1 } : {}) });
-    mats.push(mat); return mat;
+    return mat;
   }
   function box(x, y, z, width, height, depth, mat, parent = group) {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), mat);
@@ -64,19 +64,35 @@ export async function createFestivalScene(container, location) {
   box(0, 19, -9, 42, 23, 2, glow);
   [-27, 27].forEach(x => { box(x, 18, 0, 2, 36, 2, dark); box(x, 8, 0, 7, 14, 7, dark); });
   box(0, 36, 0, 56, 2, 3, dark);
-  // Performers are abstract game characters, not portraits of real artists.
-  [-8, 0, 8].forEach(x => {
-    box(x, 11, 2, 2, 6, 2, white);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(1.7, 8, 6), white); head.position.set(x, 16, 2); group.add(head);
-  });
+  // 실제 외모·안무를 모사하지 않는 게임용 무대 캐릭터입니다.
+  const performers = [];
+  const wardrobe = [0xeee1ff, 0x9ddfce, 0xffb6d2, 0xb0cafa, 0xffdba0, 0xdfb7f4];
+  for (let i = 0; i < 6; i++) {
+    const person = new THREE.Group(); group.add(person);
+    const outfit = material(wardrobe[i]), skin = material(0xe9bea0), hair = material(i % 2 ? 0x543b35 : 0x252332);
+    box(0, 9, 0, 2.4, 4, 1.6, outfit, person);
+    box(-.7, 5.8, 0, .8, 3, .9, dark, person); box(.7, 5.8, 0, .8, 3, .9, dark, person);
+    box(0, 12.2, 0, 2, 2, 1.8, skin, person); box(0, 13.2, -.2, 2.2, 1, 1.9, hair, person);
+    const arms = [-1, 1].map(side => { const pivot = new THREE.Group(); pivot.position.set(side * 1.5, 10, 0); person.add(pivot); box(0, -1.3, 0, .7, 3, .8, outfit, pivot); return pivot; });
+    performers.push({ person, arms, outfit });
+  }
+  const decor = new THREE.Group(); group.add(decor);
+  const screenCanvas = document.createElement('canvas'); screenCanvas.width = 1024; screenCanvas.height = 512;
+  const screenTexture = new THREE.CanvasTexture(screenCanvas); screenTexture.colorSpace = THREE.SRGBColorSpace;
+  const screenMaterial = new THREE.MeshBasicMaterial({ map: screenTexture });
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(41, 22), screenMaterial); screen.position.set(0, 19, -7.9); group.add(screen);
   const crowd = [];
   const bodyGeo = new THREE.BoxGeometry(1.5, 3, 1.5), headGeo = new THREE.SphereGeometry(.95, 6, 5), stickGeo = new THREE.BoxGeometry(.35, 3, .35);
+  const crowdClothes = [0x7a9bc1, 0xb9789c, 0x698d70, 0xc9a16c, 0x8b7cbb, 0xb1c4c1].map(c => material(c));
+  const skinTones = [0xf0c5a3, 0xd5a17d, 0xb67d58].map(c => material(c));
+  const hairMat = material(0x2d2832);
   for (let i = 0; i < 168; i++) {
     const person = new THREE.Group();
     person.position.set((i % 14 - 6.5) * 4.7, 0, 23 + Math.floor(i / 14) * 4.4);
-    const body = new THREE.Mesh(bodyGeo, i % 3 ? dark : white); body.position.y = 2; person.add(body);
-    const head = new THREE.Mesh(headGeo, white); head.position.y = 4.5; person.add(head);
+    const body = new THREE.Mesh(bodyGeo, crowdClothes[i % crowdClothes.length]); body.position.y = 2; person.add(body);
+    const head = new THREE.Mesh(headGeo, skinTones[i % 3]); head.position.y = 4.5; person.add(head);
     const stick = new THREE.Mesh(stickGeo, i % 2 ? glow : accent); stick.position.set(1.2, 5, 0); person.add(stick);
+    box(0, 5.1, -.15, 1.7, .7, 1.5, hairMat, person);
     crowd.push(person); group.add(person);
   }
   const booths = new THREE.Group(); group.add(booths);
@@ -95,14 +111,6 @@ export async function createFestivalScene(container, location) {
   particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   const confetti = new THREE.Points(particles, new THREE.PointsMaterial({ color: 0xffd7ed, size: 1.2 })); group.add(confetti);
   const { camera, controls, resize, fit } = createCamera(renderer, campus.bounds);
-  function focusStage() {
-    const factor = baseScale / Math.min(container.clientWidth / container.clientHeight, 1);
-    if (compact) {
-      camera.position.copy(origin).addScaledVector(right, 100 * factor).addScaledVector(down, 165 * factor); camera.position.y = 100 * factor;
-      controls.target.copy(origin).addScaledVector(down, 25 * baseScale); controls.target.y = 13 * baseScale;
-    } else { camera.position.set(origin.x + 100 * factor, 100 * factor, origin.z + 165 * factor); controls.target.set(origin.x, 13, origin.z + 25); }
-    controls.update();
-  }
   function focusFestival() {
     const factor = 1 / Math.min(container.clientWidth / container.clientHeight, 1);
     camera.position.copy(origin).addScaledVector(right, 190 * factor).addScaledVector(down, 260 * factor);
@@ -116,19 +124,81 @@ export async function createFestivalScene(container, location) {
     const occluders = new THREE.Raycaster(camera.position, direction.clone().normalize(), 0, direction.length());
     occluders.intersectObjects(campus.meshes, false).forEach(hit => { hit.object.material = ghost; });
   }
-  controls.minDistance = compact ? 20 : 60; controls.maxDistance = 3000; focusFestival();
-  let overview = false;
+  controls.minDistance = 1; controls.maxDistance = 3000; focusFestival();
+  let overview = false, view = 'outside', restoreView = null, skyUntil = 0, cheerUntil = 0;
+  let visitorX = 0, visitorZ = 100;
+  let profile = getArtistProfile({ id: 'default', name: 'OUR CAMPUS', genre: 'indie', colors: ['#ffb76d', '#ffe5ad'] });
   let genre = 'indie', elapsed = 0, playing = true, frame, previous = performance.now(), finale = false, disposed = false;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const skyEffects = new THREE.Group(); skyEffects.position.copy(origin); skyEffects.rotation.y = group.rotation.y;
   scene.add(skyEffects);
   const fireworks = createFireworks(skyEffects, reducedMotion);
+  let fireworkPosition = 'stage-back';
   function theme(value) {
     genre = value;
-    const t = themes[genre]; scene.background = new THREE.Color(t.sky); scene.fog = overview ? null : new THREE.Fog(t.sky, 450, 1800);
-    groundMaterial.color.setHex(t.ground); glow.color.setHex(t.main); glow.emissive.setHex(t.main);
-    accent.color.setHex(t.accent); accent.emissive.setHex(t.accent); point.color.setHex(t.main);
-    beams.forEach((b, i) => b.material.color.setHex(i % 2 ? t.accent : t.main));
+    const t = themes[genre];
+    scene.background = new THREE.Color(profile.sky || t.sky); scene.fog = overview ? null : new THREE.Fog(profile.sky || t.sky, 600, 2200);
+    groundMaterial.color.setHex(t.ground);
+    glow.color.set(profile.colors[0]); glow.emissive.set(profile.colors[0]);
+    accent.color.set(profile.colors[1]); accent.emissive.set(profile.colors[1]); point.color.set(profile.colors[0]);
+    beams.forEach((beam, i) => { beam.material.color.set(profile.colors[i % 2]); });
+  }
+  function setArtist(artist) {
+    profile = getArtistProfile(artist); theme(artist.genre);
+    performers.forEach(({ outfit }, i) => outfit.color.set(profile.colors[i % 2]));
+    const ctx = screenCanvas.getContext('2d');
+    ctx.fillStyle = '#101525'; ctx.fillRect(0, 0, 1024, 512);
+    const gradient = ctx.createLinearGradient(0, 0, 1024, 512);
+    gradient.addColorStop(0, profile.colors[0]); gradient.addColorStop(1, profile.colors[1]);
+    ctx.fillStyle = gradient; ctx.fillRect(14, 14, 996, 484);
+    ctx.fillStyle = '#172039'; ctx.textAlign = 'center';
+    ctx.font = 'bold 25px sans-serif'; ctx.fillText(profile.title, 512, 115);
+    let fontSize = 78; do { ctx.font = `bold ${fontSize}px sans-serif`; fontSize -= 2; } while (ctx.measureText(artist.name).width > 925 && fontSize > 22);
+    ctx.fillText(artist.name, 512, 265); ctx.font = '24px sans-serif'; ctx.fillText('FANTASY LIVE · SONGDO CAMPUS', 512, 380);
+    screenTexture.needsUpdate = true;
+    decor.children.slice().forEach(child => { child.geometry?.dispose(); decor.remove(child); });
+    if (profile.design === 'crown' || profile.design === 'prism') {
+      for (let i = 0; i < 5; i++) {
+        const height = profile.design === 'crown' ? 8 + (2 - Math.abs(i - 2)) * 4 : 10 + i % 2 * 6;
+        const panel = box((i - 2) * 10, 38 + height / 2, -8, 7, height, 1, i % 2 ? accent : glow, decor);
+        if (profile.design === 'prism') panel.rotation.z = .35;
+      }
+    } else {
+      for (let i = 0; i < 5; i++) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(5 + i, .5, 6, 30), i % 2 ? glow : accent);
+        ring.position.set((i - 2) * 12, 39 + Math.sin(i) * 3, -8); decor.add(ring);
+      }
+    }
+  }
+  function localPoint(x, y, z) {
+    const p = origin.clone();
+    if (compact) p.addScaledVector(right, x * baseScale).addScaledVector(down, z * baseScale);
+    else { p.x += x * baseScale; p.z += z * baseScale; }
+    p.y = y * baseScale; return p;
+  }
+  function applyView(mode) {
+    view = mode; overview = mode === 'map'; marker.visible = overview;
+    campus.meshes.forEach(mesh => { mesh.material = originalMaterials.get(mesh); });
+    if (outlineMaterial) outlineMaterial.opacity = mode === 'inside' ? .15 : .7;
+    scene.fog = overview ? null : new THREE.Fog(profile.sky, 600, 2200);
+    if (mode === 'inside') {
+      nearby.forEach(({ mesh }) => { mesh.material = ghost; });
+      camera.position.copy(localPoint(visitorX, 9, visitorZ)); controls.target.copy(localPoint(visitorX * .15, 19, -5));
+    } else if (mode === 'fireworks') {
+      const factor = 1 / Math.min(container.clientWidth / container.clientHeight, 1);
+      camera.position.copy(skyEffects.position).addScaledVector(right, 170 * factor).addScaledVector(down, 380 * factor); camera.position.y = 145 * factor;
+      controls.target.copy(skyEffects.position); controls.target.y = 100;
+    } else if (mode === 'map') {
+      controls.target.copy(campus.bounds.getCenter(new THREE.Vector3())); controls.target.y = 0; fit(container.clientWidth, container.clientHeight);
+    } else focusFestival();
+    controls.update();
+  }
+  function positionFireworks(id) {
+    fireworkPosition = FIREWORK_SITES.some(s => s.id === id) ? id : 'stage-back';
+    const site = FIREWORK_SITES.find(s => s.id === fireworkPosition);
+    skyEffects.position.copy(fireworkPosition === 'campus-center' ? campus.bounds.getCenter(new THREE.Vector3()) : origin);
+    skyEffects.position.y = 0;
+    if (fireworkPosition !== 'campus-center') skyEffects.position.addScaledVector(right, site.x).addScaledVector(down, site.z);
   }
   theme(genre);
   const observer = new ResizeObserver(() => {
@@ -138,13 +208,24 @@ export async function createFestivalScene(container, location) {
   }); observer.observe(container);
   function animate(now) {
     if (disposed) return;
-    const dt = Math.min((now - previous) / 1000, .05); previous = now;
+    const dt = Math.min((now - previous) / 1000, .25); previous = now;
     if (playing) elapsed += dt;
     const t = reducedMotion ? 0 : elapsed;
+    if (restoreView && elapsed > skyUntil) { const next = restoreView; restoreView = null; applyView(next); }
+    performers.forEach(({ person, arms }, i) => {
+      person.position.x = (i - 2.5) * 5;
+      person.position.z = profile.formation === 'arc' ? Math.abs(i - 2.5) * 1.4 : profile.formation === 'zigzag' ? (i % 2) * 4 : 0;
+      person.visible = profile.formation !== 'solo' || i === 2;
+      const beat = t * profile.tempo / 60 * Math.PI;
+      person.position.y = profile.dance === 'bounce' ? Math.max(0, Math.sin(beat + i)) * 1.1 : 0;
+      person.rotation.z = Math.sin(beat * (profile.dance === 'wave' ? .35 : .7) + i * .4) * .08;
+      arms.forEach((arm, side) => { arm.rotation.z = Math.sin(beat * .5 + i + side) * (profile.dance === 'sharp' ? 1.4 : .8); });
+    });
+    decor.rotation.z = profile.design === 'bloom' ? Math.sin(t * .4) * .02 : 0;
     crowd.forEach((person, i) => {
       const phase = t * (genre === 'indie' ? 1.4 : genre === 'idol' ? 5 : 7) + i * .7;
       person.rotation.z = Math.sin(phase) * (genre === 'indie' ? .07 : .14);
-      person.position.y = genre === 'indie' ? 0 : Math.max(0, Math.sin(phase)) * (genre === 'hiphop' ? 2.8 : 1.5);
+      person.position.y = genre === 'indie' ? 0 : Math.max(0, Math.sin(phase)) * (elapsed < cheerUntil ? 5 : genre === 'hiphop' ? 2.8 : 1.5);
     });
     beams.forEach((beam, i) => { beam.rotation.z = Math.sin(t * (genre === 'indie' ? .3 : genre === 'idol' ? 1.7 : 2.3) + i) * .55; beam.rotation.x = Math.cos(t * .7 + i) * .4; });
     // Continuous, non-strobing light motion.
@@ -159,30 +240,19 @@ export async function createFestivalScene(container, location) {
   }
   resize(container.clientWidth, container.clientHeight); frame = requestAnimationFrame(animate);
   return {
-    theme,
-    burstFireworks() { fireworks.burst(); },
+    theme, setArtist,
+    setView(mode) { restoreView = null; applyView(mode); },
+    setFireworkPosition(id) { positionFireworks(id); if (view === 'fireworks') applyView('fireworks'); },
+    moveVisitor(dx, dz) { visitorX = THREE.MathUtils.clamp(visitorX + dx, -25, 25); visitorZ = THREE.MathUtils.clamp(visitorZ + dz, 38, 145); restoreView = null; applyView('inside'); },
+    cheer() { cheerUntil = elapsed + 2; },
+    burstFireworks() { fireworks.burst(); if (!restoreView) restoreView = view; skyUntil = elapsed + 7.2; applyView('fireworks'); },
     resetFireworks() { fireworks.reset(); },
     configure(extras) { booths.visible = extras.includes('booths'); crowd.forEach(p => { p.children[2].visible = extras.includes('lights') || genre === 'indie'; }); },
     setFinale(value) { finale = value; },
     setPreparation(progress) { group.scale.setScalar(baseScale * (reducedMotion ? 1 : Math.max(.01, Math.min(1, progress)))); },
-    setCloseup(value) {
-      overview = false; marker.visible = false;
-      campus.meshes.forEach(mesh => { mesh.material = originalMaterials.get(mesh); });
-      if (value) nearby.forEach(({ mesh }) => { mesh.material = ghost; });
-      if (outlineMaterial) outlineMaterial.opacity = value ? .25 : .7;
-      scene.fog = new THREE.Fog(themes[genre].sky, 450, 1800);
-      if (value) focusStage(); else focusFestival();
-    },
-    setOverview(value) {
-      overview = value; marker.visible = value;
-      campus.meshes.forEach(mesh => { mesh.material = originalMaterials.get(mesh); });
-      scene.fog = value ? null : new THREE.Fog(themes[genre].sky, 450, 1800);
-      if (outlineMaterial) outlineMaterial.opacity = value ? 1 : .7;
-      if (value) { controls.target.copy(campus.bounds.getCenter(new THREE.Vector3())); controls.target.y = 0; fit(container.clientWidth, container.clientHeight); } else focusFestival();
-    },
     setPlaying(value) { playing = value; },
     dispose() {
-      disposed = true; fireworks.dispose(); cancelAnimationFrame(frame); observer.disconnect(); controls.dispose();
+      disposed = true; screenTexture.dispose(); fireworks.dispose(); cancelAnimationFrame(frame); observer.disconnect(); controls.dispose();
       const geometries = new Set(), materials = new Set();
       scene.traverse(object => { if (object.geometry) geometries.add(object.geometry); if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach(m => materials.add(m)); });
       geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); ghost.dispose(); renderer.dispose(); renderer.domElement.remove();

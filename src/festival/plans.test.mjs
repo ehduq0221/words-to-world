@@ -42,10 +42,25 @@ test('제공 차트 기반 예시와 초록 위치 데이터가 유효하다', (
 test('공연 사이와 마지막 공연 종료가 폭죽 타이밍으로 분리된다', async () => {
   const { buildTimeline } = await import('./timeline.js');
   const timeline = buildTimeline(3);
-  assert.equal(timeline.length, 63);
+  assert.equal(timeline.length, 66);
   assert.equal(timeline.fireworkTimes.opening, 4);
   assert.equal(timeline.fireworkTimes['between-1-2'], 20.2);
   assert.equal(timeline.fireworkTimes['between-2-3'], 39.2);
   assert.equal(timeline.fireworkTimes.finale, 58.2);
   assert.equal(buildTimeline(1).fireworkTimes['between-1-2'], undefined);
+});
+
+test('폭죽 위치를 저장하고 알 수 없는 위치는 거부한다', () => {
+  const p = createPlan(data); p.fireworkPosition = 'right-sky';
+  const storage = memory(); writePlans([p], data, storage);
+  assert.equal(readPlans(data, storage)[0].fireworkPosition, 'right-sky');
+  assert.ok(!validatePlan({ ...p, fireworkPosition: 'unknown' }, data));
+  const legacy = { ...p }; delete legacy.fireworkPosition; assert.ok(validatePlan(legacy, data));
+});
+test('같은 아이돌 연출도 가수별 무대·색·패턴을 다르게 사용한다', async () => {
+  const { getArtistProfile } = await import('./profiles.js');
+  const ive = getArtistProfile(data.artists.find(a => a.id === 'ive'));
+  const rescene = getArtistProfile(data.artists.find(a => a.id === 'rescene'));
+  assert.notDeepEqual(ive.colors, rescene.colors); assert.notEqual(ive.design, rescene.design);
+  assert.notDeepEqual(ive.notes, rescene.notes); assert.notEqual(ive.formation, rescene.formation);
 });

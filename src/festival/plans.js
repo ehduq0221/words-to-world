@@ -1,3 +1,4 @@
+import { FIREWORK_SITES } from './profiles.js';
 // 기획안은 게임 저장·선호도 제출과 구분합니다. 네트워크 전송 없음.
 export const FIREWORK_MOMENTS = [
   { id: 'opening', label: '축제 시작', teams: 1 },
@@ -9,7 +10,7 @@ export function availableFireworks(plan) { return FIREWORK_MOMENTS.filter(m => m
 export const PLAN_KEY = 'words-to-world:festival-plans:v1';
 export function createPlan(data) {
   return { id: crypto.randomUUID(), name: '우리의 첫 번째 축제', venueId: data.venues[0].id,
-    budget: 50000000, artistIds: [], extras: ['booths', 'lights', 'confetti'], fireworks: [], updatedAt: null };
+    budget: 50000000, artistIds: [], extras: ['booths', 'lights', 'confetti'], fireworks: [], fireworkPosition: 'stage-back', updatedAt: null };
 }
 export function validatePlan(plan, data) {
   return plan && typeof plan.id === 'string' && plan.id.length <= 100 &&
@@ -20,6 +21,7 @@ export function validatePlan(plan, data) {
     plan.artistIds.every(id => data.artists.some(a => a.id === id)) &&
     Array.isArray(plan.extras) && new Set(plan.extras).size === plan.extras.length &&
     plan.extras.every(id => data.extras.some(e => e.id === id)) &&
+    (plan.fireworkPosition === undefined || FIREWORK_SITES.some(site => site.id === plan.fireworkPosition)) &&
     (plan.fireworks === undefined || (Array.isArray(plan.fireworks) && new Set(plan.fireworks).size === plan.fireworks.length &&
       plan.fireworks.every(id => availableFireworks(plan).some(m => m.id === id))));
 }
