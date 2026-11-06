@@ -15,3 +15,18 @@
 .ops-select select { font: inherit; font-size: 11px; color: #2f4a3c; padding: 5px 6px; border: 1px solid #d4e0d6; border-radius: 6px; background: #fff; }
 .ops-note { display: block; margin-top: 6px; font-size: 9px; line-height: 1.6; color: #98a397; }
 .ops-place { display: block; margin-bottom: 9px; font-size: 9px; line-height: 1.6; color: #8b978c; }
+.ops-choice button:disabled, .ops-select select:disabled { cursor: not-allowed; opacity: .55; }
+.ops-locked { color: #b0644f; }
+/* 결정 확인 창 */
+.ops-confirm { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: #1d2e2680; }
+.ops-confirm-box { width: min(420px, 100%); max-height: calc(100dvh - 32px); overflow: auto; background: #fff; border-radius: 14px; padding: 20px 20px 16px; box-shadow: 0 20px 50px #13241c40; }
+.ops-confirm-box h3 { margin: 0 0 14px; font-size: 16px; letter-spacing: -.04em; line-height: 1.4; color: #243d37; }
+.ops-confirm-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
+.ops-confirm-table th, .ops-confirm-table td { padding: 6px 4px; border-bottom: 1px solid #edf1eb; text-align: right; font-weight: 500; }
+.ops-confirm-table th:first-child { text-align: left; color: #6f8277; font-weight: 500; }
+.ops-confirm-table tr:first-child th { font-size: 10px; color: #98a397; }
+.ops-confirm-table tr.changed td:last-child { color: #2f654d; font-weight: 700; }
+.ops-confirm-note { margin: 6px 0 0; font-size: 11px; line-height: 1.6; color: #6c7d72; }
+.ops-confirm-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.ops-confirm-buttons button { border-radius: 8px; padding: 8px 14px; font-size: 12px; border: 1px solid #d4e0d6; background: #fff; color: #3c5946; }
+.ops-confirm-buttons .ops-confirm-ok { background: #2f654d; border-color: #2f654d; color: #fff; font-weight: 650; }
