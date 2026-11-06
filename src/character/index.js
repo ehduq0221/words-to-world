@@ -1,7 +1,7 @@
-import { variants, renderAvatar, resolveAvatarIndex } from './avatars.js?v=2';
-import { baseAvatar } from './baseAvatar.js?v=2';
+import { variants, renderAvatar, resolveAvatarIndex } from './avatars.js?v=3';
+import { baseAvatar } from './baseAvatar.js?v=3';
 import { readCharacter } from './storage.js';
-import { initDepartmentPicker } from './departmentPicker.js?v=2';
+import { initDepartmentPicker } from './departmentPicker.js?v=3';
 
 export async function initCharacter() {
   const baseSvg = baseAvatar;

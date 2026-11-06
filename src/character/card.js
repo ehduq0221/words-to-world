@@ -1,6 +1,6 @@
 import { readCharacter } from './storage.js';
-import { baseAvatar } from './baseAvatar.js?v=2';
-import { renderAvatar, resolveAvatarIndex } from './avatars.js?v=2';
+import { baseAvatar } from './baseAvatar.js?v=3';
+import { renderAvatar, resolveAvatarIndex } from './avatars.js?v=3';
 
 export function initCharacterMap() {
   const profile = readCharacter();
