@@ -1,6 +1,9 @@
 /* 상단 날짜 버튼 */
-.date { background: none; border: 0; color: inherit; padding: 8px 10px; margin-right: -10px; border-radius: 12px; text-align: right; }
-.date:hover, .date[aria-expanded="true"] { background: #eef4ef; }
+.date { display: flex; align-items: center; gap: 12px; background: none; border: 1px solid #dce5df; color: inherit; padding: 8px 12px 8px 10px; border-radius: 14px; text-align: right; }
+.date .date-icon { margin-top: 0; display: grid; justify-items: center; gap: 2px; padding: 6px 8px; border-radius: 10px; background: #254e40; color: #edf6dc; }
+.date-icon small { font-size: 9px; font-weight: 650; letter-spacing: -.02em; }
+.date .date-text { display: block; margin-top: 0; color: inherit; font-size: inherit; }
+.date:hover, .date[aria-expanded="true"] { background: #eef4ef; border-color: #b9cdc1; }
 .date b::after { content: ''; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-3px) rotate(45deg); }
 .date[aria-expanded="true"] b::after { transform: translateY(0) rotate(-135deg); }
 
