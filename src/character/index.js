@@ -36,12 +36,7 @@ export async function initCharacter() {
     button.className = 'avatar-option';
     button.type = 'button';
     button.setAttribute('aria-label', look.gender + ' 외형 ' + (index % 8 + 1));
-    button.title = look.gender + ' 외형 ' + (index % 8 + 1);
     button.innerHTML = avatar(index);
-    const label = document.createElement('span');
-    label.className = 'avatar-caption';
-    label.textContent = button.title;
-    button.append(label);
     button.addEventListener('click', () => selectAvatar(index));
     document.querySelector('#avatars').append(button);
   });

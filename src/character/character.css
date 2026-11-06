@@ -24,7 +24,6 @@ svg { width: 62px; height: 86px; image-rendering: pixelated; }
 .selected-preview p { font-size: 12px; color: #83917e; margin-top: 9px; }
 .avatars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .avatar-option { padding: 8px; display: grid; place-items: center; min-height: 112px; border: 2px solid transparent; border-radius: 15px; background: #f0f4eb; position: relative; }
-.avatar-caption { font-size: 10px; color: #708270; margin-top: 4px; }
 .avatar-option[aria-pressed=true] { border-color: #3e795b; box-shadow: 0 0 0 3px #3e795b28; }
 .avatar-option[aria-pressed=true]::after { content: '✓'; position: absolute; top: 5px; right: 6px; color: white; background: #3e795b; border-radius: 50%; width: 17px; height: 17px; font-size: 11px; }
 .form { display: grid; gap: 20px; }
