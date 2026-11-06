@@ -9,10 +9,10 @@ export function initCharacterMap() {
     return false;
   }
   const card = document.querySelector('#character-card');
-  card.innerHTML = `<div class="section-heading"><h2>내 캐릭터</h2><span>인천대학교</span></div>
+  card.innerHTML = `<div class="section-heading"><h2>내 캐릭터</h2><span>학생</span></div>
     <div class="character-profile"><div class="character-portrait"></div>
     <div class="character-identity"><strong></strong><span></span><small>송도캠퍼스</small></div></div>
-    <dl></dl><a class="character-edit" href="./character-create.html">캐릭터 바꾸기</a>`;
+    <details class="student-details"><summary>학생 정보</summary><dl></dl></details><a class="character-edit" href="./character-create.html">캐릭터 수정</a>`;
   card.querySelector('.character-portrait').innerHTML = renderAvatar(baseAvatar, resolveAvatarIndex(profile.avatar, profile.gender));
   card.querySelector('.character-identity strong').textContent = profile.name;
   card.querySelector('.character-identity span').textContent = profile.department;

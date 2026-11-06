@@ -1,0 +1,8 @@
+{
+  "note": "실제 학교 축제 확정 일정이 아닌 게임용 봄·가을 축제 시즌입니다. 게임 날짜를 기준으로 열립니다.",
+  "venueId": "outdoor:main-field",
+  "seasons": [
+    {"id":"spring","name":"봄 대동제","start":"05-18","end":"05-22"},
+    {"id":"autumn","name":"가을 대동제","start":"09-14","end":"09-18"}
+  ]
+}

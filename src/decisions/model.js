@@ -108,7 +108,10 @@ function hasFuture(events, state, released, schedule) {
 }
 export function initializeSchedule(events, state, limit, schedule, random = Math.random) {
   const area = state.decisions;
-  if (Array.isArray(area.released)) return null;
+  if (Array.isArray(area.released)) {
+    const missing = area.released.filter(id => !Object.hasOwn(area.releasedOn ?? {}, id));
+    return missing.length ? { ...area, releasedOn: { ...(area.releasedOn ?? {}), ...Object.fromEntries(missing.map(id => [id, state.time.dayCount])) } } : null;
+  }
   // 기존 저장에서 열어 둔 안건은 우선 유지하고 상한을 넘는 항목은 이후에 공개합니다.
   const pending = events.filter(event => area.opened.includes(event.id) && !resolvedChoice(event, state)).slice(0, limit);
   const released = pending.map(event => event.id);
@@ -117,7 +120,7 @@ export function initializeSchedule(events, state, limit, schedule, random = Math
     if (!pool.length) break;
     released.push(pool[Math.floor(random() * pool.length)].id);
   }
-  return { ...area, released, nextEventDay: hasFuture(events, state, released, schedule) ? nextDay(state.time.dayCount, schedule, random) : null };
+  return { ...area, released, releasedOn: Object.fromEntries(released.map(id => [id, state.time.dayCount])), nextEventDay: hasFuture(events, state, released, schedule) ? nextDay(state.time.dayCount, schedule, random) : null };
 }
 export function releaseDueEvent(events, state, limit, schedule, random = Math.random) {
   const area = state.decisions;
@@ -126,6 +129,7 @@ export function releaseDueEvent(events, state, limit, schedule, random = Math.ra
   let next = { ...area, released: [...area.released] };
   if (pool.length && activeEvents(events, state, limit).length < limit) {
     const event = pool[Math.floor(random() * pool.length)];
+    next.releasedOn = { ...(area.releasedOn ?? {}), [event.id]: state.time.dayCount };
     if (next.released.includes(event.id)) {
       // 다시 생긴 안건: 회차를 올리고 지난 카드를 목록에서 내립니다.
       next = { ...next, rounds: { ...(area.rounds ?? {}), [event.id]: roundOf(event, state) + 1 }, opened: area.opened.filter(id => id !== event.id) };

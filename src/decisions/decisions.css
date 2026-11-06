@@ -28,3 +28,5 @@
 .decision-card:focus, .decision-card:focus-within { outline: none; border-color: #789c68; background: #fbfdf8; }
 .decision-result.is-pending { background: #f7f3e8; border-color: #ebe0c4; }
 .decision-card.is-scheduled .decision-status { color: #8d6529; }
+
+.care-note { font-size:10px; line-height:1.6; color:#a78150; margin:0 0 10px; flex:none; }
